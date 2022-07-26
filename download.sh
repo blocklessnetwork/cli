@@ -65,7 +65,7 @@ function install {
 	#choose from asset list
 	URL=""
 	FTYPE=""
-	VERSION="0.0.1"
+	VERSION="v0.0.1"
 	case "${OS}_${ARCH}" in
 	"darwin_amd64")
 		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-macos-x64-blockless-cli.tar.gz"
