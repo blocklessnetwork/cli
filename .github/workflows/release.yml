@@ -1,0 +1,149 @@
+on:
+  release:
+    types: [created]
+
+name: Release
+
+jobs:
+  build_and_test:
+    if: contains(github.ref,'latest') == false
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build
+      - run: yarn build:arm
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-linux-x64-blockless-cli.tar.gz
+          path: bls_x64-linux*
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-windows-x64-blockless-cli.tar.gz
+          path: bls_x64-win*
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-macos-x64-blockless-cli.tar.gz
+          path: bls_x64-macos*
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-linux-arm64-blockless-cli.tar.gz
+          path: bls_arm64-linux*
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-windows-arm64-blockless-cli.tar.gz
+          path: bls_arm64-win*
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "tar"
+          filename: bls-macos-arm64-blockless-cli.tar.gz
+          path: bls_arm64-macos*
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-macos-arm64-blockless-cli.tar.gz
+          asset_name: bls-macos-arm64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-linux-arm64-blockless-cli.tar.gz
+          asset_name: bls-linux-arm64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-windows-arm64-blockless-cli.tar.gz
+          asset_name: bls-windows-arm64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-macos-x64-blockless-cli.tar.gz
+          asset_name: bls-macos-x64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-linux-x64-blockless-cli.tar.gz
+          asset_name: bls-linux-x64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: bls-windows-x64-blockless-cli.tar.gz
+          asset_name: bls-windows-x64-blockless-cli.tar.gz
+          asset_content_type: application/gzip
+
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: blockless-cli.${{ matrix.os }}.x64.tar.gz
+  #         retention-days: 1
+
+  # update_latest:
+  #   needs: build_and_test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         path: .
+  #     - name: Delete the "latest" Release
+  #       uses: dev-drprasad/delete-tag-and-release@v0.2.0
+  #       with:
+  #         tag_name: latest
+  #         delete_release: true
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Publish the Release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         tag_name: latest
+  #         files: artifact/*
+  #         prerelease: true
+  #         fail_on_unmatched_files: true
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

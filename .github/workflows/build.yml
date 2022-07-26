@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-linux-x64-blockless-cli
+          path: bls_x64-linux*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-windows-x64-blockless-cli
+          path: bls_x64-win*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-macos-x64-blockless-cli
+          path: bls_x64-macos*
+  build_arm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build:arm
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-linux-arm64-blockless-cli
+          path: bls_arm64-linux*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-windows-arm64-blockless-cli
+          path: bls_arm64-win*
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bls-macos-arm64-blockless-cli
+          path: bls_arm64-macos*
