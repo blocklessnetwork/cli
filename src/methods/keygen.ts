@@ -6,8 +6,7 @@ export const generateKey = () => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
-  const platform =
-    store.system.platform === "darwin" ? store.system.arch : "x64";
+  const arch = store.system.arch;
 
   console.log(
     `${Chalk.yellow("Generating")} ... identity key in ${
@@ -15,7 +14,7 @@ export const generateKey = () => {
     }/.bls/network/keys`
   );
   execSync(
-    `mkdir -p ${store.system.homedir}/.bls/network/keys; cd ${store.system.homedir}/.bls/network/keys; ${store.system.homedir}/.bls/network/txkeygen-${os}-${platform}`,
+    `mkdir -p ${store.system.homedir}/.bls/network/keys; cd ${store.system.homedir}/.bls/network/keys; ${store.system.homedir}/.bls/network/txkeygen-${os}-${arch}`,
     {
       stdio: "ignore",
     }
