@@ -6,7 +6,7 @@ export const run = () => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
-  const arch = store.system.platform === "darwin" ? store.system.arch : "x64";
+  const arch = store.system.arch;
 
   console.log(`${Chalk.yellow("Off-Chain")} ... starting coordinator node`);
   execSync(
