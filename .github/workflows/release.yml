@@ -119,31 +119,51 @@ jobs:
           asset_name: bls-windows-x64-blockless-cli.tar.gz
           asset_content_type: application/gzip
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         path: blockless-cli.${{ matrix.os }}.x64.tar.gz
-  #         retention-days: 1
-
-  # update_latest:
-  #   needs: build_and_test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         path: .
-  #     - name: Delete the "latest" Release
-  #       uses: dev-drprasad/delete-tag-and-release@v0.2.0
-  #       with:
-  #         tag_name: latest
-  #         delete_release: true
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Publish the Release
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         tag_name: latest
-  #         files: artifact/*
-  #         prerelease: true
-  #         fail_on_unmatched_files: true
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-windows-x64-blockless-cli.tar.gz
+          retention-days: 1
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-linux-x64-blockless-cli.tar.gz
+          retention-days: 1
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-macos-x64-blockless-cli.tar.gz
+          retention-days: 1
+  
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-windows-arm64-blockless-cli.tar.gz
+          retention-days: 1
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-linux-arm64-blockless-cli.tar.gz
+          retention-days: 1
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bls-macos-arm64-blockless-cli.tar.gz
+          retention-days: 1
+  update_latest:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: .
+      - name: Delete the "latest" Release
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          tag_name: latest
+          delete_release: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          files: artifact/*
+          prerelease: true
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
