@@ -12,7 +12,7 @@ Supported Platforms
 
 | OS      | arm64 | x64 |
 | ------- | ----- | --- |
-| Windows | x     | x   |
+| Windows |       | x   |
 | Linux   | x     | x   |
 | MacOS   | x     | x   |
 
@@ -26,13 +26,7 @@ wget
 
 ```bash
 sudo sh -c "wget https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh -v -O download.sh; chmod +x download.sh; ./download.sh; rm -rf download.sh"
-```
-
-In a different environment? Use `npm` with `node 14`.
-
-```bash
-npm i -g @blockless/cli
-```
+``
 
 ## contributing
 
