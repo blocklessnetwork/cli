@@ -26,14 +26,14 @@ wget
 
 ```bash
 sudo sh -c "wget https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh -v -O download.sh; chmod +x download.sh; ./download.sh; rm -rf download.sh"
-``
+```
 
 ## contributing
 
-this client command utility is written in `typescript` , and packaged using `nexe`.
+This client command utility is written in `typescript` , and packaged using `nexe`.
 
 - Node 14.15
 - Typescript
 - Pkg Wrapper
 
-use `dev-bin.js` to test locally, use `npm link` if you wish to test bin globally installed.
+Use `dev-bin.js` to test locally, use `npm link` if you wish to test bin globally installed.
