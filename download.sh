@@ -76,7 +76,7 @@ function install {
 		FTYPE=".tar.gz"
 		;;
 	"linux_amd64")
-		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-linux-arm64-blockless-cli.tar.gz"
+		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-linux-x64-blockless-cli.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"linux_arm64")
