@@ -144,8 +144,7 @@ args
       }
 
       console.log(name, sub);
-    },
-    ["add", "create", "initialize"]
+    }
   )
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
