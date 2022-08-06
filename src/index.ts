@@ -4,6 +4,7 @@ import { store, set as storeSet } from "./store";
 import * as wallet from "./methods/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
+import { run as runInit } from "./commands/function/init";
 import pkg from "../package.json";
 
 let didRun = false;
@@ -30,6 +31,14 @@ function printHelp(commands: any, options: any = []) {
 }
 
 args
+  .options([
+    {
+      name: "path",
+      description: "The target path for the command",
+      defaultValue: `${store.system.homedir}/.bls`,
+    },
+    { name: "name", description: "The target name for the command" },
+  ])
   .command(
     "offchain",
     "Interact with local off-chain network [install, start, configure]",
@@ -109,10 +118,34 @@ args
   .command(
     "function",
     "Interact with Functions [init, invoke, delete, list]",
-    (name: string, sub: string[]) => {
+    (name: string, sub: string[], options) => {
       didRun = true;
+
+      if (!sub[0] || sub[0] === "help" || !("name" in options)) {
+        printHelp(
+          [["init", "initialize a new function with @blockless/app"]],
+          [
+            ["-n, --name", "the name of the function to initialize (required)"],
+            [
+              "-p, --path",
+              `the location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
+            ],
+          ]
+        );
+        return;
+      }
+      switch (sub[0]) {
+        case "init":
+          runInit(options);
+          break;
+
+        default:
+          break;
+      }
+
       console.log(name, sub);
-    }
+    },
+    ["add", "create", "initialize"]
   )
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
