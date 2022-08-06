@@ -1,7 +1,7 @@
 import Chalk from "chalk";
 import { execSync } from "child_process";
 
-const sanitizer = /[^a-zA-Z0-9]/;
+const sanitizer = /[^a-zA-Z0-9\-]/;
 
 const sanitize = (input: string) => input.replace(sanitizer, "");
 
