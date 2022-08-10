@@ -5,6 +5,8 @@ import * as wallet from "./methods/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
+import { run as runLogin } from "./commands/login";
+
 import pkg from "../package.json";
 
 let didRun = false;
@@ -148,7 +150,15 @@ args
   )
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
-  });
+  })
+  .command(
+    "login",
+    "Login to the the CLI",
+    (name: string, sub: string[], options: any) => {
+      runLogin(sub);
+      didRun = true;
+    }
+  );
 
 export async function cli() {
   const flags = args.parse(process.argv, {
