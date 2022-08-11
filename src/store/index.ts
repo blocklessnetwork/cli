@@ -6,6 +6,7 @@ export const store: any = {
     platform: platform,
     arch: process.arch,
     homedir: os.homedir(),
+    appPath: "/.bls",
   },
   opts: {},
 };
