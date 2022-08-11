@@ -5,13 +5,13 @@ import * as wallet from "./methods/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
+import { run as runPublish } from "./commands/function/publish";
 import { run as runLogin } from "./commands/login";
-
 import pkg from "../package.json";
 
 let didRun = false;
 const name = "bls";
-function printHelp(commands: any, options: any = []) {
+function printHelp(commands: any = [], options: any = []) {
   console.log(
     `  Usage: ${Chalk.yellow(name)} ${Chalk.green(
       "subcommand"
@@ -37,7 +37,6 @@ args
     {
       name: "path",
       description: "The target path for the command",
-      defaultValue: `${store.system.homedir}/.bls`,
     },
     { name: "name", description: "The target name for the command" },
   ])
@@ -119,32 +118,84 @@ args
   )
   .command(
     "function",
-    "Interact with Functions [init, invoke, delete, list]",
+    "Interact with Functions [init, invoke, delete, publish, list]",
     (name: string, sub: string[], options) => {
+      interface RequiredOptions {
+        init: string[];
+        publish: string[];
+      }
+      const requiredOptions: RequiredOptions = {
+        init: ["name"],
+        publish: ["name", "path"],
+      };
+      const index: keyof RequiredOptions = "init";
       didRun = true;
-
-      if (!sub[0] || sub[0] === "help" || !("name" in options)) {
-        printHelp(
-          [["init", "initialize a new function with @blockless/app"]],
-          [
-            ["-n, --name", "the name of the function to initialize (required)"],
-            [
-              "-p, --path",
-              `the location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
-            ],
-          ]
-        );
+      if (!sub[0] || sub[0] === "help") {
+        printHelp([
+          ["init\t", "initialize a new function with @blockless/app"],
+          ["publish\t", "publish a function on Blockless"],
+        ]);
         return;
       }
       switch (sub[0]) {
         case "init":
-          runInit(options);
+          if (!("name" in options)) {
+            console.log(
+              Chalk.red(`Missing required option ${Chalk.yellow("name")}\n`)
+            );
+            printHelp(
+              [["init", "initialize a new function with @blockless/app"]],
+              [
+                [
+                  "-n, --name",
+                  "the name of the function to initialize (required)",
+                ],
+                [
+                  "-p, --path",
+                  `the location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
+                ],
+              ]
+            );
+            return;
+          } else {
+            runInit(options);
+          }
           break;
-
+        case "publish":
+          for (const option of requiredOptions[sub[0]]) {
+            if (!(option in options)) {
+              console.log(
+                Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
+              );
+              printHelp(
+                [["publish", "publish a function on Blockless"]],
+                [
+                  [
+                    "-n, --name",
+                    "the name of the function to publish (required)",
+                  ],
+                  [
+                    "-p, --path",
+                    "the location of the function to publish (required)",
+                  ],
+                  [
+                    "-r, --rebuild",
+                    "build the package before publishing it (optional; defaults to undefined)",
+                  ],
+                  [
+                    "-d, --debug",
+                    "specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
+                  ],
+                ]
+              );
+              return;
+            }
+          }
+          runPublish(options);
+          break;
         default:
           break;
       }
-
       console.log(name, sub);
     }
   )
