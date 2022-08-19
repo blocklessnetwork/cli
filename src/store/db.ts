@@ -12,14 +12,12 @@ const cliConfigFileName = "bls.cli.config.json";
 const cliConfigFilePath = `${store.system.homedir}${store.system.appPath}`;
 const cliConfigFile = `${cliConfigFilePath}/${cliConfigFileName}`;
 
-const createConfigFile = () => {
-  if (!existsSync(cliConfigFile)) {
-    if (!existsSync(cliConfigFilePath)) {
-      execSync(`mkdir -p ${cliConfigFilePath}`);
-    }
-    writeFileSync(cliConfigFile, JSON.stringify({}));
+if (!existsSync(cliConfigFile)) {
+  if (!existsSync(cliConfigFilePath)) {
+    execSync(`mkdir -p ${cliConfigFilePath}`);
   }
-};
+  writeFileSync(cliConfigFile, JSON.stringify({}));
+}
 
 const adapter = new FileSync(cliConfigFile, {
   ...lowdbEncryption({
