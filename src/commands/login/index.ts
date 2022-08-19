@@ -17,8 +17,8 @@ fastify.get("/token/:userId", async (request: any, reply: any) => {
   const userId = request.params.userId;
   const error = request.params.error;
   const db = await getDb();
-  db.data.config.token = userId;
-  db.write();
+  db.set("config.token", userId);
+  await db.write();
 
   if (error) {
     console.log("Error when attempting to login");
