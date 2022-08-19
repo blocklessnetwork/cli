@@ -20,6 +20,6 @@ const db = lowdb(adapter);
 
 export const getDb = async () => {
   await db.read();
-  db.data ||= { config: { token: "" } };
+  db.defaults({ config: { token: "" } }).write();
   return db;
 };
