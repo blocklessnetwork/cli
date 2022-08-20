@@ -2,7 +2,10 @@ import Fastify from "fastify";
 import { getDb } from "../../store/db";
 const portastic = require("portastic");
 
-const authHost = "http://console.bls.dev";
+const authHost =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost"
+    : "http://console.bls.dev";
 const clientId = "7ddcb826-e84a-4102-b95b-d9b8d3a57176";
 
 const fastify = Fastify({
@@ -93,7 +96,10 @@ fastify.get("/complete", async (request: any, reply: any) => {
 const start = async () => {
   try {
     const ports = await portastic.find({ min: 8000, max: 8999 });
-    const port = ports[Math.floor(Math.random() * ports.length)];
+    const port =
+      process.env.NODE_ENV === "development"
+        ? 3000
+        : ports[Math.floor(Math.random() * ports.length)];
 
     // request a jwt from the console ui
     fastify.get("/", async (request, reply) => {
