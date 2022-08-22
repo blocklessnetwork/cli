@@ -83,7 +83,7 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   formData.append("wasi_archive", archive);
 
   axios
-    .post(`${host}/api/submit`, formData, {
+    .post(`${host}/api/modules/deploy`, formData, {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
