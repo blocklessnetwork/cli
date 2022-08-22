@@ -32,7 +32,7 @@ sudo sh -c "wget https://raw.githubusercontent.com/txlabs/blockless-cli/main/dow
 
 This client command utility is written in `typescript` , and packaged using `nexe`.
 
-- Node 14.15
+- Node 14.17
 - Typescript
 - Pkg Wrapper
 
