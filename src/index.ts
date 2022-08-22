@@ -5,7 +5,7 @@ import * as wallet from "./methods/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
-import { run as runPublish } from "./commands/function/publish";
+import { run as runDeploy } from "./commands/function/deploy";
 import { run as runLogin } from "./commands/login";
 import pkg from "../package.json";
 
@@ -118,22 +118,22 @@ args
   )
   .command(
     "function",
-    "Interact with Functions [init, invoke, delete, publish, list]",
+    "Interact with Functions [init, invoke, delete, deploy, list]",
     (name: string, sub: string[], options) => {
       interface RequiredOptions {
         init: string[];
-        publish: string[];
+        deploy: string[];
       }
       const requiredOptions: RequiredOptions = {
         init: ["name"],
-        publish: ["name", "path"],
+        deploy: ["name", "path"],
       };
       const index: keyof RequiredOptions = "init";
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
         printHelp([
           ["init\t", "initialize a new function with @blockless/app"],
-          ["publish\t", "publish a function on Blockless"],
+          ["deploy\t", "deploy a function on Blockless"],
         ]);
         return;
       }
@@ -161,26 +161,26 @@ args
             runInit(options);
           }
           break;
-        case "publish":
+        case "deploy":
           for (const option of requiredOptions[sub[0]]) {
             if (!(option in options)) {
               console.log(
                 Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
               );
               printHelp(
-                [["publish", "publish a function on Blockless"]],
+                [["deploy", "deploy a function on Blockless"]],
                 [
                   [
                     "-n, --name",
-                    "the name of the function to publish (required)",
+                    "the name of the function to defploy (required)",
                   ],
                   [
                     "-p, --path",
-                    "the location of the function to publish (required)",
+                    "the location of the function to deploy (required)",
                   ],
                   [
                     "-r, --rebuild",
-                    "build the package before publishing it (optional; defaults to undefined)",
+                    "build the package before deploying it (optional; defaults to undefined)",
                   ],
                   [
                     "-d, --debug",
@@ -191,7 +191,7 @@ args
               return;
             }
           }
-          runPublish(options);
+          runDeploy(options);
           break;
         default:
           break;

@@ -15,9 +15,24 @@ const cliConfigFile = `${cliConfigFilePath}/${cliConfigFileName}`;
 if (!existsSync(cliConfigFile)) {
   if (!existsSync(cliConfigFilePath)) {
     execSync(`mkdir -p ${cliConfigFilePath}`);
-  }
-  writeFileSync(cliConfigFile, JSON.stringify({}));
+      writeFileSync(cliConfigFile, JSON.stringify({}));
 }
+
+const defaultValue = {
+  config: {
+    token: "",
+  },
+};
+
+const adapter = new FileSync(
+  `${store.system.homedir}${store.system.appPath}/bls.cli.config.json`,
+  {
+    defaultValue,
+    ...lowdbEncryption({
+      secret: "s3cr3t",
+      iterations: 100_000,
+    }),
+  }
 
 const adapter = new FileSync(cliConfigFile, {
   ...lowdbEncryption({
@@ -28,8 +43,4 @@ const adapter = new FileSync(cliConfigFile, {
 
 const db = lowdb(adapter);
 
-export const getDb = async () => {
-  await db.read();
-  db.defaults({ config: { token: "" } }).write();
-  return db;
-};
+export const getDb = () => db.read();

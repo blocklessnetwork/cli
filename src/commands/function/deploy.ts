@@ -33,9 +33,10 @@ const host =
     ? "http://localhost:3005"
     : "https://wasi.bls.dev";
 
-const getTokenFromStore = async () => {
-  const db = await getDb();
-  return db.get("config.token").value();
+const getTokenFromStore = () => {
+  const db = getDb();
+  const { token } = db.get("config").value();
+  return token;
 };
 
 const createChecksum = ({
@@ -74,7 +75,7 @@ const renameWasm = (path: string, oldName: string, newName: string) => {
   execSync(`mv ${path}/${oldName} ${path}/${newName}`, { stdio: "inherit" });
 };
 
-const publishWasm = async (manifest: any, archive: any, cb?: Function) => {
+const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   const formData = new FormData();
   const token = await getTokenFromStore();
 
@@ -94,7 +95,7 @@ const publishWasm = async (manifest: any, archive: any, cb?: Function) => {
       }
     })
     .catch((error) => {
-      console.log("error publishing function", error);
+      console.log("error deploying function", error);
     });
 };
 
@@ -134,8 +135,8 @@ export const run = (options: any) => {
   console.log(Chalk.yellow(`Creating manifest...`));
   writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest));
 
-  console.log(Chalk.yellow(`Publishing function located in ${buildDir}`));
-  publishWasm(
+  console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
+  deployWasm(
     readFileSync(`${buildDir}/manifest.json`),
     readFileSync(`${buildDir}/${wasmArchive}`)
   );
