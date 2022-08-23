@@ -15,7 +15,8 @@ const cliConfigFile = `${cliConfigFilePath}/${cliConfigFileName}`;
 if (!existsSync(cliConfigFile)) {
   if (!existsSync(cliConfigFilePath)) {
     execSync(`mkdir -p ${cliConfigFilePath}`);
-      writeFileSync(cliConfigFile, JSON.stringify({}));
+  }
+  writeFileSync(cliConfigFile, JSON.stringify({}));
 }
 
 const defaultValue = {
@@ -33,13 +34,7 @@ const adapter = new FileSync(
       iterations: 100_000,
     }),
   }
-
-const adapter = new FileSync(cliConfigFile, {
-  ...lowdbEncryption({
-    secret: "s3cr3t",
-    iterations: 100_000,
-  }),
-});
+);
 
 const db = lowdb(adapter);
 
