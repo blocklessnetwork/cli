@@ -9,6 +9,7 @@ const deploymentOptions: IDeploymentOptions = {
   functionName: "",
   userFunctionId: "",
 };
+const consoleServer = getConsoleServer();
 
 const server = "https://console.bls.dev";
 const token = getToken();
