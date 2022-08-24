@@ -34,11 +34,16 @@ function printHelp(commands: any = [], options: any = []) {
 
 args
   .options([
+    { name: "name", description: "The target name for the command" },
     {
       name: "path",
       description: "The target path for the command",
     },
-    { name: "name", description: "The target name for the command" },
+    {
+      name: "private",
+      description:
+        "For functions, setting this will mark the function as private",
+    },
   ])
   .command(
     "offchain",
@@ -144,15 +149,24 @@ args
               Chalk.red(`Missing required option ${Chalk.yellow("name")}\n`)
             );
             printHelp(
-              [["init", "initialize a new function with @blockless/app"]],
               [
                 [
-                  "-n, --name",
-                  "the name of the function to initialize (required)",
+                  "init",
+                  "Initialize a new function with @blockless/app and save it to Console.",
+                ],
+              ],
+              [
+                [
+                  "--name",
+                  "The name of the function to initialize.  This name will be used in the package's configuration file (i.e. package.json). (required)",
                 ],
                 [
-                  "-p, --path",
-                  `the location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
+                  "--path",
+                  `The location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
+                ],
+                [
+                  "--private",
+                  "If set, this function will not be made available for others to consume (optional; defaults to undefined)",
                 ],
               ]
             );
@@ -168,23 +182,21 @@ args
                 Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
               );
               printHelp(
-                [["deploy", "deploy a function on Blockless"]],
+                [["deploy", "Deploy a function on Blockless"]],
                 [
+                  ["--name", "The name of the function to deploy (required)"],
                   [
-                    "-n, --name",
-                    "the name of the function to defploy (required)",
+                    "--path",
+                    "The location of the function' to deploy (required)",
+                  ],
+
+                  [
+                    "--rebuild",
+                    "Build the package before deploying it (optional; defaults to undefined)",
                   ],
                   [
-                    "-p, --path",
-                    "the location of the function to deploy (required)",
-                  ],
-                  [
-                    "-r, --rebuild",
-                    "build the package before deploying it (optional; defaults to undefined)",
-                  ],
-                  [
-                    "-d, --debug",
-                    "specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
+                    "--debug",
+                    "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
                   ],
                 ]
               );
