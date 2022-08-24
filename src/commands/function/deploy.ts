@@ -3,7 +3,7 @@ import { createHash, BinaryToTextEncoding } from "crypto";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import FormData from "form-data";
-import { getDb } from "../../store/db";
+import { getConsoleServer, getTokenFromStore } from "../../lib/utils";
 import axios from "axios";
 
 interface WasmMethod {
@@ -38,6 +38,7 @@ const getTokenFromStore = () => {
   const { token } = db.get("config").value();
   return token;
 };
+const consoleServer = getConsoleServer();
 
 const createChecksum = ({
   digest = "hex",
@@ -83,7 +84,7 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   formData.append("wasi_archive", archive);
 
   axios
-    .post(`${host}/api/modules/deploy`, formData, {
+    .post(`${consoleServer}/api/modules/deploy`, formData, {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

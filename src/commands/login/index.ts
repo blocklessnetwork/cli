@@ -1,11 +1,10 @@
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
+import { getConsoleServer } from "../../lib/utils";
+
 const portastic = require("portastic");
 
-const authHost =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost"
-    : "http://console.bls.dev";
+const consoleServer = getConsoleServer();
 const clientId = "7ddcb826-e84a-4102-b95b-d9b8d3a57176";
 
 const fastify = Fastify({
@@ -25,7 +24,7 @@ fastify.get("/token/:userId", async (request: any, reply: any) => {
     console.log("Error when attempting to login");
     return;
   }
-  console.log("User returned from https://console.bls.dev authenticated");
+  console.log(`User returned from ${consoleServer} authenticated`);
   reply.redirect("/complete");
 });
 
@@ -98,17 +97,18 @@ const start = async () => {
       process.env.NODE_ENV === "development"
         ? 3000
         : ports[Math.floor(Math.random() * ports.length)];
+    const localConsoleServer = getConsoleServer("local", port);
 
     // request a jwt from the console ui
     fastify.get("/", async (request, reply) => {
-      console.log("Sending user to https://console.bls.dev to authenticate");
+      console.log(`Sending user to ${consoleServer} to authenticate`);
       reply.redirect(
-        `${authHost}/login?returnUrl=http://localhost:${port}/token&clientId=${clientId}`
+        `${consoleServer}/login?returnUrl=${localConsoleServer}/token&clientId=${clientId}`
       );
     });
 
     fastify.listen({ port }).then(() => {
-      console.log(`Open Browser at http://localhost:${port} to complete login`);
+      console.log(`Open Browser at ${localConsoleServer} to complete login`);
     });
   } catch (err) {
     fastify.log.error(err);
