@@ -3,41 +3,11 @@ import { createHash, BinaryToTextEncoding } from "crypto";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import FormData from "form-data";
-import { getDb } from "../../store/db";
+import { getConsoleServer, getTokenFromStore } from "../../lib/utils";
 import axios from "axios";
+import { IManifest } from "./interfaces";
 
-interface WasmMethod {
-  name: string;
-  entry: string;
-  result_type: string;
-}
-
-interface Manifest {
-  id: string;
-  name: string;
-  description: string;
-  fs_root_path: string;
-  limited_fuel?: number;
-  limited_memory?: number;
-  entry: string;
-  runtime: {
-    checksum: string;
-    url: string;
-  };
-  resources?: string[];
-  methods?: WasmMethod[];
-}
-
-const host =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3005"
-    : "https://wasi.bls.dev";
-
-const getTokenFromStore = () => {
-  const db = getDb();
-  const { token } = db.get("config").value();
-  return token;
-};
+const consoleServer = getConsoleServer();
 
 const createChecksum = ({
   digest = "hex",
@@ -55,9 +25,9 @@ const createManifest = (
   buildDir: string,
   entry: string,
   url: string
-): Manifest => {
+): IManifest => {
   const name = entry.split(".")[0];
-  const manifest: Manifest = {
+  const manifest: IManifest = {
     id: "",
     name,
     description: "",
@@ -83,7 +53,7 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   formData.append("wasi_archive", archive);
 
   axios
-    .post(`${host}/api/modules/deploy`, formData, {
+    .post(`${consoleServer}/api/modules/deploy`, formData, {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
