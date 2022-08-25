@@ -2,6 +2,7 @@ import args from "args";
 import Chalk from "chalk";
 import { store, set as storeSet } from "./store";
 import * as wallet from "./methods/wallet";
+import open from "open";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
@@ -11,6 +12,8 @@ import pkg from "../package.json";
 
 let didRun = false;
 const name = "bls";
+const consoleHost = "https://console.bls.dev";
+
 function printHelp(commands: any = [], options: any = []) {
   console.log(
     `  Usage: ${Chalk.yellow(name)} ${Chalk.green(
@@ -213,6 +216,9 @@ args
   )
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
+
+    // opens the url in the default browser
+    open(consoleHost);
   })
   .command(
     "login",
