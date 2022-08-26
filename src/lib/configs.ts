@@ -26,8 +26,7 @@ ui:
 repository:
   url: https://wasi.bls.dev/api/sync
 stake:
-  sc_address: ""
-  infura_url: ""
+  disabled: true
 `;
 
 export const coordinatorConfigJSON = yaml.load(coordinatorConfig);
