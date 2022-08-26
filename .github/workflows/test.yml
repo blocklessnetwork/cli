@@ -7,5 +7,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - run: chmod +x download.sh && ./download.sh
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build
+      - run: cp bls_x64-macos /usr/local/bin/bls
       - run: bls offchain install -y
