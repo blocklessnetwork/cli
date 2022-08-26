@@ -22,7 +22,7 @@ jobs:
         uses: dmikey/package-json-version@v0.0.2
         with:
           version: ${{ steps.get_release.outputs.tag_name }}
-          package: "client/"
+          package: "./"
       - run: npm i -g yarn
       - run: yarn
       - run: yarn build
