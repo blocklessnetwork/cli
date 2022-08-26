@@ -9,10 +9,20 @@ jobs:
     if: contains(github.ref,'latest') == false
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - uses: actions/checkout@v2
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: "change version"
+        uses: reedyuk/npm-version@1.1.1
+        with:
+          version: ${{ steps.get_release.outputs.tag_name }}
+          package: "client/"
       - run: npm i -g yarn
       - run: yarn
       - run: yarn build
@@ -131,7 +141,7 @@ jobs:
         with:
           path: bls-macos-x64-blockless-cli.tar.gz
           retention-days: 1
-  
+
       - uses: actions/upload-artifact@v3
         with:
           path: bls-windows-arm64-blockless-cli.tar.gz
