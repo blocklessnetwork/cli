@@ -7,14 +7,7 @@ import { getToken } from "../../store/db";
 import axios from "axios";
 import { IDeploymentOptions, IManifest } from "./interfaces";
 
-const deploymentOptions: IDeploymentOptions = {
-  functionId: "",
-  functionName: "",
-  userFunctionId: "",
-};
-
-const consoleServer = "https://console.bls.dev";
-const wasiServer = "https://wasi.bls.dev";
+const consoleServer = getConsoleServer();
 const token = getToken();
 
 const createChecksum = ({
@@ -111,12 +104,6 @@ export const run = (options: any) => {
   const name = pathParts.pop();
   const wasmName = `${name}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
-  const {
-    bls: { functionId: userFunctionId },
-  } = require(`${path}/package`);
-
-  //TODO: this is absolutely monstrous and needssanity appplied
-  deploymentOptions.userFunctionId = userFunctionId;
 
   if (rebuild) {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
