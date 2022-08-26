@@ -7,10 +7,11 @@ import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
 import { run as runDeploy } from "./commands/function/deploy";
+import { run as runInvoke } from "./commands/function/invoke";
 import { run as runLogin } from "./commands/login";
-import pkg from "../package.json";
 
 let didRun = false;
+let pkg = { version: "0.0.0" };
 const name = "bls";
 const consoleHost = "https://console.bls.dev";
 
@@ -70,13 +71,6 @@ args
       }
     }
   )
-  // .command(
-  //   "runtime",
-  //   "Interact with installed Blockless Runtimes [list, install, remove]",
-  //   () => {
-  //     didRun = true;
-  //   }
-  // )
   .command("info", "Information about the local Blockless environment", () => {
     didRun = true;
     console.log(
@@ -208,10 +202,14 @@ args
           }
           runDeploy(options);
           break;
+        case "invoke":
+          runInvoke(options);
+          break;
         default:
           break;
       }
-      console.log(name, sub);
+      //todo: add verbose logging flag
+      // console.log(name, sub);
     }
   )
   .command("console", "Open the Blockless console in browser", () => {
@@ -229,7 +227,8 @@ args
     }
   );
 
-export async function cli() {
+export async function cli(argv: any, packageJson: any) {
+  pkg = packageJson;
   const flags = args.parse(process.argv, {
     name: name,
     version: false,

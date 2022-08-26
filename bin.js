@@ -1,2 +1,4 @@
 const { cli } = require("./dist/src/index");
-cli(process.argv);
+const { version } = require("./package.json");
+
+cli(process.argv, { version });
