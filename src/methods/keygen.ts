@@ -6,7 +6,7 @@ export const generateKey = () => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
-  const arch = store.system.arch;
+  const arch = store.system.arch === "arm64" ? "arm64" : "amd64";
 
   console.log(
     `${Chalk.yellow("Generating")} ... identity key in ${

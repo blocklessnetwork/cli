@@ -1,0 +1,29 @@
+name: Run tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, self-hosted]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build
+      - run: cp bls_x64-macos /usr/local/bin/bls
+      - run: bls offchain install -y
+      - run: |
+          FILE="/Users/runner/.bls/network/keys/identity"
+          if test -f $FILE; then
+            echo " exists."
+            exit 0
+          else
+            echo " does not exist."
+            exit 1
+          fi
