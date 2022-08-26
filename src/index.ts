@@ -48,11 +48,16 @@ args
       description:
         "For functions, setting this will mark the function as private",
     },
+    {
+      name: "yes",
+      description:
+        "Assume yes to all prompts. This will skip all prompts and use default values",
+    },
   ])
   .command(
     "offchain",
     "Interact with local off-chain network [install, start, configure]",
-    async (name: string, sub: string[]) => {
+    async (name: string, sub: string[], options: any) => {
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
         printHelp([
@@ -63,10 +68,10 @@ args
       }
       switch (sub[0]) {
         case "install":
-          runInstall();
+          runInstall(options);
           break;
         case "start":
-          runStart();
+          runStart(options);
           break;
       }
     }

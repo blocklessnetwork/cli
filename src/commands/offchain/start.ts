@@ -2,7 +2,7 @@ import Chalk from "chalk";
 import { store, get as storeGet, set as storeSet } from "../../store";
 import { execSync } from "child_process";
 
-export const run = () => {
+export const run = (options: any) => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
