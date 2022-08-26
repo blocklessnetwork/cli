@@ -31,6 +31,7 @@
     "js-yaml": "^4.1.0",
     "lowdb": "^1.0.0",
     "lowdb-encryption": "^0.1.0",
+    "open": "^8.4.0",
     "pkg": "^5.8.0",
     "portastic": "^1.0.1",
     "prompt": "^1.3.0",
