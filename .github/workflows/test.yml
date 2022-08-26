@@ -4,6 +4,9 @@ on: [push, pull_request]
 
 jobs:
   test:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, self-hosted]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
