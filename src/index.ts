@@ -11,6 +11,7 @@ import { run as runDeploy } from "./commands/function/deploy";
 import { run as runInvoke } from "./commands/function/invoke";
 import { run as runList } from "./commands/function/list";
 import { run as runLogin } from "./commands/login";
+import { run as runInfo } from "./commands/info";
 
 let didRun = false;
 let pkg = { version: "0.0.0" };
@@ -80,43 +81,11 @@ args
   )
   .command("info", "Information about the local Blockless environment", () => {
     didRun = true;
-    console.log(
-      Chalk.green(`                                                 
-            *%%%%%%%%%.         
-        (%%%%%%*   #%%%%%%*     
-     #%%%%%##  %%%%#   (%%%%%(  
-    (%%%  (%%#   #%%%%%%  (%%%, 
-    (%%%  %%%%%%%%   /%%%  %%%* 
-    (%%%  %%%  %%%%%%%   .%%%%* 
-    (%%%  %%%  %%#   #%%%  %%%* 
-    (%%%. ,%%  %%%%%%%%#  #%%%, 
-     #%%%%%##  #%%%/   #%%%%%,  
-        ,%%%%%%(  *%%%%%%%      
-            #%%%%%%%#`)
-    );
-    console.log("");
-    console.log(Chalk.greenBright("  Blockless Runtime Environment"));
-    console.log("");
-    console.log(`  ${Chalk.yellow("CLI Version:")} ${pkg.version}`);
-    console.log(`  ${Chalk.yellow("Platform:")} ${store.system.platform}`);
-    console.log(`  ${Chalk.yellow("Architecture:")} ${store.system.arch}`);
-    console.log(
-      `  ${Chalk.yellow("Base directory:")} ${store.system.homedir}/.bls`
-    );
-    console.log(
-      `  ${Chalk.yellow("Runtime Library:")} ${
-        store.system.homedir
-      }/.bls/runtime`
-    );
-    console.log(
-      `  ${Chalk.yellow("Networking Library:")} ${
-        store.system.homedir
-      }/.bls/network`
-    );
+    runInfo();
   })
   .command(
     "wallet",
-    "Interact with the Blockless blockchain [ list ]",
+    "Interact with the Blockless blockchain [list, remove]",
     async (name: string, sub: string[], options) => {
       if (sub[0]) {
         didRun = true;

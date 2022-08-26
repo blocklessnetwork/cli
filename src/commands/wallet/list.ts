@@ -1,8 +1,9 @@
-import { getTokenFromStore } from "../../lib/utils";
+import { getToken } from "../../store/db";
+
 import Chalk from "chalk";
 // todo verify the jwt is valid
 export const listWallet = (options: any) => {
-  const token = getTokenFromStore();
+  const token = getToken();
   if (token) {
     console.log(`Wallet is currently ${Chalk.green("connected")}`);
   } else {
