@@ -18,7 +18,7 @@ export const getConsoleServer = (
 export const getTokenFromStore = () => {
   const db = getDb();
   const config = db.get("config").value();
-  const { token } = config?.value() || { token: null };
+  const { token } = config || { token: null };
   return token;
 };
 
