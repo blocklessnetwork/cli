@@ -8,6 +8,7 @@ import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
 import { run as runDeploy } from "./commands/function/deploy";
 import { run as runInvoke } from "./commands/function/invoke";
+import { run as runList } from "./commands/function/list";
 import { run as runLogin } from "./commands/login";
 
 let didRun = false;
@@ -209,6 +210,9 @@ args
           break;
         case "invoke":
           runInvoke(options);
+          break;
+        case "list":
+          runList(options);
           break;
         default:
           break;

@@ -13,15 +13,6 @@ export const getConsoleServer = (
   return `${host}:${port ? port : devMode && local ? 3000 : 443}`;
 };
 
-// JWT retrieval
-
-export const getTokenFromStore = () => {
-  const db = getDb();
-  const config = db.get("config").value();
-  const { token } = config || { token: null };
-  return token;
-};
-
 // Node/npm config
 export const getNpmConfigInitVersion = (): string =>
   execSync("npm config get init-version").toString("utf-8");

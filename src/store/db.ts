@@ -39,3 +39,10 @@ const adapter = new FileSync(
 const db = lowdb(adapter);
 
 export const getDb = () => db.read();
+// JWT retrieval
+export const getToken = () => {
+  const db = getDb();
+  const config = db.get("config").value();
+  const { token } = config || { token: null };
+  return token;
+};
