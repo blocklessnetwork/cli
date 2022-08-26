@@ -1,8 +1,9 @@
 import args from "args";
 import Chalk from "chalk";
 import { store, set as storeSet } from "./store";
-import * as wallet from "./methods/wallet";
 import open from "open";
+
+import * as wallet from "./commands/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
 import { run as runInit } from "./commands/function/init";
@@ -114,12 +115,12 @@ args
   })
   .command(
     "wallet",
-    "Interact with the Blockless blockchain [import, list, remove, create, balance, send]",
-    async (name: string, sub: string[]) => {
+    "Interact with the Blockless blockchain [ list ]",
+    async (name: string, sub: string[], options) => {
       if (sub[0]) {
         didRun = true;
         const method = (wallet as any)[`${sub[0]}Wallet`];
-        if (method) await method();
+        if (method) await method(options);
       }
     }
   )
