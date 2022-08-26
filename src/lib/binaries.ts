@@ -9,7 +9,7 @@ import { store } from "../store";
 import { https } from "follow-redirects";
 import fs from "fs";
 
-const BUILD_VERSION = "v0.0.1";
+const BUILD_VERSION = "v0.0.2";
 const download = function (url: any, dest: any): Promise<any> {
   return new Promise((resolve, reject) => {
     var file = fs.createWriteStream(dest);
@@ -56,7 +56,7 @@ export const getNetworking = (cb: any) => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
-  const arch = store.system.platform === "darwin" ? store.system.arch : "arm64";
+  const arch = store.system.arch === "arm64" ? "arm64" : "amd64";
 
   // https://github.com/txlabs/builds/releases/download/v1.0.8/blockless-txnode-darwin.amd64.tar.gz
   download(
@@ -81,7 +81,7 @@ export const getKeygen = (cb: any) => {
   const os =
     store.system.platform === "win32" ? "windows" : store.system.platform;
 
-  const arch = store.system.arch;
+  const arch = store.system.arch === "arm64" ? "arm64" : "amd64";
 
   // https://github.com/txlabs/builds/releases/download/v1.0.8/blockless-txnode-darwin.amd64.tar.gz
 
