@@ -4,7 +4,7 @@
   "description": "blockless cli client, manage, interact with and deploy blockless applications.",
   "main": "src/index.ts",
   "bin": {
-    "bls": "bin.js"
+    "bls": "dev-bin.js"
   },
   "scripts": {
     "build:module": "tsc",
