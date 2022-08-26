@@ -3,7 +3,8 @@ import { createHash, BinaryToTextEncoding } from "crypto";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import FormData from "form-data";
-import { getConsoleServer, getTokenFromStore } from "../../lib/utils";
+import { getConsoleServer } from "../../lib/utils";
+import { getToken } from "../../store/db";
 import axios from "axios";
 import { IManifest } from "./interfaces";
 
@@ -47,7 +48,7 @@ const renameWasm = (path: string, oldName: string, newName: string) => {
 
 const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   const formData = new FormData();
-  const token = await getTokenFromStore();
+  const token = await getToken();
 
   formData.append("manifest", manifest);
   formData.append("wasi_archive", archive);
@@ -55,7 +56,7 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   axios
     .post(`${consoleServer}/api/modules/deploy`, formData, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     })
