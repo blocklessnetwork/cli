@@ -9,7 +9,7 @@ import { store } from "../store";
 import { https } from "follow-redirects";
 import fs from "fs";
 
-const BUILD_VERSION = "v0.0.2";
+const BUILD_VERSION = "v0.0.3";
 const download = function (url: any, dest: any): Promise<any> {
   return new Promise((resolve, reject) => {
     var file = fs.createWriteStream(dest);
