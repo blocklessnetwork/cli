@@ -81,7 +81,7 @@ args
   )
   .command("info", "Information about the local Blockless environment", () => {
     didRun = true;
-    runInfo();
+    runInfo({ pkg });
   })
   .command(
     "wallet",
