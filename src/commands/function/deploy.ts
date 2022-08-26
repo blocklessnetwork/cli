@@ -9,6 +9,7 @@ import axios from "axios";
 import { IManifest } from "./interfaces";
 
 const consoleServer = getConsoleServer();
+const token = getToken();
 
 const createChecksum = ({
   digest = "hex",
@@ -43,12 +44,11 @@ const createManifest = (
 };
 
 const renameWasm = (path: string, oldName: string, newName: string) => {
-  execSync(`mv ${path}/${oldName} ${path}/${newName}`, { stdio: "inherit" });
+  execSync(`mv ${oldName} ${newName}`, { cwd: path, stdio: "inherit" });
 };
 
 const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   const formData = new FormData();
-  const token = await getToken();
 
   formData.append("manifest", manifest);
   formData.append("wasi_archive", archive);
@@ -56,7 +56,7 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
   axios
     .post(`${consoleServer}/api/modules/deploy`, formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     })
@@ -79,32 +79,38 @@ export const run = (options: any) => {
   const name = pathParts.pop();
   const wasmName = `${name}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
-  const wasmManifest = createManifest(buildDir, wasmName, wasmArchive);
 
   if (rebuild) {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
     execSync(
-      `cd ${path}; npm run build:${debug ? "debug" : "release"}; ${renameWasm(
+      `npm run build:${debug ? "debug" : "release"}; ${renameWasm(
         buildDir,
         defaultWasm,
         wasmName
       )}`,
-      {
-        stdio: "inherit",
-      }
+      { cwd: path, stdio: "inherit" }
     );
-  } else {
+  } else if (existsSync(`${buildDir}`)) {
     if (existsSync(`${buildDir}/${defaultWasm}`)) {
       renameWasm(buildDir, defaultWasm, wasmName);
     }
+  } else {
+    console.log(
+      Chalk.red(`Could not access ${buildDir}.  Has the function been built?`)
+    );
   }
+
   console.log(Chalk.yellow(`Creating tarball...`));
-  execSync(`cd ${buildDir}; tar zcf ${wasmArchive} ${wasmName}`, {
+  execSync(`tar zcf ${wasmArchive} ${wasmName}`, {
+    cwd: buildDir,
     stdio: "inherit",
   });
 
   console.log(Chalk.yellow(`Creating manifest...`));
-  writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest));
+  writeFileSync(
+    `${buildDir}/manifest.json`,
+    JSON.stringify(createManifest(buildDir, wasmName, wasmArchive))
+  );
 
   console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
   deployWasm(
