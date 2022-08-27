@@ -3,12 +3,18 @@ import { createHash, BinaryToTextEncoding } from "crypto";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import FormData from "form-data";
-import { getConsoleServer } from "../../lib/utils";
 import { getToken } from "../../store/db";
 import axios from "axios";
-import { IManifest } from "./interfaces";
+import { IDeploymentOptions, IManifest } from "./interfaces";
 
-const consoleServer = getConsoleServer();
+const deploymentOptions: IDeploymentOptions = {
+  functionId: "",
+  functionName: "",
+  userFunctionId: "",
+};
+
+const consoleServer = "https://console.bls.dev";
+const wasiServer = "https://wasi.bls.dev";
 const token = getToken();
 
 const createChecksum = ({
@@ -47,14 +53,14 @@ const renameWasm = (path: string, oldName: string, newName: string) => {
   execSync(`mv ${oldName} ${newName}`, { cwd: path, stdio: "inherit" });
 };
 
-const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
+const publishFunction = async (manifest: any, archive: any, cb?: Function) => {
   const formData = new FormData();
 
   formData.append("manifest", manifest);
   formData.append("wasi_archive", archive);
 
   axios
-    .post(`${consoleServer}/api/modules/deploy`, formData, {
+    .post(`${wasiServer}/api/submit`, formData, {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -66,7 +72,33 @@ const deployWasm = async (manifest: any, archive: any, cb?: Function) => {
       }
     })
     .catch((error) => {
-      console.log("error deploying function", error);
+      console.log("error publishing function", error);
+    });
+};
+
+//TODO: make this a lot better.
+const deployFunction = (data: any) => {
+  const { cid: functionId, name: functionName } = data;
+  const { userFunctionId } = deploymentOptions;
+  axios
+    .post(
+      `${consoleServer}/api/modules/deploy`,
+      {
+        functionId,
+        functionName,
+        userFunctionId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log("error publishing function", error);
     });
 };
 
@@ -79,6 +111,12 @@ export const run = (options: any) => {
   const name = pathParts.pop();
   const wasmName = `${name}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
+  const {
+    bls: { functionId: userFunctionId },
+  } = require(`${path}/package`);
+
+  //TODO: this is absolutely monstrous and needssanity appplied
+  deploymentOptions.userFunctionId = userFunctionId;
 
   if (rebuild) {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
@@ -113,8 +151,9 @@ export const run = (options: any) => {
   );
 
   console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
-  deployWasm(
+  publishFunction(
     readFileSync(`${buildDir}/manifest.json`),
-    readFileSync(`${buildDir}/${wasmArchive}`)
+    readFileSync(`${buildDir}/${wasmArchive}`),
+    deployFunction
   );
 };
