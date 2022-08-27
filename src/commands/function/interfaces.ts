@@ -26,3 +26,9 @@ export interface IManifest {
   resources?: string[];
   methods?: IWasmMethod[];
 }
+
+export interface IDeploymentOptions {
+  functionId: string;
+  functionName: string;
+  userFunctionId: string;
+}
