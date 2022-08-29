@@ -6,10 +6,13 @@ import open from "open";
 import * as wallet from "./commands/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
-import { run as runInit } from "./commands/function/init";
-import { run as runDeploy } from "./commands/function/deploy";
-import { run as runInvoke } from "./commands/function/invoke";
-import { run as runList } from "./commands/function/list";
+import {
+  runDeploy,
+  runInit,
+  runInvoke,
+  runList,
+  runPublish,
+} from "./commands/function";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
