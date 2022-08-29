@@ -1,6 +1,4 @@
 import { execSync } from "child_process";
-import { readFileSync } from "fs";
-import { getDb } from "../store/db";
 
 // API Server
 export const getConsoleServer = (

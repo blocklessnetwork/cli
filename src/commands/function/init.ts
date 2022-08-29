@@ -1,43 +1,11 @@
 import Chalk from "chalk";
 import { store } from "../../store";
 import { execSync } from "child_process";
-import { getConsoleServer, getNpmConfigInitVersion } from "../../lib/utils";
-import { getToken } from "../../store/db";
-import axios from "axios";
-import { IBlsFunction } from "./interfaces";
+import { getNpmConfigInitVersion } from "../../lib/utils";
 
 const sanitizer = /[^a-zA-Z0-9\-]/;
 
 const sanitize = (input: string) => input.replace(sanitizer, "");
-
-const consoleServer = getConsoleServer();
-const token = getToken();
-
-const saveNewFunction = (functionProps: IBlsFunction, cb?: Function) => {
-  const { functionId, name } = functionProps;
-  axios
-    .post(
-      `${consoleServer}/api/modules/new`,
-      {
-        functionId,
-        name,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then((res) => {
-      if (cb) {
-        cb(res.data);
-      }
-    })
-    .catch((error) => {
-      console.log("error saving function", error);
-    });
-};
 
 export const run = (options: any) => {
   const {
@@ -71,12 +39,4 @@ export const run = (options: any) => {
       `Initialization of function ${installationPath} completed successfully`
     ) // because I said so in the absence of actual verification :D
   );
-
-  // upload new project
-  // check auth token validity; how?
-  // tbd
-  // if (token is valid) then
-  saveNewFunction({ functionId, name }, ({ _id }: any) => {
-    console.log(`Saved function in console successfully, id: ${_id}`);
-  });
 };
