@@ -25,20 +25,19 @@ const createManifest = (
 };
 
 const renameWasm = (path: string, oldName: string, newName: string) => {
-  execSync(`mv ${path}/${oldName} ${path}/${newName}`, { stdio: "inherit" });
+  execSync(`mv ${oldName} ${newName}`, { cwd: path, stdio: "inherit" });
 };
 
 export const run = (options: {
   debug: boolean;
+  name: string;
   path: string;
   rebuild: boolean;
 }) => {
-  const { debug, path, rebuild } = options;
+  const { debug, name, path, rebuild } = options;
   // check for and store unmodified wasm file name to change later
   const defaultWasm = debug ? "debug.wasm" : "release.wasm";
   const buildDir = `${path}/build`;
-  const pathParts = path.split("/");
-  const name = pathParts.pop();
   const wasmName = `${name}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
   const wasmManifest = createManifest(
@@ -49,7 +48,8 @@ export const run = (options: {
 
   const build = () => {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
-    execSync(`cd ${path}; npm run build:${debug ? "debug" : "release"};`, {
+    execSync(`npm run build:${debug ? "debug" : "release"};`, {
+      cwd: path,
       stdio: "inherit",
     });
 
