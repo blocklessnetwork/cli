@@ -6,10 +6,13 @@ import open from "open";
 import * as wallet from "./commands/wallet";
 import { run as runInstall } from "./commands/offchain/install";
 import { run as runStart } from "./commands/offchain/start";
-import { run as runInit } from "./commands/function/init";
-import { run as runDeploy } from "./commands/function/deploy";
-import { run as runInvoke } from "./commands/function/invoke";
-import { run as runList } from "./commands/function/list";
+import {
+  runDeploy,
+  runInit,
+  runInvoke,
+  runList,
+  runPublish,
+} from "./commands/function";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
@@ -101,10 +104,12 @@ args
       interface RequiredOptions {
         init: string[];
         deploy: string[];
+        publish: string[];
       }
       const requiredOptions: RequiredOptions = {
         init: ["name"],
         deploy: ["name", "path"],
+        publish: ["name", "path"],
       };
       const index: keyof RequiredOptions = "init";
       didRun = true;
@@ -155,7 +160,7 @@ args
                 Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
               );
               printHelp(
-                [["deploy", "Deploy a function on Blockless"]],
+                [["deploy", "Deploy a function on Blockless."]],
                 [
                   ["--name", "The name of the function to deploy (required)"],
                   [
@@ -177,6 +182,41 @@ args
             }
           }
           runDeploy(options);
+          break;
+        case "publish":
+          for (const option of requiredOptions[sub[0]]) {
+            if (!(option in options)) {
+              console.log(
+                Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
+              );
+              printHelp(
+                [
+                  [
+                    "publish",
+                    "Publish a function on Blockless and make it available to other functions",
+                  ],
+                ],
+                [
+                  ["--name", "The name of the function to publish (required)"],
+                  [
+                    "--path",
+                    "The location of the function' to publish (required)",
+                  ],
+
+                  [
+                    "--rebuild",
+                    "Build the package before publishing it (optional; defaults to undefined)",
+                  ],
+                  [
+                    "--debug",
+                    "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
+                  ],
+                ]
+              );
+              return;
+            }
+          }
+          runPublish(options);
           break;
         case "invoke":
           runInvoke(options);
