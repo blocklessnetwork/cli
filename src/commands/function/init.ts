@@ -1,6 +1,7 @@
 import Chalk from "chalk";
 import { store } from "../../store";
 import { execSync } from "child_process";
+import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
 
 const sanitizer = /[^a-zA-Z0-9\-]/;
@@ -17,6 +18,18 @@ export const run = (options: any) => {
   const version = getNpmConfigInitVersion();
   const functionId = `blockless-function_${name}-${version}`; // TODO: standardize function  IDs
 
+  //TODO: this is specific to asconfig.json, needs to be generalized for other scaffoldings
+  const replaceTargetOptions = {
+    files: `${installationPath}/asconfig.json`,
+    from: [/debug/g, /release/g],
+    to: [`${name}-debug`, name],
+  };
+
+  try {
+    replace.sync(replaceTargetOptions);
+  } catch (error) {
+    console.log(Chalk.red(`Could not replace build target strings: ${error}`));
+  }
   // initialize new local project
   console.log(
     Chalk.yellow(

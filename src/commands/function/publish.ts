@@ -50,6 +50,7 @@ const logResult = (data: any) => {
 export const run = (options: any) => {
   const { debug, name, path, publishCallback = logResult, rebuild } = options;
   const buildDir = getBuildDir(path);
+  const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
   const {
     bls: { functionId: userFunctionId },
@@ -63,7 +64,7 @@ export const run = (options: any) => {
   }
 
   console.log(Chalk.yellow(`Creating tarball...`));
-  createWasmArchive(buildDir, wasmArchive, `${name}.wasm`);
+  createWasmArchive(buildDir, wasmArchive, wasmName);
 
   console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
   publishFunction(
