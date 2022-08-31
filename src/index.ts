@@ -13,6 +13,9 @@ import {
   runList,
   runPublish,
 } from "./commands/function";
+import {
+  IBlsFunctionRequiredOptions,
+} from "./commands/function/interfaces";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
@@ -107,12 +110,7 @@ args
     "function",
     "Interact with Functions [init, invoke, delete, deploy, list]",
     (name: string, sub: string[], options) => {
-      interface RequiredOptions {
-        init: string[];
-        deploy: string[];
-        publish: string[];
-      }
-      const requiredOptions: RequiredOptions = {
+      const requiredOptions: IBlsFunctionRequiredOptions = {
         init: ["name"],
         deploy: ["name", "path"],
         publish: ["name", "path"],
