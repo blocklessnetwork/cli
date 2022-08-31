@@ -117,7 +117,6 @@ args
         deploy: ["name", "path"],
         publish: ["name", "path"],
       };
-      const index: keyof RequiredOptions = "init";
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
         printHelp([
