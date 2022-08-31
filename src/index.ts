@@ -22,6 +22,7 @@ const name = "bls";
 const consoleHost = "https://console.bls.dev";
 
 function printHelp(commands: any = [], options: any = []) {
+  console.log("");
   console.log(
     `  Usage: ${Chalk.yellow(name)} ${Chalk.green("[command]")} ${Chalk.blue(
       "[subcommand]"
@@ -36,10 +37,17 @@ function printHelp(commands: any = [], options: any = []) {
 
   console.log("");
   if (options.length > 0) console.log("  Options:");
-
+  console.log("");
   for (const option of options) {
     console.log(`       ${Chalk.yellow(option[0])}     ${option[1]}`);
   }
+
+  console.log("");
+  console.log(
+    `  ${Chalk.yellow("Blockless CLI")} ${store.system.platform}/${
+      store.system.arch
+    }-${pkg.version}`
+  );
 }
 
 args
@@ -113,8 +121,19 @@ args
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
         printHelp([
-          ["init\t", "initialize a new function with @blockless/app"],
+          [
+            "init\t",
+            "initialize a new function with blockless starter template",
+          ],
           ["deploy\t", "deploy a function on Blockless"],
+          [
+            "list\t",
+            "Retrieve a list of funtions deployed at Blockless Console.",
+          ],
+          [
+            "invoke\t",
+            "Invokes the a function at the current (cwd) directory.",
+          ],
         ]);
         return;
       }
@@ -128,7 +147,7 @@ args
               [
                 [
                   "init",
-                  "Initialize a new function with @blockless/app and save it to Console.",
+                  "Initialize a new function with a project starter template",
                 ],
               ],
               [
@@ -263,21 +282,17 @@ args
   );
 
 const help = () => {
-  printHelp([
-    ["console    ", "Open console in browser"],
-    ["components ", "Install and manage local environment"],
-    ["function   ", "Install and manage local environment"],
-    ["login      ", "Login into the CLI from console"],
-    ["logout     ", "Logout of the CLI"],
-    ["whoami     ", "Check logged in user"],
-    ["help       ", "Print help message for command"],
-  ]);
-
-  console.log("");
-  console.log(
-    `  ${Chalk.yellow("platform")}: ${store.system.platform}/${
-      store.system.arch
-    }-${pkg.version}`
+  printHelp(
+    [
+      ["login\t", " Logs into your account"],
+      ["logout\t", " Logs out of your account"],
+      ["whoami\t", " Shows the currently logged in user"],
+      ["console\t", " Opens the Developer Console in the browser"],
+      ["components", "Install and manage local environment"],
+      ["function", "  Manages your functions"],
+      ["help\t", " Shows the usage information"],
+    ],
+    [["--yes\t", " Skip questions using default values"]]
   );
 };
 export async function cli(argv: any, packageJson: any) {
