@@ -5,8 +5,8 @@ The Blockless CLI helps you build, test, and manage your deployments and project
 
 - Build and deploy your functions to the Blockless network
 - Test locally with a fully emulated production environment
-- Create, list, or delete functions.
-- Manage wallet and permissions.
+- Create, list, or delete functions
+- Manage wallet and permissions
 
 ## Installation
 
@@ -20,13 +20,13 @@ Supported Platforms
 | Linux   | x     | x   |
 | MacOS   | x     | x   |
 
-Using curl:
+Using **curl**:
 
 ```bash
 sudo sh -c "curl https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh | bash"
 ```
 
-Using wget:
+Using **wget**:
 
 ```bash
 sudo sh -c "wget https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh -v -O download.sh; chmod +x download.sh; ./download.sh; rm -rf download.sh"
