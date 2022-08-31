@@ -23,9 +23,9 @@ const consoleHost = "https://console.bls.dev";
 
 function printHelp(commands: any = [], options: any = []) {
   console.log(
-    `  Usage: ${Chalk.yellow(name)} ${Chalk.green(
-      "subcommand"
-    )} [options] [command]`
+    `  Usage: ${Chalk.yellow(name)} ${Chalk.green("[command]")} ${Chalk.blue(
+      "[subcommand]"
+    )} [--options]`
   );
   console.log("");
   console.log("  Commands:");
@@ -61,15 +61,12 @@ args
     },
   ])
   .command(
-    "offchain",
-    "Interact with local off-chain network [install, start, configure]",
+    "components",
+    "Interact with local off-chain network [install, configure]",
     async (name: string, sub: string[], options: any) => {
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
-        printHelp([
-          ["install", "install the off-chain agent"],
-          ["start  ", "start the off-chain agent"],
-        ]);
+        printHelp([["install", "install the off-chain agent"]]);
         return;
       }
       switch (sub[0]) {
@@ -82,21 +79,32 @@ args
       }
     }
   )
-  .command("info", "Information about the local Blockless environment", () => {
-    didRun = true;
-    runInfo({ pkg });
-  })
+  // .command("info", "Information about the local Blockless environment", () => {
+  //   didRun = true;
+  //   runInfo({ pkg });
+  // })
   .command(
-    "wallet",
-    "Interact with the Blockless blockchain [list, remove]",
+    "logout",
+    "Logout of the CLI",
     async (name: string, sub: string[], options) => {
       if (sub[0]) {
         didRun = true;
-        const method = (wallet as any)[`${sub[0]}Wallet`];
+        const method = (wallet as any)[`removeWallet`];
         if (method) await method(options);
       }
     }
   )
+  // .command(
+  //   "wallet",
+  //   "Interact with the Blockless blockchain [list, remove]",
+  //   async (name: string, sub: string[], options) => {
+  //     if (sub[0]) {
+  //       didRun = true;
+  //       const method = (wallet as any)[`${sub[0]}Wallet`];
+  //       if (method) await method(options);
+  //     }
+  //   }
+  // )
   .command(
     "function",
     "Interact with Functions [init, invoke, delete, deploy, list]",
@@ -246,11 +254,29 @@ args
     }
   );
 
+const help = () => {
+  printHelp([
+    ["console    ", "Open console in browser"],
+    ["components ", "Install and manage local environment"],
+    ["function   ", "Install and manage local environment"],
+    ["login      ", "Login into the CLI from console"],
+    ["logout     ", "Logout of the CLI"],
+    ["help       ", "Print help message for command"],
+  ]);
+
+  console.log("");
+  console.log(
+    `  ${Chalk.yellow("platform")}: ${store.system.platform}/${
+      store.system.arch
+    }-${pkg.version}`
+  );
+};
 export async function cli(argv: any, packageJson: any) {
   pkg = packageJson;
   const flags = args.parse(process.argv, {
     name: name,
     version: false,
+    help: false,
   } as any);
-  if (!didRun) args.showHelp();
+  if (!didRun) help();
 }
