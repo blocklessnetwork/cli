@@ -83,17 +83,7 @@ args
   //   didRun = true;
   //   runInfo({ pkg });
   // })
-  .command(
-    "logout",
-    "Logout of the CLI",
-    async (name: string, sub: string[], options) => {
-      if (sub[0]) {
-        didRun = true;
-        const method = (wallet as any)[`removeWallet`];
-        if (method) await method(options);
-      }
-    }
-  )
+
   // .command(
   //   "wallet",
   //   "Interact with the Blockless blockchain [list, remove]",
@@ -246,11 +236,29 @@ args
     open(consoleHost);
   })
   .command(
+    "whoami",
+    "Check logged in user",
+    async (name: string, sub: string[], options: any) => {
+      didRun = true;
+      const method = (wallet as any)[`listWallet`];
+      if (method) await method(options);
+    }
+  )
+  .command(
     "login",
     "Login to the the CLI",
     (name: string, sub: string[], options: any) => {
       runLogin(sub);
       didRun = true;
+    }
+  )
+  .command(
+    "logout",
+    "Logout of the CLI",
+    async (name: string, sub: string[], options) => {
+      didRun = true;
+      const method = (wallet as any)[`removeWallet`];
+      if (method) await method(options);
     }
   );
 
@@ -261,6 +269,7 @@ const help = () => {
     ["function   ", "Install and manage local environment"],
     ["login      ", "Login into the CLI from console"],
     ["logout     ", "Logout of the CLI"],
+    ["whoami     ", "Check logged in user"],
     ["help       ", "Print help message for command"],
   ]);
 
