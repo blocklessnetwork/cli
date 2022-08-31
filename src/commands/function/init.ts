@@ -1,14 +1,13 @@
 import Chalk from "chalk";
-import { store } from "../../store";
 import { execSync } from "child_process";
 import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
+import { removeTrailingSlash } from "./shared";
 
 const sanitizer = /[^a-zA-Z0-9\-\.]/;
-const trailingSlash = /\/$/;
 
 const sanitize = (input: string) =>
-  input.replace(sanitizer, "").replace(trailingSlash, "");
+  removeTrailingSlash(input.replace(sanitizer, ""));
 
 const renameBuildTargets = (replacementOptions: any) => {
   console.log(Chalk.yellow("Renaming build targets"));
