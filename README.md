@@ -1,12 +1,16 @@
-# `bls` the blockless cli
+# Blockless CLI
+The Blockless CLI helps you build, test, and manage your deployments and projects right from the terminal.
 
-Command your blockless deployments and projects, and participate in our on-chain network.
+**With the Blockless CLI, you can:**
 
-If you intend to run a blockchain Validator, Node, IBC Relayer, or would rather interact with only the on-chain network see [`blsd` blockless chain](https://github.com/txlabs/blockless-chain/)
+- Build and deploy your functions to the Blockless network
+- Test locally with a fully emulated production environment
+- Create, list, or delete functions.
+- Manage wallet and permissions.
 
-## installing
+## Installation
 
-Install the latest version of the prebuilt CLI by running the following command on bash.
+Blockless CLI is available for macOS, Windows, and Linux. Windows with arm64 architecture will be supported shortly. Installation can be done via bash for all supported platforms.
 
 Supported Platforms
 
@@ -16,19 +20,43 @@ Supported Platforms
 | Linux   | x     | x   |
 | MacOS   | x     | x   |
 
-curl
+Using curl:
 
 ```bash
 sudo sh -c "curl https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh | bash"
 ```
 
-wget
+Using wget:
 
 ```bash
 sudo sh -c "wget https://raw.githubusercontent.com/txlabs/blockless-cli/main/download.sh -v -O download.sh; chmod +x download.sh; ./download.sh; rm -rf download.sh"
 ```
 
-## contributing
+## Usage
+
+Installing the Blockless CLI provides access to the `bls` command.
+
+```sh-session
+bls [command]
+# Run `--help` for detailed information about CLI commands
+bls [command] help
+```
+
+## Commands
+
+The Stripe CLI supports a broad range of commands. Below is some of the most used ones:
+- `bls help`
+- `bls console`
+- `bls login`
+- `bls whoami`
+- `bls components`
+- `bls function`
+
+## Documentation
+
+For a full reference, see the [Blockless CLI reference](https://docs.blockless.network/docs/cli)
+
+## Contributing
 
 This client command utility is written in `typescript` , and packaged using `nexe`.
 
