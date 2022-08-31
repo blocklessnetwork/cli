@@ -10,6 +10,15 @@ const trailingSlash = /\/$/;
 const sanitize = (input: string) =>
   input.replace(sanitizer, "").replace(trailingSlash, "");
 
+const renameBuildTargets = (replacementOptions: any) => {
+  console.log(Chalk.yellow("Renaming build targets"));
+  try {
+    replace.sync(replacementOptions);
+  } catch (error) {
+    console.log(Chalk.red(`Could not rename build targets: ${error}`));
+  }
+};
+
 export const run = (options: any) => {
   const { name, path = ".", private: isPrivate } = options;
   const installationPath = `${sanitize(path)}/${sanitize(name)}`;
@@ -23,11 +32,6 @@ export const run = (options: any) => {
     to: [`${name}-debug`, name],
   };
 
-  try {
-    replace.sync(replaceTargetOptions);
-  } catch (error) {
-    console.log(Chalk.red(`Could not replace build target strings: ${error}`));
-  }
   // initialize new local project
   console.log(
     Chalk.yellow(
@@ -45,6 +49,7 @@ export const run = (options: any) => {
       stdio: "inherit",
     }
   );
+  renameBuildTargets(replaceTargetOptions);
   console.log(
     Chalk.green(
       `Initialization of function ${installationPath} completed successfully`
