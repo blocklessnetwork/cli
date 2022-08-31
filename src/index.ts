@@ -12,6 +12,7 @@ import {
   runInvoke,
   runList,
   runPublish,
+  runUpdate,
 } from "./commands/function";
 import {
   IBlsFunctionRequiredOptions,
@@ -114,6 +115,7 @@ args
         init: ["name"],
         deploy: ["name", "path"],
         publish: ["name", "path"],
+        update: ["name", "path"],
       };
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
@@ -128,6 +130,7 @@ args
             "Retrieve a list of funtions deployed at Blockless Console.",
           ],
           ["invoke\t", "Invokes the function at the current (cwd) directory."],
+          ["update\t", "Update an existing function on Blockless."],
         ]);
         return;
       }
@@ -228,6 +231,36 @@ args
             }
           }
           runPublish(options);
+          break;
+        case "update":
+          for (const option of requiredOptions[sub[0]]) {
+            if (!(option in options)) {
+              console.log(
+                Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
+              );
+              printHelp(
+                [["update", "Update an existing function on Blockless"]],
+                [
+                  ["--name", "The name of the function to update (required)"],
+                  [
+                    "--path",
+                    "The location of the function' to update (required)",
+                  ],
+
+                  [
+                    "--rebuild",
+                    "Build the package before updating it (optional; defaults to undefined)",
+                  ],
+                  [
+                    "--debug",
+                    "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
+                  ],
+                ]
+              );
+              return;
+            }
+          }
+          runUpdate(options);
           break;
         case "invoke":
           runInvoke(options);

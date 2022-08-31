@@ -4,3 +4,4 @@ export { run as runInit } from "./init";
 export { run as runInvoke } from "./invoke";
 export { run as runList } from "./list";
 export { run as runPublish } from "./publish";
+export { run as runUpdate } from "./update";
