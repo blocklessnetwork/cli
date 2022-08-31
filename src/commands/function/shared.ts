@@ -14,3 +14,6 @@ export const createWasmArchive = (
   });
   return readFileSync(`${path}/${wasmArchive}`);
 };
+
+export const removeTrailingSlash = (input: string): string =>
+  input.replace(/\/$/, "");
