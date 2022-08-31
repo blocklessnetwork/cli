@@ -4,17 +4,13 @@ import { execSync } from "child_process";
 import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
 
-const sanitizer = /[^a-zA-Z0-9\-]/;
+const sanitizer = /[^a-zA-Z0-9\-\.]/;
 
 const sanitize = (input: string) => input.replace(sanitizer, "");
 
 export const run = (options: any) => {
-  const {
-    name,
-    path = `${store.system.homedir}/.bls`,
-    private: isPrivate,
-  } = options;
-  const installationPath = `/${sanitize(path)}/${sanitize(name)}`;
+  const { name, path = ".", private: isPrivate } = options;
+  const installationPath = `${sanitize(path)}/${sanitize(name)}`;
   const version = getNpmConfigInitVersion();
   const functionId = `blockless-function_${name}-${version}`; // TODO: standardize function  IDs
 
