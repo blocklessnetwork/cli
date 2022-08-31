@@ -120,17 +120,14 @@ args
         printHelp([
           [
             "init\t",
-            "initialize a new function with blockless starter template",
+            "Initialize a new function with blockless starter template.",
           ],
-          ["deploy\t", "deploy a function on Blockless"],
+          ["deploy\t", "Deploy a function on Blockless."],
           [
             "list\t",
             "Retrieve a list of funtions deployed at Blockless Console.",
           ],
-          [
-            "invoke\t",
-            "Invokes the a function at the current (cwd) directory.",
-          ],
+          ["invoke\t", "Invokes the function at the current (cwd) directory."],
         ]);
         return;
       }
