@@ -5,8 +5,10 @@ import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
 
 const sanitizer = /[^a-zA-Z0-9\-\.]/;
+const trailingSlash = /\/$/;
 
-const sanitize = (input: string) => input.replace(sanitizer, "");
+const sanitize = (input: string) =>
+  input.replace(sanitizer, "").replace(trailingSlash, "");
 
 export const run = (options: any) => {
   const { name, path = ".", private: isPrivate } = options;
