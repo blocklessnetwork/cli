@@ -58,7 +58,7 @@ For a full reference, see the [Blockless CLI reference](https://docs.blockless.n
 
 ## Contributing
 
-This client command utility is written in `typescript` , and packaged using `nexe`.
+This client command utility is written in `typescript` , and packaged using vercel's `pkg` for now.
 
 - Node 14.17
 - Typescript
