@@ -56,11 +56,11 @@ const install = function () {
         console.log("");
 
         activateRuntime();
-        console.log(
-          `use the command ${Chalk.blue(
-            "bls offchain start"
-          )} to start the agent`
-        );
+        // console.log(
+        //   `use the command ${Chalk.blue(
+        //     "bls offchain start"
+        //   )} to start the agent`
+        // );
 
         process.exit(0);
       });
