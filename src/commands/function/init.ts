@@ -19,7 +19,7 @@ export const run = (options: any) => {
   //TODO: this is specific to asconfig.json, needs to be generalized for other scaffoldings
   const replaceTargetOptions = {
     files: `${installationPath}/asconfig.json`,
-    from: [/debug/g, /release/g],
+    from: [/build\/(debug)/g, /build\/(release)/g],
     to: [`${name}-debug`, name],
   };
 
