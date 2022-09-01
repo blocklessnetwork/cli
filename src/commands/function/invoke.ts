@@ -8,6 +8,7 @@ export const run = (options: any) => {
     systemPath = `${store.system.homedir}/.bls/`,
     cwd: path = process.cwd(),
     name,
+    rebuild = true,
   } = options;
   const runtimePath = `${systemPath}runtime/blockless-cli`;
 
@@ -17,9 +18,16 @@ export const run = (options: any) => {
         path,
         name,
         debug: true,
-        rebuild: false,
+        rebuild,
       });
-      execSync(`${runtimePath} build/manifest.json`, {
+      // the runtime requires absolute paths
+      let manifestData = fs.readFileSync(`${path}/build/manifest.json`, "utf8");
+      let manifest = JSON.parse(manifestData);
+      manifest.entry = `${path}/build/${manifest.entry}`;
+      fs.writeFileSync(`${path}/build/manifest.json`, JSON.stringify(manifest));
+
+      // pass in stdin to the runtime
+      execSync(`echo "" | ${runtimePath} build/manifest.json`, {
         cwd: path,
         stdio: "inherit",
       });
