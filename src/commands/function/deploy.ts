@@ -56,6 +56,9 @@ const deployFunction = (data: any) => {
                 `Successfully deployed ${functionName} with id ${functionId}`
               )
             );
+          })
+          .catch((error) => {
+            console.log("error publishing function", error);
           });
       }
     })
