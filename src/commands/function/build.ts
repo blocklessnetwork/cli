@@ -2,7 +2,6 @@ import { existsSync, writeFileSync } from "fs";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import { IManifest } from "./interfaces";
-import fs from "fs";
 import { removeTrailingSlash } from "./shared";
 
 const createManifest = (
@@ -48,7 +47,7 @@ export const run = (options: {
   };
 
   try {
-    if (!fs.existsSync(`${buildDir}/${wasmName}`)) build();
+    if (!existsSync(`${buildDir}/${wasmName}`)) build();
   } catch (err) {
     build();
   }
