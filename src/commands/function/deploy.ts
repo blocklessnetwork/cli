@@ -22,10 +22,10 @@ const deployFunction = (data: any) => {
   console.log(Chalk.yellow(`Deploying ${functionName}`));
   axios
     .post(
-      `${server}/api/modules/deploy`,
+      `${server}/api/modules/new`,
       {
         functionId,
-        functionName,
+        name: functionName,
         userFunctionId,
       },
       {
@@ -35,7 +35,13 @@ const deployFunction = (data: any) => {
       }
     )
     .then((res) => {
-      console.log(res);
+      if (res.data && res.data.success) {
+        console.log(
+          Chalk.green(
+            `Successfully deployed ${functionName} with id ${functionId}`
+          )
+        );
+      }
     })
     .catch((error) => {
       console.log("error publishing function", error);
@@ -43,7 +49,8 @@ const deployFunction = (data: any) => {
 };
 
 export const run = (options: any) => {
-  const { debug, name, path, rebuild } = options;
+  const { debug, name, path = process.cwd(), rebuild } = options;
+
   const {
     bls: { functionId: userFunctionId },
   } = require(`${path}/package`);
