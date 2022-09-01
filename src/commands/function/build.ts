@@ -9,7 +9,8 @@ const createManifest = (entry: string, url: string): IManifest => {
   const manifest: IManifest = {
     id: "",
     name,
-    description: "",
+    description:
+      "Lörem ipsum dolor sit amet, dedeeshka duu. Leebur deroor iehroom, Börk Börk Börk! Ut enim ad minim veniam, letsi ifder svensk og latin makinen dehr graek. Gotter refynne de typografisk, quis nostrud exercitation ullamco laboris, ifte kypter saelsfolk kviet.Ut enim ad minim veniam, letsi ifder svensk og latin makinen dehr graek. Vender gests kämmen vewänthärdis wehrdsen onderpasje. Yöva gäta stahrt sömwaer.",
     fs_root_path: "./",
     entry,
     runtime: {
