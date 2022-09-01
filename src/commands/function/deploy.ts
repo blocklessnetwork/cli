@@ -36,11 +36,27 @@ const deployFunction = (data: any) => {
     )
     .then((res) => {
       if (res.data && res.data.success) {
-        console.log(
-          Chalk.green(
-            `Successfully deployed ${functionName} with id ${functionId}`
+        axios
+          .post(
+            `${server}/modules/deploy`,
+            {
+              functionName: functionName.replace(/\s+/g, "-"),
+              functionId: functionId,
+              userFunctionid: res.data._id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           )
-        );
+          .then((res) => {
+            console.log(
+              Chalk.green(
+                `Successfully deployed ${functionName} with id ${functionId}`
+              )
+            );
+          });
       }
     })
     .catch((error) => {
