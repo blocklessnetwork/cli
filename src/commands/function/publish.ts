@@ -14,17 +14,19 @@ const deploymentOptions: IDeploymentOptions = {
 };
 
 const server = "https://wasi.bls.dev";
+// const server = "http://127.0.0.1:3000";
 const token = getToken();
 
 export const publishFunction = async (
   manifest: any,
   archive: any,
+  archiveName: string,
   cb?: Function
 ) => {
   const formData = new FormData();
 
-  formData.append("manifest", manifest);
-  formData.append("wasi_archive", archive);
+  formData.append("manifest", manifest, "manifest.json");
+  formData.append("wasi_archive", archive, archiveName);
 
   axios
     .post(`${server}/api/submit`, formData, {
@@ -74,6 +76,7 @@ export const run = (options: any) => {
   publishFunction(
     readFileSync(`${buildDir}/manifest.json`),
     readFileSync(`${buildDir}/${wasmArchive}`),
+    wasmArchive,
     publishCallback
   );
 };
