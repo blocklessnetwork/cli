@@ -4,11 +4,7 @@ import { execSync } from "child_process";
 import { IManifest } from "./interfaces";
 import { removeTrailingSlash } from "./shared";
 
-const createManifest = (
-  buildDir: string,
-  entry: string,
-  url: string
-): IManifest => {
+const createManifest = (entry: string, url: string): IManifest => {
   const name = entry.split(".")[0];
   const manifest: IManifest = {
     id: "",
@@ -36,7 +32,7 @@ export const run = (options: {
   const buildDir = `${path}/build`;
   const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
-  const wasmManifest = createManifest(buildDir, wasmName, wasmArchive);
+  const wasmManifestObject = createManifest(wasmName, wasmArchive);
 
   const build = () => {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
