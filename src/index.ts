@@ -14,9 +14,7 @@ import {
   runPublish,
   runUpdate,
 } from "./commands/function";
-import {
-  IBlsFunctionRequiredOptions,
-} from "./commands/function/interfaces";
+import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
