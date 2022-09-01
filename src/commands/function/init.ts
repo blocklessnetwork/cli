@@ -4,7 +4,7 @@ import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
 import { removeTrailingSlash } from "./shared";
 
-const sanitizer = /[^a-zA-Z0-9\-\.]/;
+const sanitizer = /[^a-zA-Z0-9\-\.\/\~]/;
 
 const sanitize = (input: string) =>
   removeTrailingSlash(input.replace(sanitizer, ""));
