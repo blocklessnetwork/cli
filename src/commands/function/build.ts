@@ -50,5 +50,8 @@ export const run = (options: {
 
   if (rebuild) build();
 
-  writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest));
+  writeFileSync(
+    `${buildDir}/manifest.json`,
+    JSON.stringify(wasmManifestObject)
+  );
 };

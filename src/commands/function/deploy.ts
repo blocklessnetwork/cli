@@ -50,5 +50,11 @@ export const run = (options: any) => {
   //TODO: this is absolutely monstrous and needs sanity applied
   deploymentOptions.userFunctionId = userFunctionId;
 
-  runPublish({ debug, name, path, publishCallback: deployFunction, rebuild });
+  runPublish({
+    debug,
+    name,
+    path,
+    publishCallback: deployFunction,
+    rebuild,
+  });
 };
