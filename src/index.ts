@@ -114,8 +114,8 @@ args
       }
       const requiredOptions: RequiredOptions = {
         init: ["name"],
-        deploy: ["name", "path"],
-        publish: ["name", "path"],
+        deploy: ["name"],
+        publish: ["name"],
       };
       const index: keyof RequiredOptions = "init";
       didRun = true;
