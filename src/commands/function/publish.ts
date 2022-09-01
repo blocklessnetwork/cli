@@ -5,7 +5,7 @@ import axios from "axios";
 import { getToken } from "../../store/db";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runBuild } from "./build";
-import { createWasmArchive, getBuildDir } from "./shared";
+import { createWasmArchive, getBuildDir, removeTrailingSlash } from "./shared";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -47,8 +47,16 @@ const logResult = (data: any) => {
   const { cid } = data;
   console.log(`function successfully published with id ${cid}`);
 };
+
 export const run = (options: any) => {
-  const { debug, name, path, publishCallback = logResult, rebuild } = options;
+  const {
+    debug,
+    name,
+    path: givenPath = ".",
+    publishCallback = logResult,
+    rebuild,
+  } = options;
+  const path = removeTrailingSlash(givenPath); // deploy does this already but we can call publish from the CLI, so still needed here
   const buildDir = getBuildDir(path);
   const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;

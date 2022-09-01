@@ -3,6 +3,7 @@ import Chalk from "chalk";
 import { execSync } from "child_process";
 import { IManifest } from "./interfaces";
 import fs from "fs";
+import { removeTrailingSlash } from "./shared";
 
 const createManifest = (
   buildDir: string,
@@ -30,8 +31,9 @@ export const run = (options: {
   path: string;
   rebuild: boolean;
 }) => {
-  const { debug, name, path, rebuild } = options;
+  const { debug, name, path: givenPath = ".", rebuild } = options;
   // check for and store unmodified wasm file name to change later
+  const path = removeTrailingSlash(givenPath); // publish does this already but we can call build from the CLI, so still needed here
   const buildDir = `${path}/build`;
   const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;

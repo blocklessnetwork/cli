@@ -3,6 +3,7 @@ import { getToken } from "../../store/db";
 import axios from "axios";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runPublish } from "./publish";
+import { removeTrailingSlash } from "./shared";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -40,7 +41,8 @@ const deployFunction = (data: any) => {
 };
 
 export const run = (options: any) => {
-  const { debug, name, path, rebuild } = options;
+  const { debug, name, path: givenPath = ".", rebuild } = options;
+  const path = removeTrailingSlash(givenPath);
   const {
     bls: { functionId: userFunctionId },
   } = require(`${path}/package`);
