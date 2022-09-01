@@ -17,7 +17,7 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: cp bls_x64-macos /usr/local/bin/bls
-      - run: bls offchain install -y
+      - run: bls components install -y
       - run: |
           FILE="/Users/runner/.bls/network/keys/identity"
           if test -f $FILE; then
