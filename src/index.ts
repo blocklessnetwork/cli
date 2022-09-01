@@ -14,9 +14,7 @@ import {
   runPublish,
   runUpdate,
 } from "./commands/function";
-import {
-  IBlsFunctionRequiredOptions,
-} from "./commands/function/interfaces";
+import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
@@ -113,9 +111,9 @@ args
     (name: string, sub: string[], options) => {
       const requiredOptions: IBlsFunctionRequiredOptions = {
         init: ["name"],
-        deploy: ["name", "path"],
-        publish: ["name", "path"],
-        update: ["name", "path"],
+        deploy: ["name"],
+        publish: ["name"],
+        update: ["name"],
       };
       didRun = true;
       if (!sub[0] || sub[0] === "help") {

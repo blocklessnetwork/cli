@@ -29,7 +29,7 @@ export const publishFunction = async (
   axios
     .post(`${server}/api/submit`, formData, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     })
@@ -48,7 +48,13 @@ const logResult = (data: any) => {
   console.log(`function successfully published with id ${cid}`);
 };
 export const run = (options: any) => {
-  const { debug, name, path, publishCallback = logResult, rebuild } = options;
+  const {
+    debug,
+    name,
+    path = process.cwd(),
+    publishCallback = logResult,
+    rebuild,
+  } = options;
   const buildDir = getBuildDir(path);
   const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
@@ -59,16 +65,14 @@ export const run = (options: any) => {
   //TODO: this is absolutely monstrous and needssanity appplied
   deploymentOptions.userFunctionId = userFunctionId;
 
-  if (rebuild) {
-    runBuild({ debug, name, path, rebuild });
-  }
+  runBuild({ debug, name, path, rebuild });
 
   console.log(Chalk.yellow(`Creating tarball...`));
   createWasmArchive(buildDir, wasmArchive, wasmName);
 
   console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
   publishFunction(
-    readFileSync(`${buildDir}/manifest.json}`),
+    readFileSync(`${buildDir}/manifest.json`),
     readFileSync(`${buildDir}/${wasmArchive}`),
     publishCallback
   );
