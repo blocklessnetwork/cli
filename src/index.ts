@@ -111,9 +111,9 @@ args
     (name: string, sub: string[], options) => {
       const requiredOptions: IBlsFunctionRequiredOptions = {
         init: ["name"],
-        deploy: ["name", "path"],
-        publish: ["name", "path"],
-        update: ["name", "path"],
+        deploy: ["name"],
+        publish: ["name"],
+        update: ["name"],
       };
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
