@@ -8,7 +8,7 @@ export const createWasmArchive = (
   wasmArchive: string,
   wasmName: string
 ) => {
-  execSync(`tar zcf ${wasmArchive} ${wasmName}`, {
+  execSync(`tar zcf ${path}/${wasmArchive} ${path}/${wasmName}`, {
     cwd: path,
     stdio: "inherit",
   });
