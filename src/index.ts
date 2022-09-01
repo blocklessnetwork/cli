@@ -12,7 +12,9 @@ import {
   runInvoke,
   runList,
   runPublish,
+  runUpdate,
 } from "./commands/function";
+import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
 import { run as runLogin } from "./commands/login";
 import { run as runInfo } from "./commands/info";
 
@@ -107,33 +109,26 @@ args
     "function",
     "Interact with Functions [init, invoke, delete, deploy, list]",
     (name: string, sub: string[], options) => {
-      interface RequiredOptions {
-        init: string[];
-        deploy: string[];
-        publish: string[];
-      }
-      const requiredOptions: RequiredOptions = {
+      const requiredOptions: IBlsFunctionRequiredOptions = {
         init: ["name"],
         deploy: ["name"],
         publish: ["name"],
+        update: ["name"],
       };
-      const index: keyof RequiredOptions = "init";
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
         printHelp([
           [
             "init\t",
-            "initialize a new function with blockless starter template",
+            "Initialize a new function with blockless starter template.",
           ],
-          ["deploy\t", "deploy a function on Blockless"],
+          ["deploy\t", "Deploy a function on Blockless."],
           [
             "list\t",
             "Retrieve a list of funtions deployed at Blockless Console.",
           ],
-          [
-            "invoke\t",
-            "Invokes the a function at the current (cwd) directory.",
-          ],
+          ["invoke\t", "Invokes the function at the current (cwd) directory."],
+          ["update\t", "Update an existing function on Blockless."],
         ]);
         return;
       }
@@ -234,6 +229,36 @@ args
             }
           }
           runPublish(options);
+          break;
+        case "update":
+          for (const option of requiredOptions[sub[0]]) {
+            if (!(option in options)) {
+              console.log(
+                Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
+              );
+              printHelp(
+                [["update", "Update an existing function on Blockless"]],
+                [
+                  ["--name", "The name of the function to update (required)"],
+                  [
+                    "--path",
+                    "The location of the function' to update (required)",
+                  ],
+
+                  [
+                    "--rebuild",
+                    "Build the package before updating it (optional; defaults to undefined)",
+                  ],
+                  [
+                    "--debug",
+                    "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
+                  ],
+                ]
+              );
+              return;
+            }
+          }
+          runUpdate(options);
           break;
         case "invoke":
           runInvoke(options);

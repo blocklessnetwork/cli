@@ -3,6 +3,12 @@ export interface IBlsFunction {
   functionId: string;
   name: string;
 }
+export interface IBlsFunctionRequiredOptions {
+  init: string[];
+  deploy: string[];
+  publish: string[];
+  update: string[];
+}
 
 // WASM interrfaces
 export interface IWasmMethod {

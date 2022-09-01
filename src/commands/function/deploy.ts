@@ -3,12 +3,14 @@ import { getToken } from "../../store/db";
 import axios from "axios";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runPublish } from "./publish";
+import { getConsoleServer } from "../../lib/utils";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
   functionName: "",
   userFunctionId: "",
 };
+const consoleServer = getConsoleServer();
 
 const server = "https://console.bls.dev";
 const token = getToken();
