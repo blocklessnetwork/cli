@@ -22,7 +22,7 @@ import { run as runInfo } from "./commands/info";
 let didRun = false;
 let pkg = { version: "0.0.0" };
 const name = "bls";
-const consoleHost = "https://console.bls.dev";
+const consoleHost = "https://localhost:3005";
 
 function printHelp(commands: any = [], options: any = []) {
   console.log("");
