@@ -11,7 +11,6 @@ const deploymentOptions: IDeploymentOptions = {
   userFunctionId: "",
 };
 const consoleServer = getConsoleServer();
-
 const server = "https://console.bls.dev";
 const token = getToken();
 
@@ -38,7 +37,7 @@ const deployFunction = (data: any) => {
       if (res.data && res.data.success) {
         axios
           .post(
-            `${server}/modules/deploy`,
+            `${server}/api/modules/deploy`,
             {
               functionName: functionName.replace(/\s+/g, "-"),
               functionId: functionId,

@@ -2,7 +2,10 @@ import { existsSync, writeFileSync } from "fs";
 import Chalk from "chalk";
 import { execSync } from "child_process";
 import { IManifest } from "./interfaces";
+import { createWasmArchive, getBuildDir } from "./shared";
+import { basename } from "path";
 import fs from "fs";
+import crypto from "crypto";
 
 const createManifest = (
   buildDir: string,
@@ -20,6 +23,7 @@ const createManifest = (
       checksum: "",
       url,
     },
+    methods: [],
   };
   return manifest;
 };
@@ -30,7 +34,12 @@ export const run = (options: {
   path: string;
   rebuild: boolean;
 }) => {
-  const { debug, name, path, rebuild } = options;
+  const {
+    debug = false,
+    name = basename(process.cwd()),
+    path = process.cwd(),
+    rebuild = false,
+  } = options;
   // check for and store unmodified wasm file name to change later
   const defaultWasm = debug ? "debug.wasm" : "release.wasm";
   const buildDir = `${path}/build`;
@@ -59,6 +68,15 @@ export const run = (options: {
   } catch (err) {
     build();
   }
+
+  const archive = createWasmArchive(buildDir, wasmArchive, wasmName);
+  const hash = crypto.createHash("md5").update(archive).digest("hex");
+  wasmManifest.runtime.checksum = hash;
+  wasmManifest.methods?.push({
+    name: wasmName.split(".")[0],
+    entry: wasmName,
+    result_type: "string",
+  });
 
   writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest));
 };

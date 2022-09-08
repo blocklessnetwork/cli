@@ -66,13 +66,9 @@ export const run = (options: any) => {
 
   //TODO: this is absolutely monstrous and needssanity appplied
   deploymentOptions.userFunctionId = userFunctionId;
-
   runBuild({ debug, name, path, rebuild });
 
-  console.log(Chalk.yellow(`Creating tarball...`));
-  createWasmArchive(buildDir, wasmArchive, wasmName);
-
-  console.log(Chalk.yellow(`Deploying function located in ${buildDir}`));
+  console.log(Chalk.yellow(`Publishing function located in ${buildDir}`));
   publishFunction(
     readFileSync(`${buildDir}/manifest.json`),
     readFileSync(`${buildDir}/${wasmArchive}`),
