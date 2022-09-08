@@ -12,7 +12,7 @@ const deploymentOptions: IDeploymentOptions = {
   userFunctionId: "",
 };
 const consoleServer = getConsoleServer();
-const server = "https://console.bls.dev";
+const server = consoleServer;
 const token = getToken();
 
 //TODO: make this a lot better.
@@ -76,11 +76,18 @@ export const run = (options: any) => {
   } = options;
 
   const {
-    bls: { functionId: userFunctionId },
+    bls: { functionId: userFunctionId, manifest },
   } = require(`${path}/package`);
 
   //TODO: this is absolutely monstrous and needs sanity applied
   deploymentOptions.userFunctionId = userFunctionId;
 
-  runPublish({ debug, name, path, publishCallback: deployFunction, rebuild });
+  runPublish({
+    debug,
+    name,
+    path,
+    publishCallback: deployFunction,
+    rebuild,
+    manifest,
+  });
 };

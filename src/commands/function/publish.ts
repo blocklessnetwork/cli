@@ -7,6 +7,7 @@ import { IDeploymentOptions } from "./interfaces";
 import { run as runBuild } from "./build";
 import { createWasmArchive, getBuildDir } from "./shared";
 import { basename, resolve } from "path";
+import { getWASMRepoServer } from "../../lib/utils";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -14,8 +15,7 @@ const deploymentOptions: IDeploymentOptions = {
   userFunctionId: "",
 };
 
-const server = "https://wasi.bls.dev";
-// const server = "http://127.0.0.1:3000";
+const server = getWASMRepoServer();
 const token = getToken();
 
 export const publishFunction = async (
@@ -61,13 +61,14 @@ export const run = (options: any) => {
   const buildDir = getBuildDir(path);
   const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
   const wasmArchive = `${name}.tar.gz`;
+  const pkg = require(`${path}/package`);
   const {
     bls: { functionId: userFunctionId },
-  } = require(`${path}/package`);
+  } = pkg;
 
   //TODO: this is absolutely monstrous and needssanity appplied
   deploymentOptions.userFunctionId = userFunctionId;
-  runBuild({ debug, name, path, rebuild });
+  runBuild({ debug, name, path, rebuild, manifest: pkg?.bls?.manifest });
 
   console.log(Chalk.yellow(`Publishing function located in ${buildDir}`));
   publishFunction(
