@@ -26,10 +26,12 @@ export interface IManifest {
   limited_memory?: number;
   entry: string;
   resouces?: [];
+  hooks?: [];
   runtime: {
     checksum: string;
     url: string;
   };
+  contentType?: "json" | "html" | "text";
   resources?: string[];
   methods?: IWasmMethod[];
 }
