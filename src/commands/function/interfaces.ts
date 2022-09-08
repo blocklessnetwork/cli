@@ -25,6 +25,7 @@ export interface IManifest {
   limited_fuel?: number;
   limited_memory?: number;
   entry: string;
+  resouces?: [];
   runtime: {
     checksum: string;
     url: string;
