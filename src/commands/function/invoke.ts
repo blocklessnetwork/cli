@@ -2,12 +2,13 @@ import { store } from "../../store";
 import fs from "fs";
 import { execSync } from "child_process";
 import { run as runBuild } from "./build";
+import { basename, resolve } from "path";
 
 export const run = (options: any) => {
   const {
     systemPath = `${store.system.homedir}/.bls/`,
     cwd: path = process.cwd(),
-    name,
+    name = basename(resolve(process.cwd())),
     rebuild = true,
   } = options;
   const runtimePath = `${systemPath}runtime/blockless-cli`;

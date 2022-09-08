@@ -4,6 +4,7 @@ import axios from "axios";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runPublish } from "./publish";
 import { getConsoleServer } from "../../lib/utils";
+import { basename, resolve } from "path";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -67,7 +68,12 @@ const deployFunction = (data: any) => {
 };
 
 export const run = (options: any) => {
-  const { debug, name, path = process.cwd(), rebuild } = options;
+  const {
+    debug,
+    name = basename(resolve(process.cwd())),
+    path = process.cwd(),
+    rebuild,
+  } = options;
 
   const {
     bls: { functionId: userFunctionId },

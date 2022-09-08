@@ -4,6 +4,12 @@ import { execSync } from "child_process";
 import replace from "replace-in-file";
 import { getNpmConfigInitVersion } from "../../lib/utils";
 import prompt from "prompt";
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from "unique-names-generator";
 
 prompt.start();
 prompt.message = "";
@@ -24,9 +30,13 @@ const checkForNpm = () => {
   }
 };
 
+const randomName = uniqueNamesGenerator({
+  dictionaries: [adjectives, colors, animals],
+}); // big_red_donkey
+
 export const run = (options: any) => {
   const {
-    name,
+    name = randomName,
     path = process.cwd(),
     private: isPrivate,
     yes = false,
@@ -115,9 +125,9 @@ export const run = (options: any) => {
   }
   // initialize new local project
   console.log(
-    Chalk.yellow(
-      `Initializing new function in ${installationPath} with ID ${functionId}`
-    )
+    `${Chalk.blue("Initializing")} new function in \n${Chalk.yellow(
+      installationPath
+    )} \nwith ID ${functionId}`
   );
 
   execSync(
@@ -127,12 +137,14 @@ export const run = (options: any) => {
       isPrivate
     ).toString()} "bls.functionId"=${functionId}`,
     {
-      stdio: "inherit",
+      stdio: "ignore",
     }
   );
   console.log(
-    Chalk.green(
-      `Initialization of function ${installationPath} completed successfully`
-    ) // because I said so in the absence of actual verification :D
+    `Initialization of function\n${Chalk.blue(
+      installationPath
+    )}\ncompleted ${Chalk.green("successfully")}`
   );
+  console.log("");
+  console.log(`change into the directory\n${installationPath}\nto get started`);
 };

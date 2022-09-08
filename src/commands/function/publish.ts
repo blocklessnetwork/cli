@@ -6,6 +6,7 @@ import { getToken } from "../../store/db";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runBuild } from "./build";
 import { createWasmArchive, getBuildDir } from "./shared";
+import { basename, resolve } from "path";
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -52,7 +53,7 @@ const logResult = (data: any) => {
 export const run = (options: any) => {
   const {
     debug,
-    name,
+    name = basename(resolve(process.cwd())),
     path = process.cwd(),
     publishCallback = logResult,
     rebuild,
