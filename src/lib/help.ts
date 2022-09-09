@@ -17,10 +17,12 @@ export function printHelp(commands: any = [], options: any = [], { pkg }: any) {
   }
 
   console.log("");
-  if (options.length > 0) console.log("  Options:");
-  console.log("");
-  for (const option of options) {
-    console.log(`       ${Chalk.yellow(option[0])}     ${option[1]}`);
+  if (options?.length > 0) {
+    console.log("  Options:");
+    console.log("");
+    for (const option of options) {
+      console.log(`       ${Chalk.yellow(option[0])}     ${option[1]}`);
+    }
   }
 
   console.log("");
