@@ -2,7 +2,7 @@ import Chalk from "chalk";
 import { store } from "../../store";
 import { execSync } from "child_process";
 import replace from "replace-in-file";
-import { getNpmConfigInitVersion } from "../../lib/utils";
+import { getNpmConfigInitVersion } from "../../lib/npm";
 import prompt from "prompt";
 import {
   uniqueNamesGenerator,

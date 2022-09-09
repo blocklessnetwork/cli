@@ -3,7 +3,7 @@ import { getToken } from "../../store/db";
 import axios from "axios";
 import { IDeploymentOptions } from "./interfaces";
 import { run as runPublish } from "./publish";
-import { getConsoleServer } from "../../lib/utils";
+import { getConsoleServer } from "../../lib/urls";
 import { basename, resolve } from "path";
 
 const deploymentOptions: IDeploymentOptions = {

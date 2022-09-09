@@ -1,6 +1,4 @@
 import args from "args";
-import Chalk from "chalk";
-import { store, set as storeSet } from "./store";
 import open from "open";
 
 import * as wallet from "./commands/wallet";
@@ -15,43 +13,15 @@ import {
   runUpdate,
   runBuild,
 } from "./commands/function";
-import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
 import { run as runLogin } from "./commands/login";
-import { run as runInfo } from "./commands/info";
+
+import { printHelp } from "./lib/help";
+import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
+import { getConsoleServer } from "./lib/urls";
+import { NAME } from "./store/constants";
 
 let didRun = false;
-let pkg = { version: "0.0.0" };
-const name = "bls";
-const consoleHost = "https://localhost:3005";
-
-function printHelp(commands: any = [], options: any = []) {
-  console.log("");
-  console.log(
-    `  Usage: ${Chalk.yellow(name)} ${Chalk.green("[command]")} ${Chalk.blue(
-      "[subcommand]"
-    )} [--options]`
-  );
-  console.log("");
-  console.log("  Commands:");
-  console.log("");
-  for (const command of commands) {
-    console.log(`       ${Chalk.green(command[0])}     ${command[1]}`);
-  }
-
-  console.log("");
-  if (options.length > 0) console.log("  Options:");
-  console.log("");
-  for (const option of options) {
-    console.log(`       ${Chalk.yellow(option[0])}     ${option[1]}`);
-  }
-
-  console.log("");
-  console.log(
-    `  ${Chalk.yellow("Blockless CLI")} ${store.system.platform}/${
-      store.system.arch
-    }-${pkg.version}`
-  );
-}
+let pkg: any;
 
 args
   .options([
@@ -77,7 +47,7 @@ args
     async (name: string, sub: string[], options: any) => {
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
-        printHelp([["install", "install the off-chain agent"]]);
+        printHelp([["install", "install the off-chain agent"]], null, { pkg });
         return;
       }
       switch (sub[0]) {
@@ -116,19 +86,26 @@ args
 
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
-        printHelp([
+        printHelp(
           [
-            "init\t",
-            "Initialize a new function with blockless starter template.",
+            [
+              "init\t",
+              "Initialize a new function with blockless starter template.",
+            ],
+            ["deploy\t", "Deploy a function on Blockless."],
+            [
+              "list\t",
+              "Retrieve a list of funtions deployed at Blockless Console.",
+            ],
+            [
+              "invoke\t",
+              "Invokes the function at the current (cwd) directory.",
+            ],
+            ["update\t", "Update an existing function on Blockless."],
           ],
-          ["deploy\t", "Deploy a function on Blockless."],
-          [
-            "list\t",
-            "Retrieve a list of funtions deployed at Blockless Console.",
-          ],
-          ["invoke\t", "Invokes the function at the current (cwd) directory."],
-          ["update\t", "Update an existing function on Blockless."],
-        ]);
+          null,
+          { pkg }
+        );
         return;
       }
 
@@ -141,7 +118,7 @@ args
   // open url in default browser
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
-    open(consoleHost);
+    open(getConsoleServer());
   })
 
   // check to see info about the user logged in
@@ -187,14 +164,15 @@ const help = () => {
       ["function", "  Manages your functions"],
       ["help\t", " Shows the usage information"],
     ],
-    [["--yes\t", " Skip questions using default values"]]
+    [["--yes\t", " Skip questions using default values"]],
+    { pkg }
   );
 };
 
 export async function cli(argv: any, packageJson: any) {
   pkg = packageJson;
   const flags = args.parse(process.argv, {
-    name: name,
+    name: NAME,
     version: false,
     help: false,
   } as any);
