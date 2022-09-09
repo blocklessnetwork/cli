@@ -1,5 +1,3 @@
-import { execSync } from "child_process";
-
 // Console API Server
 export const getConsoleServer = (
   location: "local" | "remote" = "remote",
@@ -19,7 +17,3 @@ export const getWASMRepoServer = (
   const host = devMode ? "http://0.0.0.0" : "https://wasi.bls.dev";
   return `${host}:${port ? port : devMode ? 3006 : 443}`;
 };
-
-// Node/npm config
-export const getNpmConfigInitVersion = (): string =>
-  execSync("npm config get init-version").toString("utf-8");

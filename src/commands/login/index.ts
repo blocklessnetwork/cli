@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
-import { getConsoleServer } from "../../lib/utils";
+import { getConsoleServer } from "../../lib/urls";
 
 const portastic = require("portastic");
 
@@ -103,12 +103,12 @@ const start = async () => {
     fastify.get("/", async (request, reply) => {
       console.log(`Sending user to ${consoleServer} to authenticate`);
       reply.redirect(
-        `${consoleServer}/login?returnUrl=${localConsoleServer}/token&clientId=${clientId}`
+        `${consoleServer}/login?returnUrl=http://127.0.0.1:${port}/token&clientId=${clientId}`
       );
     });
 
     fastify.listen({ port }).then(() => {
-      console.log(`Open Browser at ${localConsoleServer} to complete login`);
+      console.log(`Open Browser at http://127.0.0.1:${port} to complete login`);
     });
   } catch (err) {
     fastify.log.error(err);

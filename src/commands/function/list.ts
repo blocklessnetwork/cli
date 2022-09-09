@@ -1,7 +1,7 @@
 import axios from "axios";
 import Table from "cli-table";
 import { getToken } from "../../store/db";
-import { getConsoleServer } from "../../lib/utils";
+import { getConsoleServer } from "../../lib/urls";
 
 export const run = (options: any) => {
   const token = getToken();
