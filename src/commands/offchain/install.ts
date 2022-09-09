@@ -1,14 +1,14 @@
 import Chalk from "chalk";
 import fs from "fs";
 import { getRuntime, getKeygen, getNetworking } from "../../lib/binaries";
-import { generateKey } from "../../methods/keygen";
+import { generateKey } from "../../lib/keygen";
 import {
   coordinatorConfigJSON,
   saveConfig,
   workerConfigJSON,
 } from "../../lib/configs";
 import { store, get as storeGet, set as storeSet } from "../../store";
-import { activateRuntime } from "../../methods/runtime";
+import { activateRuntime } from "../../lib/runtime";
 import prompt from "prompt";
 
 prompt.start();

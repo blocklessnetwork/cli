@@ -90,22 +90,8 @@ args
       }
     }
   )
-  // .command("info", "Information about the local Blockless environment", () => {
-  //   didRun = true;
-  //   runInfo({ pkg });
-  // })
 
-  // .command(
-  //   "wallet",
-  //   "Interact with the Blockless blockchain [list, remove]",
-  //   async (name: string, sub: string[], options) => {
-  //     if (sub[0]) {
-  //       didRun = true;
-  //       const method = (wallet as any)[`${sub[0]}Wallet`];
-  //       if (method) await method(options);
-  //     }
-  //   }
-  // )
+  // interact with functions
   .command(
     "function",
     "Interact with Functions [init, invoke, delete, deploy, list]",
@@ -149,154 +135,16 @@ args
       if (subs[sub[0]]) {
         subs[sub[0]](options);
       }
-
-      // switch (sub[0]) {
-      //   case "init":
-      //     if (!("name" in options)) {
-      //       console.log(
-      //         Chalk.red(`Missing required option ${Chalk.yellow("name")}\n`)
-      //       );
-      //       printHelp(
-      //         [
-      //           [
-      //             "init",
-      //             "Initialize a new function with a project starter template",
-      //           ],
-      //         ],
-      //         [
-      //           [
-      //             "--name",
-      //             "The name of the function to initialize.  This name will be used in the package's configuration file (i.e. package.json). (required)",
-      //           ],
-      //           [
-      //             "--path",
-      //             `The location to initialize the function (optional; defaults to  ${store.system.homedir}/.bls)`,
-      //           ],
-      //           [
-      //             "--private",
-      //             "If set, this function will not be made available for others to consume (optional; defaults to undefined)",
-      //           ],
-      //         ]
-      //       );
-      //       return;
-      //     } else {
-      //       runInit(options);
-      //     }
-      //     break;
-      //   case "deploy":
-      //     for (const option of requiredOptions[sub[0]]) {
-      //       if (!(option in options)) {
-      //         console.log(
-      //           Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
-      //         );
-      //         printHelp(
-      //           [["deploy", "Deploy a function on Blockless."]],
-      //           [
-      //             ["--name", "The name of the function to deploy (required)"],
-      //             [
-      //               "--path",
-      //               "The location of the function' to deploy (required)",
-      //             ],
-
-      //             [
-      //               "--rebuild",
-      //               "Build the package before deploying it (optional; defaults to undefined)",
-      //             ],
-      //             [
-      //               "--debug",
-      //               "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
-      //             ],
-      //           ]
-      //         );
-      //         return;
-      //       }
-      //     }
-      //     runDeploy(options);
-      //     break;
-      //   case "publish":
-      //     for (const option of requiredOptions[sub[0]]) {
-      //       if (!(option in options)) {
-      //         console.log(
-      //           Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
-      //         );
-      //         printHelp(
-      //           [
-      //             [
-      //               "publish",
-      //               "Publish a function on Blockless and make it available to other functions",
-      //             ],
-      //           ],
-      //           [
-      //             ["--name", "The name of the function to publish (required)"],
-      //             [
-      //               "--path",
-      //               "The location of the function' to publish (required)",
-      //             ],
-
-      //             [
-      //               "--rebuild",
-      //               "Build the package before publishing it (optional; defaults to undefined)",
-      //             ],
-      //             [
-      //               "--debug",
-      //               "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
-      //             ],
-      //           ]
-      //         );
-      //         return;
-      //       }
-      //     }
-      //     runPublish(options);
-      //     break;
-      //   case "update":
-      //     for (const option of requiredOptions[sub[0]]) {
-      //       if (!(option in options)) {
-      //         console.log(
-      //           Chalk.red(`Missing required option ${Chalk.yellow(option)}\n`)
-      //         );
-      //         printHelp(
-      //           [["update", "Update an existing function on Blockless"]],
-      //           [
-      //             ["--name", "The name of the function to update (required)"],
-      //             [
-      //               "--path",
-      //               "The location of the function' to update (required)",
-      //             ],
-
-      //             [
-      //               "--rebuild",
-      //               "Build the package before updating it (optional; defaults to undefined)",
-      //             ],
-      //             [
-      //               "--debug",
-      //               "Specifying the 'debug' option will build the debug version, otherwise the release version will be built (optional; defaults to undefined; only applicable if using the '--rebuild' option)",
-      //             ],
-      //           ]
-      //         );
-      //         return;
-      //       }
-      //     }
-      //     runUpdate(options);
-      //     break;
-      //   case "invoke":
-      //     runInvoke(options);
-      //     break;
-      //   case "list":
-      //     runList(options);
-      //     break;
-      //   default:
-      //     break;
-      // }
-      //todo: add verbose logging flag
-      // console.log(name, sub);
     }
   )
+
+  // open url in default browser
   .command("console", "Open the Blockless console in browser", () => {
     didRun = true;
-
-    // opens the url in the default browser
     open(consoleHost);
   })
+
+  // check to see info about the user logged in
   .command(
     "whoami",
     "Check logged in user",
@@ -306,6 +154,8 @@ args
       if (method) await method(options);
     }
   )
+
+  // login to blockless console
   .command(
     "login",
     "Login to the the CLI",
@@ -314,6 +164,8 @@ args
       didRun = true;
     }
   )
+
+  // destroy access token
   .command(
     "logout",
     "Logout of the CLI",
@@ -338,6 +190,7 @@ const help = () => {
     [["--yes\t", " Skip questions using default values"]]
   );
 };
+
 export async function cli(argv: any, packageJson: any) {
   pkg = packageJson;
   const flags = args.parse(process.argv, {
