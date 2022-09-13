@@ -36,6 +36,10 @@ args
         "For functions, setting this will mark the function as private",
     },
     {
+      name: "auth-token",
+      description: "authorization token for the function",
+    },
+    {
       name: "yes",
       description:
         "Assume yes to all prompts. This will skip all prompts and use default values",
@@ -137,7 +141,7 @@ args
     "login",
     "Login to the the CLI",
     (name: string, sub: string[], options: any) => {
-      runLogin(sub);
+      runLogin(sub, options);
       didRun = true;
     }
   )
