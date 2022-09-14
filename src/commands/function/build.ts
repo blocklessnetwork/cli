@@ -65,7 +65,7 @@ export const run = (options: {
 
   const build = () => {
     console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
-    execSync(`npm ci; npm run build:${debug ? "debug" : "release"};`, {
+    execSync(`npm i; npm run build:${debug ? "debug" : "release"};`, {
       cwd: path,
       stdio: "inherit",
     });
