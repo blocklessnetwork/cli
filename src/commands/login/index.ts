@@ -93,22 +93,25 @@ fastify.get("/complete", async (request: any, reply: any) => {
 const start = async () => {
   try {
     const ports = await portastic.find({ min: 8000, max: 8999 });
-    const port =
-      process.env.NODE_ENV === "development"
-        ? 3000
-        : ports[Math.floor(Math.random() * ports.length)];
-    const localConsoleServer = getConsoleServer("local", port);
+    const port = ports[Math.floor(Math.random() * ports.length)];
 
     // request a jwt from the console ui
     fastify.get("/", async (request, reply) => {
       console.log(`Sending user to ${consoleServer} to authenticate`);
+
+      // the web dev server will be under port 3000, and api under port 3005
+      const webServer =
+        process.env.NODE_ENV === "development"
+          ? getConsoleServer(3000)
+          : consoleServer
+
       reply.redirect(
-        `${consoleServer}/login?returnUrl=http://127.0.0.1:${port}/token&clientId=${clientId}`
+        `${webServer}/login?returnUrl=http://0.0.0.0:${port}/token&clientId=${clientId}`
       );
     });
 
     fastify.listen({ port }).then(() => {
-      console.log(`Open Browser at http://127.0.0.1:${port} to complete login`);
+      console.log(`Open Browser at http://0.0.0.0:${port} to complete login`);
     });
   } catch (err) {
     fastify.log.error(err);
