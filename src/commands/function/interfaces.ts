@@ -9,6 +9,15 @@ export interface IBlsFunctionRequiredOptions {
   publish: string[];
   update: string[];
 }
+export interface IBlsFunctionConfig {
+  name: string
+  version: string
+
+  deployment: {
+    permission: 'public' | 'private'
+    nodes: number
+  }
+}
 
 // WASM interrfaces
 export interface IWasmMethod {
@@ -40,4 +49,11 @@ export interface IDeploymentOptions {
   functionId: string;
   functionName: string;
   userFunctionId: string;
+}
+
+type JsonArray = boolean[] | number[] | string[] | JsonMap[] | Date[]
+type AnyJson = boolean | number | string | JsonMap | Date | JsonArray | JsonArray[]
+
+export interface JsonMap {
+  [key: string]: AnyJson
 }
