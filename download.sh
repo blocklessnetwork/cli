@@ -68,19 +68,19 @@ function install {
 	VERSION="latest"
 	case "${OS}_${ARCH}" in
 	"darwin_amd64")
-		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-macos-x64-blockless-cli.tar.gz"
+		URL="https://github.com/BlocklessNetwork/cli/releases/download/${VERSION}/bls-macos-x64-blockless-cli.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"darwin_arm64")
-		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-macos-arm64-blockless-cli.tar.gz"
+		URL="https://github.com/BlocklessNetwork/cli/releases/download/${VERSION}/bls-macos-arm64-blockless-cli.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"linux_amd64")
-		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-linux-x64-blockless-cli.tar.gz"
+		URL="https://github.com/BlocklessNetwork/cli/releases/download/${VERSION}/bls-linux-x64-blockless-cli.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"linux_arm64")
-		URL="https://github.com/txlabs/blockless-cli/releases/download/${VERSION}/bls-linux-arm64-blockless-cli.tar.gz"
+		URL="https://github.com/BlocklessNetwork/cli/releases/download/${VERSION}/bls-linux-arm64-blockless-cli.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	*) fail "No asset for platform ${OS}-${ARCH}";;
