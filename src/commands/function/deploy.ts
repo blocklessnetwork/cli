@@ -1,71 +1,77 @@
-import Chalk from "chalk";
-import { getToken } from "../../store/db";
-import axios from "axios";
-import { IDeploymentOptions } from "./interfaces";
-import { run as runPublish } from "./publish";
-import { getConsoleServer } from "../../lib/urls";
-import { basename, resolve } from "path";
+import Chalk from "chalk"
+import { run as runPublish } from "./publish"
+import { basename, resolve } from "path"
+import { consoleClient } from "../../lib/http"
 
-const deploymentOptions: IDeploymentOptions = {
-  functionId: "",
-  functionName: "",
-  userFunctionId: "",
-};
-const consoleServer = getConsoleServer();
-const server = consoleServer;
-const token = getToken();
+/**
+ * Helper to deploy a bls function via CLI
+ * 
+ * 0. Publish package and retrive
+ * 1. Get list of user functions
+ * 2. Decide whether to update or create a new function (based on function name), bail if deploying same data
+ * 3. Call new or update API with function config parameters
+ * 4. Run deploy
+ * 
+ * @param data 
+ * @returns 
+ */
+const deployFunction = async (data: any) => {
+  const { cid: functionId, name: functionName } = data
+  console.log(Chalk.yellow(`Deploying ${functionName}`))
 
-//TODO: make this a lot better.
-const deployFunction = (data: any) => {
-  const { cid: functionId, name: functionName } = data;
-  const { userFunctionId } = deploymentOptions;
-  console.log(Chalk.yellow(`Deploying ${functionName}`));
-  axios
-    .post(
-      `${server}/api/modules/new`,
-      {
-        functionId,
-        name: functionName,
-        userFunctionId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-    .then((res) => {
-      if (res.data && res.data.success) {
-        axios
-          .post(
-            `${server}/api/modules/deploy`,
-            {
-              functionName: functionName.replace(/\s+/g, "-"),
-              functionId: functionId,
-              userFunctionid: res.data._id,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(
-              Chalk.green(
-                `Successfully deployed ${functionName} with id ${functionId}`
-              )
-            );
-          })
-          .catch((error) => {
-            console.log("error publishing function", error);
-          });
-      }
+  let matchingFunction = null
+  let internalFunctionId = null
+
+  // Find all matching functions
+  try {
+    const { data } = await consoleClient.post(`/api/modules/mine`, {})
+    const matchingFunctions = data.filter((f: any) => f.functionName === functionName)
+
+    if (matchingFunctions && matchingFunctions.length > 0) {
+      matchingFunction = matchingFunctions[matchingFunctions.length - 1]
+      internalFunctionId = matchingFunction._id
+    }
+  } catch (error) {
+    console.log('Failed to retrive user functions', error)
+    return
+  }
+
+  // Create or Update the user function
+  try {
+    const fnAction = !internalFunctionId ? `new` : `update`
+    const fnBody = !internalFunctionId ?
+      { functionId, name: functionName } :
+      { _id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
+
+    const { data } = await consoleClient.post(`/api/modules/${fnAction}`, fnBody)
+    if (!internalFunctionId && data && data._id) internalFunctionId = data._id
+  } catch (error) {
+    console.log('Failed to update function metadata', error)
+    return
+  }
+
+  // Deploy Function
+  try {
+    if (!internalFunctionId) throw new Error('Unable to retrive function ID')
+
+    await consoleClient.post(`/api/modules/deploy`, {
+      userFunctionid: internalFunctionId,
+      functionId: functionId,
+      functionName: functionName.replace(/\s+/g, "-"),
     })
-    .catch((error) => {
-      console.log("error publishing function", error);
-    });
-};
+
+    console.log(
+      Chalk.green(
+        `Successfully deployed ${functionName} with id ${functionId}`
+      )
+    )
+  } catch (error) {
+    console.log('Failed to publish function', error)
+    return
+  }
+
+  return
+}
 
 export const run = (options: any) => {
   const {
@@ -73,14 +79,11 @@ export const run = (options: any) => {
     name = basename(resolve(process.cwd())),
     path = process.cwd(),
     rebuild,
-  } = options;
+  } = options
 
   const {
-    bls: { functionId: userFunctionId, manifest },
-  } = require(`${path}/package`);
-
-  //TODO: this is absolutely monstrous and needs sanity applied
-  deploymentOptions.userFunctionId = userFunctionId;
+    bls: { manifest },
+  } = require(`${path}/package`)
 
   runPublish({
     debug,
@@ -89,5 +92,5 @@ export const run = (options: any) => {
     publishCallback: deployFunction,
     rebuild,
     manifest,
-  });
-};
+  })
+}
