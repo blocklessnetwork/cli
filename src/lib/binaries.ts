@@ -9,7 +9,8 @@ import { store } from "../store";
 import { https } from "follow-redirects";
 import fs from "fs";
 
-const BUILD_VERSION = "v0.0.3";
+const RUNTIME_BUILD_VERSION = "v0.0.6";
+const NETWORKING_BUILD_VERSION = "v0.0.7"
 const download = function (url: any, dest: any): Promise<any> {
   return new Promise((resolve, reject) => {
     var file = fs.createWriteStream(dest);
@@ -39,7 +40,7 @@ export const getRuntime = (cb: any) => {
   const arch = store.system.arch === "arm64" ? "aarch64" : "x86_64";
   // https://github.com/txlabs/builds/releases/download/v0.0.1/blockless-runtime.linux-latest.aarch64.tar.gz
   download(
-    `https://github.com/blocklessnetwork/runtime/releases/download/${BUILD_VERSION}/blockless-runtime.${os}-latest.${arch}.tar.gz`,
+    `https://github.com/blocklessnetwork/runtime/releases/download/${RUNTIME_BUILD_VERSION}/blockless-runtime.${os}-latest.${arch}.tar.gz`,
     `/tmp/blockless-runtime.${os}-latest.${arch}.tar.gz`
   ).then(function (result) {
     console.log(`${Chalk.yellow("Installing")} ... unpacking ${result}`);
@@ -60,7 +61,7 @@ export const getNetworking = (cb: any) => {
 
   // https://github.com/txlabs/builds/releases/download/v1.0.8/blockless-txnode-darwin.amd64.tar.gz
   download(
-    `https://github.com/blocklessnetwork/networking/releases/download/${BUILD_VERSION}/blockless-txnode-${os}.${arch}.tar.gz`,
+    `https://github.com/blocklessnetwork/networking/releases/download/${NETWORKING_BUILD_VERSION}/blockless-txnode-${os}.${arch}.tar.gz`,
     `/tmp/blockless-txnode-${os}.${arch}.tar.gz`
   ).then(function (result) {
     console.log(`${Chalk.yellow("Installing")} ... unpacking ${result}`);
@@ -86,7 +87,7 @@ export const getKeygen = (cb: any) => {
   // https://github.com/txlabs/builds/releases/download/v1.0.8/blockless-txnode-darwin.amd64.tar.gz
 
   download(
-    `https://github.com/blocklessnetwork/networking/releases/download/${BUILD_VERSION}/blockless-txkeygen-${os}.${arch}.tar.gz`,
+    `https://github.com/blocklessnetwork/networking/releases/download/${NETWORKING_BUILD_VERSION}/blockless-txkeygen-${os}.${arch}.tar.gz`,
     `/tmp/blockless-txkeygen-${os}.${arch}.tar.gz`
   ).then(function (result) {
     console.log(`${Chalk.yellow("Installing")} ... unpacking ${result}`);
