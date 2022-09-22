@@ -18,6 +18,10 @@ export interface IBlsFunctionConfig {
     nodes: number
   }
 }
+export interface IBlsConfig extends JsonMap {
+  name: string
+  version: string
+}
 
 // WASM interrfaces
 export interface IWasmMethod {

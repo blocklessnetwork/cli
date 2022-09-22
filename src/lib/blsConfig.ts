@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { stringify, parse } from '@iarna/toml'
-import { IBlsFunctionConfig, JsonMap } from '../commands/function/interfaces'
+import { IBlsConfig, IBlsFunctionConfig, JsonMap } from '../commands/function/interfaces'
 
 /**
  * Generate a base BLS function config
@@ -32,9 +32,9 @@ export const generateBaseConfig = (
  * @param fileName 
  * @returns 
  */
-export const parseTomlConfig = (filePath = './', fileName = 'bls.toml'): JsonMap => {
+export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConfig => {
     const configPath = filePath + '/' + fileName
-    return parse(fs.readFileSync(configPath, 'utf-8'))
+    return parse(fs.readFileSync(configPath, 'utf-8')) as IBlsConfig
 }
 
 /**
