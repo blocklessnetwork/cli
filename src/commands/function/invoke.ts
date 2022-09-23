@@ -27,8 +27,32 @@ export const run = (options: any) => {
       manifest.entry = `${path}/build/${manifest.entry}`;
       fs.writeFileSync(`${path}/build/manifest.json`, JSON.stringify(manifest));
 
+      // prepare environment variables
+      // pass environment variables to bls runtime
+      let envString = ''
+
+      if (!!options.env) {
+        let envVars = [] as string[]
+        let envVarsKeys = [] as string[]
+
+        // Validate environment variables
+        const vars = typeof options.env === 'string' ? [options.env] : options.env
+        vars.map((v: string) => {
+          const split = v.split('=')
+          if (split.length !== 2) return
+          
+          envVars.push(v)
+          envVarsKeys.push(split[0])
+        })
+
+        // Include environment string if there are variables
+        if (envVars.length > 0) {
+          envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
+        }
+      }
+
       // pass in stdin to the runtime
-      execSync(`echo "" | ${runtimePath} build/manifest.json`, {
+      execSync(`echo "" | ${envString} ${runtimePath} build/manifest.json`, {
         cwd: path,
         stdio: "inherit",
       });
