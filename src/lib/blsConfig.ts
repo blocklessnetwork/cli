@@ -7,14 +7,15 @@ import { IBlsConfig, IBlsFunctionConfig, JsonMap } from '../commands/function/in
  * 
  */
 interface BaseConfigParams {
+    framework: string
     name: string
     version: string
     isPrivate: boolean
 }
-export const generateBaseConfig = (
-    { name, version, isPrivate }: BaseConfigParams): JsonMap => {
-
-    return {
+export const generateBaseConfig = ({ 
+    framework, name, version, isPrivate 
+}: BaseConfigParams): JsonMap => {
+    const defaultConfig = {
         name,
         version,
 
@@ -22,7 +23,23 @@ export const generateBaseConfig = (
             permission: isPrivate ? 'private' : 'public',
             nodes: 4
         }
+    } as JsonMap
+
+    if (framework === 'assemblyscript') {
+        defaultConfig.build = {
+            path: 'build',
+            entry: `${name}-debug.wasm`,
+            command: 'npm run build:debug'
+        }
+
+        defaultConfig.build_release = {
+            path: 'build',
+            entry: `${name}-release.wasm`,
+            command: 'npm run build:releaase'
+        }
     }
+
+    return defaultConfig
 }
 
 /**
