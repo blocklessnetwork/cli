@@ -22,23 +22,18 @@ export const run = (options: UpdateCommandOptions) => {
   } = parseBlsConfig()
 
   const {
-    debug,
+    debug = true,
     name = configName || basename(resolve(process.cwd())),
     path = process.cwd(),
     rebuild,
   } = options
-
-  const {
-    bls: { manifest },
-  } = require(`${path}/package`)
 
   runPublish({
     debug,
     name,
     path,
     publishCallback: updateFunction,
-    rebuild,
-    manifest,
+    rebuild
   })
 }
 
@@ -97,7 +92,7 @@ const updateFunction = async (data: any) => {
 
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id
   } catch (error) {
-    console.log('Failed to update function metadata', error)
+    console.log('Failed to update function metadata')
     return
   }
 
@@ -122,7 +117,7 @@ const updateFunction = async (data: any) => {
       )
     }
   } catch (error) {
-    console.log('Failed to publish function', error)
+    console.log('Failed to publish function')
     return
   }
 

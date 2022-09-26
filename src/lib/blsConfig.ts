@@ -1,20 +1,21 @@
 import fs from 'fs'
 import { stringify, parse } from '@iarna/toml'
-import { IBlsConfig, IBlsFunctionConfig, JsonMap } from '../commands/function/interfaces'
+import { IBlsConfig, JsonMap } from '../commands/function/interfaces'
 
 /**
  * Generate a base BLS function config
  * 
  */
 interface BaseConfigParams {
+    framework: string
     name: string
     version: string
     isPrivate: boolean
 }
-export const generateBaseConfig = (
-    { name, version, isPrivate }: BaseConfigParams): JsonMap => {
-
-    return {
+export const generateBaseConfig = ({ 
+    framework, name, version, isPrivate 
+}: BaseConfigParams): JsonMap => {
+    const defaultConfig = {
         name,
         version,
 
@@ -22,7 +23,57 @@ export const generateBaseConfig = (
             permission: isPrivate ? 'private' : 'public',
             nodes: 4
         }
+    } as JsonMap
+
+    if (framework === 'assemblyscript') {
+        defaultConfig.build = {
+            dir: 'build',
+            entry: `${name}-debug.wasm`,
+            command: 'npm run build:debug'
+        }
+
+        defaultConfig.build_release = {
+            dir: 'build',
+            entry: `${name}-release.wasm`,
+            command: 'npm run build:release'
+        }
+    } else if (framework === 'rust') {
+        defaultConfig.build = {
+            dir: 'target/wasm32-wasi/debug',
+            entry: `${name}.wasm`,
+            command: 'cargo build --target wasm32-wasi'
+        }
+
+        defaultConfig.build_release = {
+            dir: 'target/wasm32-wasi/release',
+            entry: `${name}.wasm`,
+            command: 'cargo build --target wasm32-wasi --release'
+        }
     }
+
+    return defaultConfig
+}
+
+/**
+ * Helper function to parse a BLS config file
+ * 
+ * @param filePath 
+ * @param fileName 
+ * @returns 
+ */
+export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConfig => {
+    return parseTomlConfig(filePath, fileName) as IBlsConfig
+}
+
+/**
+ * Helper function to save BLS config
+ * 
+ * @param filePath 
+ * @param fileName 
+ * @returns 
+ */
+export const saveBlsConfig = (json: JsonMap, filePath = './', fileName = 'bls.toml') => {
+    return saveTomlConfig(json, filePath, fileName)
 }
 
 /**
@@ -32,9 +83,9 @@ export const generateBaseConfig = (
  * @param fileName 
  * @returns 
  */
-export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConfig => {
+export const parseTomlConfig = (filePath: string, fileName: string): JsonMap => {
     const configPath = filePath + '/' + fileName
-    return parse(fs.readFileSync(configPath, 'utf-8')) as IBlsConfig
+    return parse(fs.readFileSync(configPath, 'utf-8')) as JsonMap
 }
 
 /**
@@ -45,7 +96,7 @@ export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConf
  * @param fileName 
  * @returns 
  */
-export const saveTomlConfig = (json: JsonMap, filePath = './', fileName = 'bls.toml') => {
+export const saveTomlConfig = (json: JsonMap, filePath: string, fileName: string) => {
     const configData = stringify(json)
     const configPath = filePath + '/' + fileName
 

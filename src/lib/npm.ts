@@ -21,6 +21,13 @@ export const getNpmInstallationStatus = (): boolean => {
 }
 
 /**
+ * Parse NPM config version to string
+ */
+export const parseNpmConfigVersion =
+  (input: string) =>
+    input.replace('version', '').trim()
+
+/**
  * Handle NPM installation
  * 
  */

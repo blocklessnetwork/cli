@@ -20,10 +20,3 @@ export const slugify = (...args: (string | number)[]): string => {
         .replace(/[^a-z0-9 _]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
         .replace(/\s+/g, '-') // separator
 }
-
-/**
- * Parse NPM config version to string
- */
-export const parseNpmConfigVersion = 
-    (input: string) => 
-    input.replace('version', '').trim()
