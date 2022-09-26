@@ -8,6 +8,7 @@ import { run as runBuild } from "./build";
 import { createWasmArchive, getBuildDir } from "./shared";
 import { basename, resolve } from "path";
 import { getWASMRepoServer } from "../../lib/urls";
+import { parseBlsConfig } from "../../lib/blsConfig"
 
 const deploymentOptions: IDeploymentOptions = {
   functionId: "",
@@ -42,7 +43,7 @@ export const publishFunction = async (
       }
     })
     .catch((error) => {
-      console.log("error publishing function", error);
+      console.log(`${Chalk.red('Error:')} failed to publish function ${archiveName}`);
     });
 };
 
@@ -52,28 +53,27 @@ const logResult = (data: any) => {
 };
 export const run = (options: any) => {
   const {
-    debug,
-    name = basename(resolve(process.cwd())),
+    debug = true,
     path = process.cwd(),
     publishCallback = logResult,
     rebuild,
   } = options;
-  const buildDir = getBuildDir(path);
-  const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
-  const wasmArchive = `${name}.tar.gz`;
-  const pkg = require(`${path}/package`);
-  const {
-    bls: { functionId: userFunctionId },
-  } = pkg;
+  
+  // Fetch BLS config
+  const { name, build, build_release } = parseBlsConfig()
+  const buildConfig = !debug ? build_release : build
+  const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
+  const buildDir = resolve(path, buildConfig.dir || 'build')
+  const wasmArchive = `${buildName}.tar.gz`
 
-  //TODO: this is absolutely monstrous and needssanity appplied
-  deploymentOptions.userFunctionId = userFunctionId;
-  runBuild({ debug, name, path, rebuild, manifest: pkg?.bls?.manifest });
+  // Run the build command
+  runBuild({ debug, path, rebuild });
 
-  console.log(Chalk.yellow(`Publishing function located in ${buildDir}`));
+  console.log(`${Chalk.yellow('Publishing:')} function located in ${buildDir}`);
+
   publishFunction(
-    readFileSync(`${buildDir}/manifest.json`),
-    readFileSync(`${buildDir}/${wasmArchive}`),
+    readFileSync(resolve(buildDir, 'manifest.json')),
+    readFileSync(resolve(buildDir, wasmArchive)),
     wasmArchive,
     publishCallback
   );

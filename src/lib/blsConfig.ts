@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { stringify, parse } from '@iarna/toml'
-import { IBlsConfig, IBlsFunctionConfig, JsonMap } from '../commands/function/interfaces'
+import { IBlsConfig, JsonMap } from '../commands/function/interfaces'
 
 /**
  * Generate a base BLS function config
@@ -27,15 +27,27 @@ export const generateBaseConfig = ({
 
     if (framework === 'assemblyscript') {
         defaultConfig.build = {
-            path: 'build',
+            dir: 'build',
             entry: `${name}-debug.wasm`,
             command: 'npm run build:debug'
         }
 
         defaultConfig.build_release = {
-            path: 'build',
+            dir: 'build',
             entry: `${name}-release.wasm`,
-            command: 'npm run build:releaase'
+            command: 'npm run build:release'
+        }
+    } else if (framework === 'rust') {
+        defaultConfig.build = {
+            dir: 'target/wasm32-wasi/debug',
+            entry: `${name}.wasm`,
+            command: 'cargo build --target wasm32-wasi'
+        }
+
+        defaultConfig.build_release = {
+            dir: 'target/wasm32-wasi/release',
+            entry: `${name}.wasm`,
+            command: 'cargo build --target wasm32-wasi --release'
         }
     }
 

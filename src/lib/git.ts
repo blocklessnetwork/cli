@@ -29,6 +29,7 @@ export async function cleanGitRepository(destination = '.'): Promise<boolean> {
     try {
         await exec(`cd ${destination}; rm -rf .git`)
         await exec(`cd ${destination}; rm -rf .github`)
+        await exec(`cd ${destination}; rm -rf manifest.json`)
         
         return true
     } catch (error) {

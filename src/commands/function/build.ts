@@ -1,94 +1,65 @@
-import { existsSync, writeFileSync } from "fs";
-import Chalk from "chalk";
-import { execSync } from "child_process";
-import { IManifest } from "./interfaces";
-import { createWasmArchive, getBuildDir } from "./shared";
-import { basename } from "path";
-import fs from "fs";
-import crypto from "crypto";
+import fs from "fs"
+import Chalk from 'chalk'
+import { resolve } from "path"
+import { writeFileSync } from "fs"
+import { buildWasm, createWasmArchive, createWasmManifest } from "./shared"
+import { parseBlsConfig } from "../../lib/blsConfig"
+import { generateChecksum } from "../../lib/crypto"
 
-const createManifest = (
-  buildDir: string,
-  entry: string,
-  url: string,
-  manifestOverride: any
-): IManifest => {
-  const name = entry.split(".")[0];
-  const manifest: IManifest = {
-    id: "",
-    name,
-    hooks: [],
-    description: "",
-    fs_root_path: "./",
-    entry,
-    runtime: {
-      checksum: "",
-      url,
-    },
-    contentType: "json",
-    methods: [],
-    ...manifestOverride,
-  };
-  return manifest;
-};
-
+/**
+ * Execute the `build` command line operation
+ * 
+ * @param options 
+ * @returns void
+ */
 export const run = (options: {
-  debug: boolean;
-  name: string;
-  path: string;
-  rebuild: boolean;
-  manifest?: any;
+  path: string
+  debug: boolean
+  rebuild: boolean
 }) => {
   const {
-    debug = false,
-    name = basename(process.cwd()),
+    debug = true,
     path = process.cwd(),
-    rebuild = false,
-    manifest = {},
-  } = options;
-  // check for and store unmodified wasm file name to change later
-  const defaultWasm = debug ? "debug.wasm" : "release.wasm";
-  const buildDir = `${path}/build`;
-  const wasmName = `${name}${debug ? "-debug" : ""}.wasm`;
-  const wasmArchive = `${name}.tar.gz`;
+    rebuild = false
+  } = options
 
-  const wasmManifest = createManifest(
+  // Fetch BLS config
+  const { name, build, build_release } = parseBlsConfig()
+
+  // check for and store unmodified wasm file name to change later
+  const buildConfig = !debug ? build_release : build
+  const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
+  const buildDir = resolve(path, buildConfig.dir || 'build')
+  const wasmName = buildConfig.entry || `${name}.wasm`
+  const wasmArchive = `${buildName}.tar.gz`
+
+  // Rebuild function if requested or 
+  if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild)
+    buildWasm(wasmName, buildDir, path, buildConfig, debug)
+
+  // Generate a default WASM manifest
+  const wasmManifest = createWasmManifest(
     buildDir,
     wasmName,
-    wasmArchive,
-    manifest
-  );
+    wasmArchive
+  )
 
-  const renameWasm = (path: string, oldName: string, newName: string) => {
-    execSync(`mv ${oldName} ${newName}`, { cwd: path, stdio: "inherit" });
-  };
+  // Create a WASM archive
+  const archive = createWasmArchive(buildDir, wasmArchive, wasmName)
+  const checksum = generateChecksum(archive)
 
-  const build = () => {
-    console.log(Chalk.green(`Building function ${name} in ${buildDir}...`));
-    execSync(`npm i; npm run build:${debug ? "debug" : "release"};`, {
-      cwd: path,
-      stdio: "inherit",
-    });
-
-    if (existsSync(`${buildDir}/${defaultWasm}`)) {
-      renameWasm(buildDir, defaultWasm, wasmName);
-    }
-  };
-
-  try {
-    if (!fs.existsSync(`${buildDir}/${wasmName}`) || rebuild) build();
-  } catch (err) {
-    build();
-  }
-
-  const archive = createWasmArchive(buildDir, wasmArchive, wasmName);
-  const hash = crypto.createHash("md5").update(archive).digest("hex");
-  wasmManifest.runtime.checksum = hash;
+  // Include WASM checksum and entrypoint
+  wasmManifest.runtime.checksum = checksum
   wasmManifest.methods?.push({
     name: wasmName.split(".")[0],
     entry: wasmName,
     result_type: "string",
-  });
+  })
 
-  writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest));
-};
+  // Store manifest
+  writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
+
+  // Show success message
+  console.log(`${Chalk.green('Build Successful!')}`)
+  console.log('')
+}
