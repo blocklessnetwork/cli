@@ -5,9 +5,10 @@ import { execSync } from "child_process"
 import { getNpmConfigInitVersion, getNpmInstallationStatus, handleNpmInstallation, parseNpmConfigVersion } from "../../lib/npm"
 import { slugify } from "../../lib/strings"
 import { randomName } from "../../lib/randomName"
-import { generateBaseConfig, saveTomlConfig } from "../../lib/blsConfig"
+import { generateBaseConfig, parseTomlConfig, saveBlsConfig, saveTomlConfig } from "../../lib/blsConfig"
 import promptFnInit from '../../prompts/function/init'
 import { downloadRepository } from '../../lib/git'
+import { JsonMap } from './interfaces'
 
 /**
  * Execute the `init` command line operation
@@ -62,7 +63,7 @@ export const run = async (options: any) => {
 
     try {
       // Create bls.toml configuration file
-      saveTomlConfig(generateBaseConfig({
+      saveBlsConfig(generateBaseConfig({
         framework,
         name: sanitizedName,
         version: parseNpmConfigVersion(version),
@@ -82,7 +83,15 @@ export const run = async (options: any) => {
           execSync(`cd ${installationPath}; npm install`, { stdio: 'ignore' })
           break
 
-        // TODO: finalize installation for Rust and Go
+        case 'rust':
+          try {
+            const cargoConfig = parseTomlConfig(installationPath, 'Cargo.toml')
+            if (cargoConfig.package) (cargoConfig.package as JsonMap).name = sanitizedName
+            saveTomlConfig(cargoConfig, installationPath, 'Cargo.toml')
+            execSync(`cd ${installationPath}; cargo update`, { stdio: 'ignore' })
+          } catch (error) {
+            console.log(`${Chalk.red('Error:')} failed to configure Rust function`)
+          }
       }
     } catch (error) {
       console.log('Failed to finalize function setup, please try again.')

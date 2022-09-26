@@ -55,15 +55,37 @@ export const generateBaseConfig = ({
 }
 
 /**
- * Helper function to parse a TOML config file
+ * Helper function to parse a BLS config file
  * 
  * @param filePath 
  * @param fileName 
  * @returns 
  */
 export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConfig => {
+    return parseTomlConfig(filePath, fileName) as IBlsConfig
+}
+
+/**
+ * Helper function to save BLS config
+ * 
+ * @param filePath 
+ * @param fileName 
+ * @returns 
+ */
+export const saveBlsConfig = (json: JsonMap, filePath = './', fileName = 'bls.toml') => {
+    return saveTomlConfig(json, filePath, fileName)
+}
+
+/**
+ * Helper function to parse a TOML config file
+ * 
+ * @param filePath 
+ * @param fileName 
+ * @returns 
+ */
+export const parseTomlConfig = (filePath: string, fileName: string): JsonMap => {
     const configPath = filePath + '/' + fileName
-    return parse(fs.readFileSync(configPath, 'utf-8')) as IBlsConfig
+    return parse(fs.readFileSync(configPath, 'utf-8')) as JsonMap
 }
 
 /**
@@ -74,7 +96,7 @@ export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConf
  * @param fileName 
  * @returns 
  */
-export const saveTomlConfig = (json: JsonMap, filePath = './', fileName = 'bls.toml') => {
+export const saveTomlConfig = (json: JsonMap, filePath: string, fileName: string) => {
     const configData = stringify(json)
     const configPath = filePath + '/' + fileName
 
