@@ -59,7 +59,7 @@ export const run = (options: any) => {
       }
 
       // pass in stdin to the runtime
-      execSync(`echo "" | ${envString} ${runtimePath} build/manifest.json`, {
+      execSync(`echo "" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path,
         stdio: "inherit",
       });
