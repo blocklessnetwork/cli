@@ -21,6 +21,15 @@ export interface IBlsFunctionConfig {
 export interface IBlsConfig extends JsonMap {
   name: string
   version: string
+
+  build: IBlsBuildConfig
+  build_release: IBlsBuildConfig
+}
+
+export interface IBlsBuildConfig extends JsonMap {
+  command: string
+  dir: string
+  entry: string
 }
 
 // WASM interrfaces
