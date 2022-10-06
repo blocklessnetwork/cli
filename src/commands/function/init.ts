@@ -9,6 +9,7 @@ import { generateBaseConfig, parseTomlConfig, saveBlsConfig, saveTomlConfig } fr
 import promptFnInit from '../../prompts/function/init'
 import { downloadRepository } from '../../lib/git'
 import { JsonMap } from './interfaces'
+import { getCargoInstallationStatus, handleCargoInstallation } from '../../lib/cargo'
 
 /**
  * Execute the `init` command line operation
@@ -24,7 +25,10 @@ export const run = async (options: any) => {
   } = options
 
   try {
-    const { name: functionName, framework, template } = await promptFnInit({ name })
+    const prompts = await promptFnInit({ name })
+    if (!prompts) return
+
+    const { name: functionName, framework, template } = prompts
 
     if (!!functionName) name = functionName
     const sanitizedName = slugify(name)
@@ -42,13 +46,22 @@ export const run = async (options: any) => {
     }
 
     // Validate installation environment
+    let isValidated = !!functionName && !!framework && !!template
+    
     switch (framework) {
       case 'assemblyscript':
         // Check whether NPM is installed
-        if (!getNpmInstallationStatus()) await handleNpmInstallation()
+        if (!getNpmInstallationStatus()) isValidated = await handleNpmInstallation()
         break;
 
-        // TODO: validate installation environment for Rust and Go
+      case 'rust':
+        // Check whether Cargo/Rust is installed
+        if (!getCargoInstallationStatus()) isValidated = await handleCargoInstallation()
+        break
+    }
+
+    if (!isValidated) {
+      return
     }
 
     console.log(`${Chalk.yellow("Creating:")} new function in ${Chalk.blue(installationPath)}`)
