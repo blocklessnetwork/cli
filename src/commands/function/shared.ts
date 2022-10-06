@@ -92,6 +92,7 @@ export const createWasmManifest = (
     },
     contentType: "json",
     methods: [],
+    permissions: [],
     ...manifestOverride,
   }
 

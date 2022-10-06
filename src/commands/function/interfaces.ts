@@ -39,6 +39,10 @@ export interface IWasmMethod {
   result_type: string;
 }
 
+export interface IWasmPermission {
+  
+}
+
 export interface IManifest {
   id: string;
   name: string;
@@ -56,6 +60,7 @@ export interface IManifest {
   contentType?: "json" | "html" | "text";
   resources?: string[];
   methods?: IWasmMethod[];
+  permissions?: IWasmPermission[];
 }
 
 export interface IDeploymentOptions {
