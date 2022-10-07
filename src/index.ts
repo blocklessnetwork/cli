@@ -44,6 +44,11 @@ args
       description:
         "Assume yes to all prompts. This will skip all prompts and use default values",
     },
+    {
+      name: "env",
+      description:
+        "For functions, includes environment variables. Eg. --env MY_ENV_VAR=value",
+    },
   ])
   .command(
     "components",
