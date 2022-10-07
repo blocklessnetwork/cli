@@ -31,44 +31,48 @@ const templates = {
     ]
 }
 
-const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployOutput> => {
-    const inputResponse = await prompts(
-        [
-            {
-                type: 'text',
-                name: 'name',
-                message: `What would you like to name your function?`,
-                initial: options.name as string
-            },
-            {
-                type: 'select',
-                name: 'framework',
-                message: 'Pick a framework',
-                choices: [
-                    { title: 'Assembly Script', value: EBlsFramework.ASSEMBLY_SCRIPT },
-                    { title: 'Rust', value: EBlsFramework.RUST },
-                    { title: 'Golang', value: EBlsFramework.GOLANG }
-                ],
-                initial: 0
-            }
-        ]
-    )
+const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployOutput | null> => {
+    try {
+        const inputResponse = await prompts(
+            [
+                {
+                    type: 'text',
+                    name: 'name',
+                    message: `What would you like to name your function?`,
+                    initial: options.name as string
+                },
+                {
+                    type: 'select',
+                    name: 'framework',
+                    message: 'Pick a framework',
+                    choices: [
+                        { title: 'Assembly Script', value: EBlsFramework.ASSEMBLY_SCRIPT },
+                        { title: 'Rust', value: EBlsFramework.RUST },
+                        { title: 'Golang', value: EBlsFramework.GOLANG }
+                    ],
+                    initial: 0
+                }
+            ]
+        )
 
-    const templateResponse = await prompts(
-        [
-            {
-                type: 'select',
-                name: 'template',
-                message: 'Pick a starter template',
-                choices: templates[inputResponse.framework as EBlsFramework],
-                initial: 1
-            }
-        ]
-    )
+        const templateResponse = await prompts(
+            [
+                {
+                    type: 'select',
+                    name: 'template',
+                    message: 'Pick a starter template',
+                    choices: templates[inputResponse.framework as EBlsFramework],
+                    initial: 1
+                }
+            ]
+        )
 
-    return {
-        ...inputResponse,
-        ...templateResponse
+        return {
+            ...inputResponse,
+            ...templateResponse
+        }
+    } catch (error) {
+        return null
     }
 }
 
