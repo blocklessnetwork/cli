@@ -1,34 +1,21 @@
-import axios from "axios";
-import Table from "cli-table";
-import { getToken } from "../../store/db";
-import { getConsoleServer } from "../../lib/urls";
+import Table from "cli-table"
+import { consoleClient } from "../../lib/http"
 
-export const run = (options: any) => {
-  const token = getToken();
-  const serverHost = getConsoleServer();
-  axios
-    .post(
-      `${serverHost}/api/modules/mine`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then((res) => {
-      // instantiate
-      var table = new Table({
-        head: ["Name", "CID", "Status"],
-      });
+export const run = async () => {
+  try {
+    const { data } = await consoleClient.post(`/api/modules/mine`, {})
 
-      res.data &&
-        res.data.forEach &&
-        res.data.forEach((f: any) => {
-          table.push([f.functionName, f.functionId, f.status]);
-        });
+    var table = new Table({
+      head: ["Name", "CID", "Status"],
+    })
 
-      console.log(table.toString());
-    });
-};
+    data && data.forEach && data.forEach((f: any) => {
+      table.push([f.functionName, f.functionId, f.status])
+    })
+
+    console.log(table.toString())
+  } catch (error) {
+    console.log('Failed to retrieve function list')
+    return
+  }
+}
