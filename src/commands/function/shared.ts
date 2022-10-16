@@ -46,8 +46,24 @@ export const buildWasm = (
   debug: boolean) => {
   console.log(`${Chalk.yellow(`Building:`)} function ${wasmName} in ${buildDir}...`)
 
-  // Execute build command
   if (buildConfig.command) {
+    try {
+      // Identify package manager
+      const packageManager = buildConfig.command.split(" ", 2)[0]
+
+      // Run install command
+      switch (packageManager) {
+        case 'npm':
+          execSync(`npm install`, { cwd: path, stdio: 'ignore' })
+          break
+
+        case 'cargo':
+          execSync(`cargo update`, { cwd: path, stdio: 'ignore' })
+          break
+      }
+    } catch {}
+
+    // Run build command
     execSync(buildConfig.command, {
       cwd: path,
       stdio: "inherit",
