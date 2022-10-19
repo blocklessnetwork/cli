@@ -14,6 +14,7 @@ import {
   runBuild,
 } from "./commands/function";
 import { run as runLogin } from "./commands/login";
+import { run as runSelfUpdate } from "./commands/self-update";
 
 import { printHelp } from "./lib/help";
 import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
@@ -159,6 +160,18 @@ args
       didRun = true;
       const method = (wallet as any)[`removeWallet`];
       if (method) await method(options);
+    }
+  )
+
+  // self update bls cli
+  .command(
+    "self-update",
+    "Self update Blockless CLI",
+    async (name: string, sub: string[]) => {
+      didRun = true
+      const version = !!sub && sub.length > 0 ? sub[0] : 'latest'
+      runSelfUpdate({ version })
+      return
     }
   );
 
