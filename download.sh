@@ -129,7 +129,7 @@ function install {
 	chmod +x $TMP_BIN || fail "chmod +x failed"
 	
 	mv $TMP_BIN $OUT_DIR/$PROG || fail "mv failed" #FINAL STEP!
-	echo "Installed bls $VERSION at $OUT_DIR/$PROG"
+	echo "Installed $PROG $VERSION at $OUT_DIR/$PROG"
 	#done
 	cleanup
 }
