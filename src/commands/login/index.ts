@@ -1,3 +1,4 @@
+import open from 'open'
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
 import { getConsoleServer } from "../../lib/urls";
@@ -86,7 +87,7 @@ fastify.get("/complete", async (request: any, reply: any) => {
     </body>
   </html>`;
   reply.header("Content-Type", "text/html").send(html);
-  setTimeout(() => process.exit(1), 2000);
+  setTimeout(() => process.exit(0), 2000);
 });
 
 // run the server
@@ -110,8 +111,12 @@ const start = async () => {
       );
     });
 
-    fastify.listen({ port }).then(() => {
+    fastify.listen({ port }).then(async () => {
       console.log(`Open Browser at http://0.0.0.0:${port} to complete login`);
+      
+      try {
+        await open(`http://0.0.0.0:${port}`)
+      } catch {}
     });
   } catch (err) {
     fastify.log.error(err);
