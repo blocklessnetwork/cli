@@ -1,5 +1,5 @@
 #!/bin/bash
-TMP_DIR="/tmp/tmpinstalldir"
+TMP_DIR="/tmp/blstmpdir"
 function cleanup {
 	echo rm -rf $TMP_DIR > /dev/null
 }
@@ -65,7 +65,8 @@ function install {
 	#choose from asset list
 	URL=""
 	FTYPE=""
-	VERSION="latest"
+	DEFAULT_VERSION="latest"
+	VERSION=${1:-$DEFAULT_VERSION}
 	case "${OS}_${ARCH}" in
 	"darwin_amd64")
 		URL="https://github.com/BlocklessNetwork/cli/releases/download/${VERSION}/bls-macos-x64-blockless-cli.tar.gz"
@@ -86,7 +87,7 @@ function install {
 	*) fail "No asset for platform ${OS}-${ARCH}";;
 	esac
 	#got URL! download it...
-	echo -n "Installing $PROG $RELEASE"
+	echo -n "Installing $PROG $VERSION"
 	
 	echo "....."
 	
@@ -128,8 +129,8 @@ function install {
 	chmod +x $TMP_BIN || fail "chmod +x failed"
 	
 	mv $TMP_BIN $OUT_DIR/$PROG || fail "mv failed" #FINAL STEP!
-	echo "Installed at $OUT_DIR/$PROG"
+	echo "Installed $PROG $VERSION at $OUT_DIR/$PROG"
 	#done
 	cleanup
 }
-install
+install $1
