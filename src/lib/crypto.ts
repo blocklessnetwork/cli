@@ -1,9 +1,9 @@
-import crypto from "crypto"
+import crypto from "crypto";
 
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 export const generateChecksum = (archive: Buffer): string => {
-    return crypto.createHash("md5").update(archive).digest("hex")
-}
+  return crypto.createHash("sha256").update(archive).digest("hex");
+};
