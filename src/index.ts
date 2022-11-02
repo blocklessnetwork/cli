@@ -120,7 +120,7 @@ args
       }
 
       if (subs[sub[0]]) {
-        subs[sub[0]](options);
+        subs[sub[0]](options, sub);
       }
     }
   )
