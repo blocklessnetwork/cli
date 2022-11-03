@@ -24,10 +24,11 @@ export const run = (options: {
   } = options
 
   // Fetch BLS config
-  const { name, build, build_release } = parseBlsConfig()
+  const { name, deployment, build, build_release } = parseBlsConfig()
 
   // check for and store unmodified wasm file name to change later
   const buildConfig = !debug ? build_release : build
+  const deployConfig = deployment
   const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
   const buildDir = resolve(path, buildConfig.dir || 'build')
   const wasmName = buildConfig.entry || `${name}.wasm`
@@ -55,6 +56,10 @@ export const run = (options: {
     entry: wasmName,
     result_type: "string",
   })
+
+  if (deployConfig) {
+    wasmManifest.permissions = deployConfig.permissions || []
+  }
 
   // Store manifest
   writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))

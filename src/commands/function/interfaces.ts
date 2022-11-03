@@ -22,6 +22,7 @@ export interface IBlsConfig extends JsonMap {
   name: string
   version: string
 
+  deployment: IBlsDeployConfig
   build: IBlsBuildConfig
   build_release: IBlsBuildConfig
 }
@@ -30,6 +31,11 @@ export interface IBlsBuildConfig extends JsonMap {
   command: string
   dir: string
   entry: string
+}
+
+export interface IBlsDeployConfig extends JsonMap {
+  nodes: number
+  permissions: string[]
 }
 
 // WASM interrfaces
@@ -56,6 +62,7 @@ export interface IManifest {
   contentType?: "json" | "html" | "text";
   resources?: string[];
   methods?: IWasmMethod[];
+  permissions?: string[];
 }
 
 export interface IDeploymentOptions {
