@@ -2,14 +2,13 @@ import fs from "fs";
 import { store } from "../../store";
 import { execSync } from "child_process";
 import { run as runBuild } from "./build";
-import { basename, resolve } from "path";
+import { resolve } from "path";
 import { parseBlsConfig } from "../../lib/blsConfig"
 
-export const run = (options: any) => {
+export const run = (options: any, sub: string[]) => {
   const {
     systemPath = `${store.system.homedir}/.bls/`,
     cwd: path = process.cwd(),
-    name = basename(resolve(process.cwd())),
     debug = true,
     rebuild = true,
   } = options;
@@ -37,6 +36,7 @@ export const run = (options: any) => {
       // prepare environment variables
       // pass environment variables to bls runtime
       let envString = ''
+      let stdinString = ''
 
       if (!!options.env) {
         let envVars = [] as string[]
@@ -56,10 +56,16 @@ export const run = (options: any) => {
         if (envVars.length > 0) {
           envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
         }
+
+        // Include stdin commands
+        if (sub.length > 1) {
+          sub.shift()
+          stdinString = sub.join(' ')
+        }
       }
 
       // pass in stdin to the runtime
-      execSync(`echo "" | ${envString} ${runtimePath} ${manifestPath}`, {
+      execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path,
         stdio: "inherit",
       });
