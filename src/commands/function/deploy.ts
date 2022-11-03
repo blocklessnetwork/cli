@@ -10,6 +10,7 @@ interface DeployCommandOptions {
   path?: string
   rebuild?: boolean
   debug?: boolean
+  yes?: boolean
 }
 
 /**
@@ -27,14 +28,15 @@ export const run = (options: DeployCommandOptions) => {
     name = configName || basename(resolve(process.cwd())),
     path = process.cwd(),
     rebuild = true,
+    yes = false
   } = options
 
   runPublish({
     debug,
     name,
     path,
-    publishCallback: deployFunction,
-    rebuild
+    publishCallback: (data: any) => deployFunction(data, options),
+    rebuild,
   })
 }
 
@@ -50,7 +52,7 @@ export const run = (options: DeployCommandOptions) => {
  * @param data 
  * @returns 
  */
-const deployFunction = async (data: any) => {
+const deployFunction = async (data: any, options: DeployCommandOptions) => {
   const { cid: functionId, name: functionName } = data
   let matchingFunction = null
   let internalFunctionId = null
@@ -68,7 +70,7 @@ const deployFunction = async (data: any) => {
     }
 
     // If a function exists and has been deployed, request a user's confirmation
-    if (matchingFunction && matchingFunction.status === 'deployed') {
+    if (matchingFunction && matchingFunction.status === 'deployed' && !options.yes) {
       const { confirm } = await promptFnDeploy({ name: matchingFunction.functionName })
 
       if (!confirm) {
