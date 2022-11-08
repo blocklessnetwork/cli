@@ -12,22 +12,15 @@ interface PromptDeployOutput {
 
 enum EBlsFramework {
     RUST = 'rust',
-    ASSEMBLY_SCRIPT = 'assemblyscript',
-    GOLANG = 'golang'
+    ASSEMBLY_SCRIPT = 'assemblyscript'
 }
 
 const templates = {
     [EBlsFramework.ASSEMBLY_SCRIPT]: [
-        { title: 'None', value: 'https://github.com/blocklessnetwork/template-assemblyscript-default' },
         { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-assemblyscript-hello-world' }
     ],
     [EBlsFramework.RUST]: [
-        { title: 'None', value: 'https://github.com/blocklessnetwork/template-rust-default' },
         { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-rust-hello-world' }
-    ],
-    [EBlsFramework.GOLANG]: [
-        { title: 'None', value: 'https://github.com/blocklessnetwork/template-golang-default' },
-        { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-golang-hello-world' }
     ]
 }
 
@@ -47,8 +40,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     message: 'Pick a framework',
                     choices: [
                         { title: 'Assembly Script', value: EBlsFramework.ASSEMBLY_SCRIPT },
-                        { title: 'Rust', value: EBlsFramework.RUST },
-                        { title: 'Golang', value: EBlsFramework.GOLANG }
+                        { title: 'Rust', value: EBlsFramework.RUST }
                     ],
                     initial: 0
                 }
@@ -62,7 +54,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     name: 'template',
                     message: 'Pick a starter template',
                     choices: templates[inputResponse.framework as EBlsFramework],
-                    initial: 1
+                    initial: 0
                 }
             ]
         )
