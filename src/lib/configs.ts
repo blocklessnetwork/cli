@@ -2,57 +2,54 @@ import yaml from "js-yaml";
 import fs from "fs";
 import { store } from "../store";
 
-export const coordinatorConfig = `
+export const headConfig = `
 node:
-  name: coordinator#1
+  name: head#1
   ip: 0.0.0.0
   port: 9527
-  rendezvous: txmesh/node
-  boot_nodes:
+  key_path: KEY_PATH
   use_static_keys: true
-  conf_path: .
+  workspace_root: /tmp/head
+  runtime_path: /tmp/runtime
+rest:
+  ip: 0.0.0.0
+  port: 8081
 protocol:
-  role: coordinator
-  seed: 0
-  protocol_id: /p2p/rpc/coordinator
-  peer_protocol_id: /p2p/rpc/worker
+  role: head
 logging:
   file_path: stdout
   level: info
-rest:
-  addr: :8080
-ui:
-  coordinator_addr: :8081
 repository:
   url: https://wasi.bls.dev/api/sync
-stake:
-  disabled: true
+chain:
+  address_key: "alice"
+  rpc: "https://edgenet.bls.dev:26657"
 `;
 
-export const coordinatorConfigJSON = yaml.load(coordinatorConfig);
+export const headConfigJSON = yaml.load(headConfig);
 
 export const workerConfig = `
 node:
-  name: worker\${id}
+  name: worker#1
   ip: 0.0.0.0
   port: 0
-  rendezvous: txmesh/node
   boot_nodes:
-  coordinator_address: 127.0.0.1
-  coordinator_port: 9527
-  coordinator_id: co_id
-  workspace_root: /tmp/txmesh/functions
-  conf_path: .
+    - /ip4/159.89.90.90/tcp/30330/p2p/12D3KooWKTKwW1y6iRoGeag1y2wpNYV9UM8QaYXaTL7DUTZdEFw6
+  workspace_root: /tmp/worker
+  runtime_path: /tmp/runtime
+rest:
+  ip: 0.0.0.0
+  port: 8081
 protocol:
   role: worker
-  seed: 0
-  protocol_id: /p2p/rpc/worker
-  peer_protocol_id: /p2p/rpc/coordinator
 logging:
   file_path: stdout
   level: info
 repository:
   url: https://wasi.bls.dev/api/sync
+chain:
+  address_key: "alice"
+  rpc: "https://edgenet.bls.dev:26657"
 `;
 
 export const workerConfigJSON = yaml.load(workerConfig);

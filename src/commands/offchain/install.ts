@@ -1,14 +1,12 @@
 import Chalk from "chalk";
-import fs from "fs";
-import { getRuntime, getKeygen, getNetworking } from "../../lib/binaries";
+import { getRuntime, getNetworking } from "../../lib/binaries";
 import { generateKey } from "../../lib/keygen";
 import {
-  coordinatorConfigJSON,
+  headConfigJSON,
   saveConfig,
   workerConfigJSON,
 } from "../../lib/configs";
 import { store, get as storeGet, set as storeSet } from "../../store";
-import { activateRuntime } from "../../lib/runtime";
 import prompt from "prompt";
 
 prompt.start();
@@ -43,27 +41,26 @@ const install = function () {
       console.log(
         `${Chalk.yellow("Installing")} ... downloading keygen identity tool`
       );
-      getKeygen(() => {
-        console.log(`${Chalk.green("Installing")} ... done`);
-        generateKey();
-        const identity = fs.readFileSync(
-          `${store.system.homedir}/.bls/network/keys/identity`,
-          { encoding: "utf8", flag: "r" }
-        );
-        (workerConfigJSON as any).node.coordinator_id = identity;
-        saveConfig(workerConfigJSON, "worker");
-        saveConfig(coordinatorConfigJSON, "coordinator");
-        console.log("");
+      
+      console.log(`${Chalk.green("Installing")} ... done`);
+      generateKey();
 
-        activateRuntime();
-        // console.log(
-        //   `use the command ${Chalk.blue(
-        //     "bls offchain start"
-        //   )} to start the agent`
-        // );
+      (headConfigJSON as any).node.key_path = `${store.system.homedir}/.bls/network/keys/priv.bin`
+      saveConfig(headConfigJSON, "head-config");
+      saveConfig(workerConfigJSON, "worker-config");
 
-        process.exit(0);
-      });
+      console.log(
+        `${Chalk.green("Generating")} ... done`
+      );
+
+      console.log('')
+      console.log(`Use the following commands to start blockless daemon:`);
+      console.log('')
+      console.log(`\t ${Chalk.blue("bls components start head")} to start the head agent`);
+      console.log(`\t ${Chalk.blue("bls components start worker")} to start the worker agent`);
+      console.log('')
+
+      process.exit(0);
     });
   });
 };

@@ -57,7 +57,11 @@ args
     async (name: string, sub: string[], options: any) => {
       didRun = true;
       if (!sub[0] || sub[0] === "help") {
-        printHelp([["install", "install the off-chain agent"]], null, { pkg });
+        printHelp([
+          ["install\t", "install the off-chain agent"],
+          ["start\t", "start the off-chain agent"]
+        ], null, { pkg });
+        
         return;
       }
       switch (sub[0]) {
@@ -65,7 +69,7 @@ args
           runInstall(options);
           break;
         case "start":
-          runStart(options);
+          runStart(options, sub);
           break;
       }
     }
