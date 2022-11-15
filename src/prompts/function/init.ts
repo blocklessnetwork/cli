@@ -17,7 +17,8 @@ enum EBlsFramework {
 
 const templates = {
     [EBlsFramework.ASSEMBLY_SCRIPT]: [
-        { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-assemblyscript-hello-world' }
+        { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-assemblyscript-hello-world' },
+        { title: 'Price Oracle', value: 'https://github.com/blocklessnetwork/template-assemblyscript-price-oracle' }
     ],
     [EBlsFramework.RUST]: [
         { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-rust-hello-world' }
