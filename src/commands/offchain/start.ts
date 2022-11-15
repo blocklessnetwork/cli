@@ -2,17 +2,30 @@ import Chalk from "chalk";
 import { store, get as storeGet, set as storeSet } from "../../store";
 import { execSync } from "child_process";
 
-export const run = (options: any) => {
-  const os =
-    store.system.platform === "win32" ? "windows" : store.system.platform;
+export const run = (options: any, sub: string[]) => {
+  let config = './head-config.yaml'
+  let type = 'head'
 
-  const arch = store.system.arch;
-
-  console.log(`${Chalk.yellow("Off-Chain")} ... starting coordinator node`);
-  execSync(
-    `cd ${store.system.homedir}/.bls/network; ./txnode-${os}-${arch} -c ${store.system.homedir}/.bls/network/coordinator.yaml & ./txnode-${os}-${arch} -c ${store.system.homedir}/.bls/network/worker.yaml`,
-    {
-      stdio: "inherit",
+  if (sub.length > 1 && sub[1]) {
+    switch (sub[1]) {
+      case 'worker':
+        type = 'worker'
+        config = './worker-config.yaml'
+        break;
     }
-  );
+  }
+
+  console.log(`${Chalk.yellow("Off-Chain")} ... starting ${type} node`);
+
+  try {
+    execSync(
+      `cd ${store.system.homedir}/.bls/network; ./b7s --config=${config}`,
+      {
+        stdio: "inherit",
+      }
+    );
+    process.exit(0)
+  } catch (error) {
+    process.exit(0)
+  }
 };

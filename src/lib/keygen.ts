@@ -14,7 +14,7 @@ export const generateKey = () => {
     }/.bls/network/keys`
   );
   execSync(
-    `mkdir -p ${store.system.homedir}/.bls/network/keys; cd ${store.system.homedir}/.bls/network/keys; ${store.system.homedir}/.bls/network/txkeygen-${os}-${arch}`,
+    `mkdir -p ${store.system.homedir}/.bls/network/keys; cd ${store.system.homedir}/.bls/network/keys; ${store.system.homedir}/.bls/network/b7s keygen`,
     {
       stdio: "ignore",
     }
