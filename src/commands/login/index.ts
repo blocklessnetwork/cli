@@ -1,7 +1,7 @@
-import open from 'open'
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
 import { getConsoleServer } from "../../lib/urls";
+import { openInBrowser } from '../../lib/browser';
 
 const portastic = require("portastic");
 
@@ -112,11 +112,8 @@ const start = async () => {
     });
 
     fastify.listen({ port }).then(async () => {
-      console.log(`Open Browser at http://0.0.0.0:${port} to complete login`);
-      
-      try {
-        await open(`http://0.0.0.0:${port}`)
-      } catch {}
+      console.log(`Open Browser at http://0.0.0.0:${port} to complete login`)
+      openInBrowser(`http://0.0.0.0:${port}`)
     });
   } catch (err) {
     fastify.log.error(err);

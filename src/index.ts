@@ -1,5 +1,4 @@
 import args from "args";
-import open from "open";
 
 import * as wallet from "./commands/wallet";
 import { run as runInstall } from "./commands/offchain/install";
@@ -17,6 +16,7 @@ import { run as runLogin } from "./commands/login";
 import { run as runSelfUpdate } from "./commands/self-update";
 
 import { printHelp } from "./lib/help";
+import { openInBrowser } from './lib/browser';
 import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
 import { getConsoleServer } from "./lib/urls";
 import { NAME } from "./store/constants";
@@ -130,9 +130,10 @@ args
   )
 
   // open url in default browser
-  .command("console", "Open the Blockless console in browser", () => {
-    didRun = true;
-    open(getConsoleServer());
+  .command("console", "Open the Blockless console in browser", async () => {
+    didRun = true
+    await openInBrowser(getConsoleServer())
+    return
   })
 
   // check to see info about the user logged in
