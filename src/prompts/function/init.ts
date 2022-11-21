@@ -45,7 +45,13 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     ],
                     initial: 0
                 }
-            ]
+            ],
+            {
+                onCancel: () => {
+                    console.log("Canceled by user, exiting...")
+                    process.exit(1)
+                }
+            }
         )
 
         const templateResponse = await prompts(
@@ -57,7 +63,13 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     choices: templates[inputResponse.framework as EBlsFramework],
                     initial: 0
                 }
-            ]
+            ],
+            {
+                onCancel: () => {
+                    console.log("Canceled by user, exiting...")
+                    process.exit(1)
+                }
+            }
         )
 
         return {

@@ -646,6 +646,11 @@ commander@^2.8.1:
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
 
+compare-versions@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-5.0.1.tgz#14c6008436d994c3787aba38d4087fabe858555e"
+  integrity sha512-v8Au3l0b+Nwkp4G142JcgJFh1/TUhdxut7wzD1Nq1dyp5oa3tXaqb03EXOAB6jS4gMlalkjAUPZBMiAfKUixHQ==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"

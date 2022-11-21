@@ -1,6 +1,13 @@
 import Chalk from "chalk"
-import prompt from "prompt"
 import { execSync } from "child_process"
+import { compareVersions } from 'compare-versions'
+import promptNpmInstall from "../prompts/npm/install"
+
+const MIN_NPM_VERSION = '7.24.2'
+
+// Node version
+export const getNpmVersion = (): string =>
+  execSync("npm --version").toString("utf-8").trim()
 
 // Node/npm config
 export const getNpmConfigInitVersion = (): string =>
@@ -13,8 +20,8 @@ export const getNpmConfigInitVersion = (): string =>
  */
 export const getNpmInstallationStatus = (): boolean => {
   try {
-    execSync("npm --version", { stdio: "ignore" })
-    return true
+    const npmVersion = getNpmVersion()
+    return compareVersions(npmVersion, MIN_NPM_VERSION) >= 0
   } catch (e) {
     return false
   }
@@ -32,64 +39,46 @@ export const parseNpmConfigVersion =
  * 
  */
 export const handleNpmInstallation = () => {
-  return new Promise<boolean>((resolve, reject) => {
-    console.log(
-      Chalk.red(`[error]`),
-      `npm is required to run this command, please install it and try again\n`,
-      `npm is a development dependency of the function you are trying to create\n`,
-      "install npm: https://github.com/nvm-sh/nvm#install--update-script"
-    )
+  return new Promise<boolean>(async (resolve, reject) => {
+    const { confirm } = await promptNpmInstall({ minVersion: MIN_NPM_VERSION })
 
-    console.log(" ")
-    prompt.get(
-      {
-        properties: {
-          install: {
-            description: Chalk.yellow(`install nodejs and npm? (Y/n)`),
-            required: false,
-            default: "y",
-          },
-        },
-      },
-      function (err: any, result: any) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        } else if (result.install === "Y" || result.install === "y") {
-          execSync(
-            `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`,
-            { stdio: "ignore" }
-          )
-          execSync(
-            `export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. $NVM_DIR/nvm.sh && nvm install 18`
-          )
-          try {
-            execSync(
-              `export NVM_DIR="$HOME/.nvm"
+    if (confirm) {
+      execSync(
+        `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`,
+        { stdio: "ignore" }
+      )
+      
+      try {
+        execSync(`export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. $NVM_DIR/nvm.sh && nvm install v18`)
+      } catch (error) {}
+
+      try {
+        execSync(
+          `export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. $NVM_DIR/nvm.sh && npm --version`,
-              { stdio: "ignore" }
-            )
-          } catch (e) {
-            console.log(
-              Chalk.red(
-                `[error] unable to install npm/node please try manually`
-              )
-            )
-          }
-          console.log(
-            "developmenmt tools installed, please restart this terminal session, or run the following command before trying again"
+          { stdio: "ignore" }
+        )
+      } catch (e) {
+        console.log(
+          Chalk.red(
+            `[error] unable to install npm/node please try manually`
           )
-          console.log("")
-          console.log(
-            `export NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" `
-          )
-
-          resolve(true)
-        } else {
-          resolve(false)
-        }
+        )
       }
-    )
+      
+      console.log('')
+      console.log(
+        Chalk.green('Success:'),
+        "Dependencies installed, please restart this terminal session, or run the following command before trying again:\n",
+        `\nexport NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && nvm use v18`
+      )
+
+      resolve(true)
+    } else {
+      resolve(false)
+    }
   })
 }

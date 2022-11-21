@@ -51,7 +51,11 @@ export const run = async (options: any) => {
     switch (framework) {
       case 'assemblyscript':
         // Check whether NPM is installed
-        if (!getNpmInstallationStatus()) isValidated = await handleNpmInstallation()
+        if (!getNpmInstallationStatus()) {
+          await handleNpmInstallation()
+          return
+        }
+        
         break;
 
       case 'rust':
