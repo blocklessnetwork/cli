@@ -63,6 +63,7 @@ export function functionCli(yargs: Argv) {
         .option('debug', {
           alias: 'd',
           description: 'Add a debug flag to the function build',
+          type: 'boolean',
           default: true
         })
         .group(['debug'], 'Options:')
@@ -85,10 +86,12 @@ export function functionCli(yargs: Argv) {
         .option('debug', {
           alias: 'd',
           description: 'Add a debug flag to the function build',
-          default: true
+          type: 'boolean',
+          default: false
         })
         .option('rebuild', {
           description: 'Rebuild the funciton',
+          type: 'boolean',
           default: true
         })
         .group(['debug', 'rebuild'], 'Options:')
@@ -111,10 +114,12 @@ export function functionCli(yargs: Argv) {
         .option('debug', {
           alias: 'd',
           description: 'Add a debug flag to the function build',
-          default: true
+          type: 'boolean',
+          default: false
         })
         .option('rebuild', {
           description: 'Rebuild the funciton',
+          type: 'boolean',
           default: true
         })
         .group(['debug', 'rebuild'], 'Options:')
@@ -142,11 +147,13 @@ export function functionCli(yargs: Argv) {
         .option('debug', {
           alias: 'd',
           description: 'Add a debug flag to the function build',
+          type: 'boolean',
           default: true
         })
         .option('rebuild', {
           description: 'Rebuild the funciton',
-          default: true
+          type: 'boolean',
+          default: false
         })
         .option("env", {
           alias: "e",
