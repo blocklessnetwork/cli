@@ -52,7 +52,7 @@ export function functionCli(yargs: Argv) {
 
   yargs.command(
     'build [path]',
-    'Build',
+    'Builds and creates a wasm archive of a local function project',
     (yargs) => {
       return yargs
         .positional('path', {
@@ -75,7 +75,7 @@ export function functionCli(yargs: Argv) {
 
   yargs.command(
     'deploy [path]',
-    'Deploy',
+    'Deploys a local function on Blockless',
     (yargs) => {
       return yargs
         .positional('path', {
@@ -103,7 +103,7 @@ export function functionCli(yargs: Argv) {
 
   yargs.command(
     'update [path]',
-    'Initialize a new function with blockless starter template.',
+    'Updates an existing deployed function on Blockless',
     (yargs) => {
       return yargs
         .positional('path', {
@@ -131,7 +131,7 @@ export function functionCli(yargs: Argv) {
 
   yargs.command(
     'invoke [path]',
-    'Initialize a new function with blockless starter template.',
+    'Invokes the function at the current working directory',
     (yargs) => {
       return yargs
         .positional('path', {
