@@ -20,7 +20,7 @@ export const run = (options: {
   const {
     debug = true,
     path = process.cwd(),
-    rebuild = false
+    rebuild = true
   } = options
 
   // Fetch BLS config
@@ -35,8 +35,11 @@ export const run = (options: {
   const wasmArchive = `${buildName}.tar.gz`
 
   // Rebuild function if requested or 
-  if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild)
+  if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
     buildWasm(wasmName, buildDir, path, buildConfig, debug)
+  } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
+    return
+  }
 
   // Generate a default WASM manifest
   const wasmManifest = createWasmManifest(

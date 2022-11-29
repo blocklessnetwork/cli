@@ -122,7 +122,7 @@ const start = async () => {
 };
 
 // run the command when cli is called
-export function run(code: string[], options?: any) {
+export function run(options?: any) {
   if (options?.authToken) {
     // todo verify token is actually good before setting it
     const token = options?.authToken;

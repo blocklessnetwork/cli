@@ -1,207 +1,155 @@
-import args from "args";
+import yargs from 'yargs'
+import type Yargs from "yargs"
 
-import * as wallet from "./commands/wallet";
-import { run as runInstall } from "./commands/offchain/install";
-import { run as runStart } from "./commands/offchain/start";
-import {
-  runDeploy,
-  runInit,
-  runInvoke,
-  runList,
-  runPublish,
-  runUpdate,
-  runBuild,
-} from "./commands/function";
-import { run as runLogin } from "./commands/login";
-import { run as runSelfUpdate } from "./commands/self-update";
+import { listWallet } from './commands/wallet/list'
+import { removeWallet } from './commands/wallet/remove'
+import { functionCli } from './commands/function'
+import { offchainCli } from './commands/offchain'
+import { run as runLogin } from './commands/login'
+import { run as runSelfUpdate } from './commands/self-update'
 
-import { printHelp } from "./lib/help";
-import { openInBrowser } from './lib/browser';
-import { IBlsFunctionRequiredOptions } from "./commands/function/interfaces";
-import { getConsoleServer } from "./lib/urls";
-import { NAME } from "./store/constants";
+import { openInBrowser } from './lib/browser'
+import { getConsoleServer } from './lib/urls'
 
-let didRun = false;
-let pkg: any;
+/**
+ * Yargs options included in every wrangler command.
+ */
+export interface CommonYargsOptions {
+  v: boolean | undefined
+  config: string | undefined
+  env: string | undefined
+}
 
-args
-  .options([
-    { name: "name", description: "The target name for the command" },
-    {
-      name: "path",
-      description: "The target path for the command",
+function createCLI(argv: string[]) {
+  const cli: Yargs.Argv<any> = yargs(argv)
+    .strict()
+    .scriptName('bls')
+    .version(false)
+    .usage('bls [command] [subcommand]')
+    .wrap(null)
+    .option("v", {
+      describe: "Show version number",
+      alias: "version",
+      type: "boolean",
+    })
+    .option("yes", {
+      alias: "y",
+      describe: "Assume yes to all prompts",
+      type: "boolean"
+    })
+
+  cli.group(["yes", "help", "version"], "Flags:")
+  cli.help().alias("h", "help")
+
+  const subCommands: Yargs.CommandModule<CommonYargsOptions, CommonYargsOptions> = {
+    command: ["*"],
+    handler: async (args) => {
+      setImmediate(() =>
+        cli.parse([...args._.map((a) => `${a}`), "--help"])
+      )
     },
-    {
-      name: "private",
-      description:
-        "For functions, setting this will mark the function as private",
+  }
+
+  cli.command(
+    'login',
+    'Logs into your blockless account',
+    (yargs) => {
+      return yargs
+        .option('auth-token', {
+          alias: 't',
+          description: 'Include an authentication token with your login command',
+        })
+        .group(['auth-token'], 'Options:')
     },
-    {
-      name: "auth-token",
-      description: "authorization token for the function",
-    },
-    {
-      name: "yes",
-      description:
-        "Assume yes to all prompts. This will skip all prompts and use default values",
-    },
-    {
-      name: "env",
-      description:
-        "For functions, includes environment variables. Eg. --env MY_ENV_VAR=value",
-    },
-  ])
-  .command(
-    "components",
-    "Interact with local off-chain network [install, configure]",
-    async (name: string, sub: string[], options: any) => {
-      didRun = true;
-      if (!sub[0] || sub[0] === "help") {
-        printHelp([
-          ["install\t", "install the off-chain agent"],
-          ["start\t", "start the off-chain agent"]
-        ], null, { pkg });
-        
-        return;
-      }
-      switch (sub[0]) {
-        case "install":
-          runInstall(options);
-          break;
-        case "start":
-          runStart(options, sub);
-          break;
-      }
+    (argv) => {
+      runLogin(argv.options)
     }
   )
 
-  // interact with functions
-  .command(
-    "function",
-    "Interact with Functions [init, invoke, delete, deploy, list]",
-    (name: string, sub: string[], options) => {
-      const requiredOptions: IBlsFunctionRequiredOptions = {
-        init: ["name"],
-        deploy: ["name"],
-        publish: ["name"],
-        update: ["name"],
-      };
-
-      const subs: any = {
-        init: runInit,
-        invoke: runInvoke,
-        delete: runInvoke,
-        deploy: runDeploy,
-        list: runList,
-        publish: runPublish,
-        update: runUpdate,
-        build: runBuild,
-      };
-
-      didRun = true;
-      if (!sub[0] || sub[0] === "help") {
-        printHelp(
-          [
-            [
-              "init\t",
-              "Initialize a new function with blockless starter template.",
-            ],
-            ["deploy\t", "Deploy a function on Blockless."],
-            [
-              "list\t",
-              "Retrieve a list of funtions deployed at Blockless Console.",
-            ],
-            [
-              "invoke\t",
-              "Invokes the function at the current (cwd) directory.",
-            ],
-            ["update\t", "Update an existing function on Blockless."],
-          ],
-          null,
-          { pkg }
-        );
-        return;
-      }
-
-      if (subs[sub[0]]) {
-        subs[sub[0]](options, sub);
-      }
+  cli.command(
+    'logout',
+    'Logs out of your blockless account',
+    () => {},
+    async (argv) => {
+      removeWallet()
     }
   )
 
-  // open url in default browser
-  .command("console", "Open the Blockless console in browser", async () => {
-    didRun = true
-    await openInBrowser(getConsoleServer())
-    return
-  })
-
-  // check to see info about the user logged in
-  .command(
-    "whoami",
-    "Check logged in user",
-    async (name: string, sub: string[], options: any) => {
-      didRun = true;
-      const method = (wallet as any)[`listWallet`];
-      if (method) await method(options);
+  cli.command(
+    'whoami',
+    'Shows the currently logged in user',
+    () => { },
+    async () => {
+      listWallet()
     }
   )
 
-  // login to blockless console
-  .command(
-    "login",
-    "Login to the the CLI",
-    (name: string, sub: string[], options: any) => {
-      runLogin(sub, options);
-      didRun = true;
+  cli.command(
+    'console',
+    'Opens the Console in the browser',
+    () => { },
+    async () => {
+      await openInBrowser(getConsoleServer())
     }
   )
 
-  // destroy access token
-  .command(
-    "logout",
-    "Logout of the CLI",
-    async (name: string, sub: string[], options) => {
-      didRun = true;
-      const method = (wallet as any)[`removeWallet`];
-      if (method) await method(options);
-    }
+  cli.command(
+    'components',
+    'Manages the components of the local environment',
+    (yargs) => offchainCli(yargs.command(subCommands))
   )
 
-  // self update bls cli
-  .command(
-    "self-update",
-    "Self update Blockless CLI",
-    async (name: string, sub: string[]) => {
-      didRun = true
-      const version = !!sub && sub.length > 0 ? sub[0] : 'latest'
+  cli.command(
+    'function',
+    'Manages your functions',
+    (yargs) => functionCli(yargs.command(subCommands))
+  )
+
+  cli.command(
+    'self-update',
+    'Update the Blockless CLI',
+    (yargs) => {
+      return yargs
+        .option('tag', {
+          alias: 't',
+          description: 'Release tag of the Blockless CLI',
+          default: 'latest'
+        })
+    },
+    (argv) => {
+      const version = argv.tag || 'latest'
       runSelfUpdate({ version })
-      return
     }
-  );
+  )
 
-const help = () => {
-  printHelp(
-    [
-      ["login\t", " Logs into your account"],
-      ["logout\t", " Logs out of your account"],
-      ["whoami\t", " Shows the currently logged in user"],
-      ["console\t", " Opens the Developer Console in the browser"],
-      ["components", "Install and manage local environment"],
-      ["function", "  Manages your functions"],
-      ["help\t", " Shows the usage information"],
-    ],
-    [["--yes\t", " Skip questions using default values"]],
-    { pkg }
-  );
-};
+  cli.command(
+    'help',
+    'Shows the usage information'
+  )
 
-export async function cli(argv: any, packageJson: any) {
-  pkg = packageJson;
-  const flags = args.parse(process.argv, {
-    name: NAME,
-    version: false,
-    help: false,
-  } as any);
-  if (!didRun) help();
+  return cli
+}
+
+/**
+ * Main function
+ * 
+ * @param argv 
+ */
+export async function main(argv: string[], options: any) {
+  const blsCli = createCLI(argv)
+
+  // console.log(`blockless cli ${options.version}`)
+  // console.log('')
+
+  if (argv.length > 0) {
+    try {
+      blsCli.version(options.version)
+      blsCli.epilogue(`Blockless CLI v${options.version}`)
+      await blsCli.parse()
+    } catch (error: any) {
+      console.info(`${error.message}\n ${await blsCli.getHelp()}`)
+    }
+  } else {
+    console.log(await blsCli.getHelp())
+  }
 }

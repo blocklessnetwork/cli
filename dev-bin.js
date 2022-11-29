@@ -9,8 +9,8 @@ if (compareVersions.compare(process.versions.node, MIN_NODE_VERSION, '<')) {
   )
   process.exit(1)
 } else {
-  const { cli } = require("./src/index");
+  const { main } = require("./src/index");
   const { version } = require("./package.json");
   
-  cli(process.argv, { version });
+  main(process.argv.slice(2), { version });
 }

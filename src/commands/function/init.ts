@@ -19,13 +19,13 @@ import { getCargoInstallationStatus, handleCargoInstallation } from '../../lib/c
  */
 export const run = async (options: any) => {
   let {
-    name = randomName(),
+    name,
     path = process.cwd(),
     private: isPrivate = true
   } = options
 
   try {
-    const prompts = await promptFnInit({ name })
+    const prompts = await promptFnInit({ name: options.name, framework: options.framework })
     if (!prompts) return
 
     const { name: functionName, framework, template } = prompts

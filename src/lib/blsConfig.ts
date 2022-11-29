@@ -28,13 +28,13 @@ export const generateBaseConfig = ({
     if (framework === 'assemblyscript') {
         defaultConfig.build = {
             dir: 'build',
-            entry: `${name}-debug.wasm`,
+            entry: `${name}_debug.wasm`,
             command: 'npm run build:debug'
         }
 
         defaultConfig.build_release = {
             dir: 'build',
-            entry: `${name}-release.wasm`,
+            entry: `${name}.wasm`,
             command: 'npm run build:release'
         }
     } else if (framework === 'rust') {
