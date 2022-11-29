@@ -1,7 +1,9 @@
 import prompts from "prompts"
+import { randomName } from "../../lib/randomName"
 
 interface PromptDeployOptions {
     name: string
+    framework: string
 }
 
 interface PromptDeployOutput {
@@ -27,15 +29,21 @@ const templates = {
 
 const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployOutput | null> => {
     try {
-        const inputResponse = await prompts(
+        const nameResponse = !options.name ? await prompts(
             [
                 {
                     type: 'text',
                     name: 'name',
                     message: `What would you like to name your function?`,
-                    initial: options.name as string
-                },
-                {
+                    initial: randomName()
+                }
+            ]
+        ) : { name: options.name }
+        
+        const matchedFramework = !!options.framework && Object.values(EBlsFramework).includes(options.framework as EBlsFramework)
+        const frameworkResponse = !matchedFramework ? await prompts(
+            [
+                    {
                     type: 'select',
                     name: 'framework',
                     message: 'Pick a framework',
@@ -52,7 +60,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     process.exit(1)
                 }
             }
-        )
+        ) : { framework: options.framework }
 
         const templateResponse = await prompts(
             [
@@ -60,7 +68,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     type: 'select',
                     name: 'template',
                     message: 'Pick a starter template',
-                    choices: templates[inputResponse.framework as EBlsFramework],
+                    choices: templates[frameworkResponse.framework as EBlsFramework],
                     initial: 0
                 }
             ],
@@ -73,7 +81,8 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
         )
 
         return {
-            ...inputResponse,
+            ...nameResponse,
+            ...frameworkResponse,
             ...templateResponse
         }
     } catch (error) {

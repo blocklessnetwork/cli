@@ -2,17 +2,15 @@ import Chalk from "chalk";
 import { store, get as storeGet, set as storeSet } from "../../store";
 import { execSync } from "child_process";
 
-export const run = (options: any, sub: string[]) => {
+export const run = (agentType: string = 'head') => {
   let config = './head-config.yaml'
   let type = 'head'
 
-  if (sub.length > 1 && sub[1]) {
-    switch (sub[1]) {
-      case 'worker':
-        type = 'worker'
-        config = './worker-config.yaml'
-        break;
-    }
+  switch (agentType) {
+    case 'worker':
+      type = 'worker'
+      config = './worker-config.yaml'
+      break;
   }
 
   console.log(`${Chalk.yellow("Off-Chain")} ... starting ${type} node`);

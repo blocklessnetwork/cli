@@ -3,21 +3,10 @@ import Chalk from "chalk";
 import FormData from "form-data";
 import axios from "axios";
 import { getToken } from "../../store/db";
-import { IDeploymentOptions } from "./interfaces";
 import { run as runBuild } from "./build";
-import { createWasmArchive, getBuildDir } from "./shared";
-import { basename, resolve } from "path";
+import { resolve } from "path";
 import { getWASMRepoServer } from "../../lib/urls";
 import { parseBlsConfig } from "../../lib/blsConfig"
-
-const deploymentOptions: IDeploymentOptions = {
-  functionId: "",
-  functionName: "",
-  userFunctionId: "",
-};
-
-const server = getWASMRepoServer();
-const token = getToken();
 
 export const publishFunction = async (
   manifest: any,
@@ -25,6 +14,8 @@ export const publishFunction = async (
   archiveName: string,
   cb?: Function
 ) => {
+  const server = getWASMRepoServer();
+  const token = getToken();
   const formData = new FormData();
 
   formData.append("manifest", manifest, "manifest.json");

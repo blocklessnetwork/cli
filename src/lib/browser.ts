@@ -8,7 +8,9 @@ export async function openInBrowser(url: string): Promise<void> {
         childProcess.on("error", () => {
             console.warn("Failed to open browser.")
         })
-    } catch { }
+    } catch {
+        console.warn("Failed to open browser.")
+    }
 }
 
 const timeout = () => {

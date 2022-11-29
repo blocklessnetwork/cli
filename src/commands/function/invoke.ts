@@ -5,12 +5,13 @@ import { run as runBuild } from "./build";
 import { resolve } from "path";
 import { parseBlsConfig } from "../../lib/blsConfig"
 
-export const run = (options: any, sub: string[]) => {
+export const run = (options: any) => {
   const {
     systemPath = `${store.system.homedir}/.bls/`,
-    cwd: path = process.cwd(),
+    path = process.cwd(),
     debug = true,
     rebuild = true,
+    stdin = []
   } = options;
   const runtimePath = `${systemPath}runtime/blockless-cli`;
 
@@ -58,9 +59,8 @@ export const run = (options: any, sub: string[]) => {
         }
 
         // Include stdin commands
-        if (sub.length > 1) {
-          sub.shift()
-          stdinString = sub.join(' ')
+        if (stdin.length > 0) {
+          stdinString = stdin.join(' ')
         }
       }
 
