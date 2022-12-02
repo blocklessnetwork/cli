@@ -56,7 +56,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
             ],
             {
                 onCancel: () => {
-                    console.log("Canceled by user, exiting...")
+                    console.log("Cancelled by user, exiting...")
                     process.exit(1)
                 }
             }
@@ -74,7 +74,7 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
             ],
             {
                 onCancel: () => {
-                    console.log("Canceled by user, exiting...")
+                    console.log("Cancelled by user, exiting...")
                     process.exit(1)
                 }
             }
