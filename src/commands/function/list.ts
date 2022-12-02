@@ -7,13 +7,20 @@ export const run = async () => {
     const { data } = await consoleClient.post(`/api/modules/mine`, {})
 
     const maxWidth = Math.min(process.stdout.columns, 120) || 120
-    var table = new Table({
+    const tableOptions = {
       head: ["Name", "CID", "Status"],
-      colWidths: [28, maxWidth - 50, 15],
       wordWrap: true,
       wrapOnWordBoundary: false
-    })
+    } as Table.TableConstructorOptions
 
+    if (maxWidth && maxWidth >= 40) {
+      const colNameWidth = Math.floor(maxWidth * 0.24)
+      const colStatusWidth = Math.floor(maxWidth * 0.24)
+      const colCIDWidth = Math.floor(maxWidth * 0.44)
+      tableOptions.colWidths = [colNameWidth, colCIDWidth, colStatusWidth]
+    }
+
+    const table = new Table(tableOptions)
     data && data.forEach && data.forEach((f: any) => {
       table.push([f.functionName, f.functionId, f.status])
     })
