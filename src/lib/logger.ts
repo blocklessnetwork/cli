@@ -49,7 +49,7 @@ class Logger {
       if (kind === 'error') {
         log += Chalk.red('Error: ')
 
-        if (otherLines.length > 0) {
+        if (otherLines.length > 0 && otherLines[0] !== '') {
           log += firstLine
           log += `\n\n${Chalk.underline('Reason:')}\n`
           otherLines.map(l => log += l)
