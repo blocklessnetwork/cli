@@ -34,10 +34,8 @@ consoleClient.interceptors.request.use(async (config) => {
  * 
  */
 consoleClient.interceptors.response.use((response) => response, async (error) => {
-    if (error.response.status === 401 && error.response.data && error.response.data.code === 'FST_JWT_AUTHORIZATION_TOKEN_EXPIRED') {
-        console.log(Chalk.red('Error:'), 'Authorization token has expired, run `bls login` to re-authenticate.')
-
-        // TODO: Add refresh access token logic
+    if (error.response.status === 401 && error.response.data && error.response.data.error === 'Unauthorized') {
+        return Promise.reject(new Error('Authorization token has expired, run `bls login` to re-authenticate.'))
     }
 
     return Promise.reject(error)
