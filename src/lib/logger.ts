@@ -14,7 +14,7 @@ type LoggerLevel = keyof typeof LOGGER_LEVELS
 const LOGGER_LEVEL_FORMAT_TYPE_MAP = {
   error: "error",
   warn: "warning",
-  info: "info",
+  info: undefined,
   log: undefined,
   debug: undefined,
 } as const
@@ -58,9 +58,6 @@ class Logger {
         }
       } else if (kind === 'warning') {
         log += Chalk.yellow('Warning: ')
-        log += message
-      } else if (kind === 'info') {
-        log += Chalk.yellow('Info: ')
         log += message
       }
 

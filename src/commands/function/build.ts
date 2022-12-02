@@ -68,6 +68,6 @@ export const run = (options: {
   writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
 
   // Show success message
-  console.log(`${Chalk.green('Build Successful!')}`)
+  console.log(`${Chalk.green('Build successful!')}`)
   console.log('')
 }

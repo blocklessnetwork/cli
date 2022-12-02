@@ -4,6 +4,7 @@ import { basename, resolve } from "path"
 import { consoleClient } from "../../lib/http"
 import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
+import { logger } from "../../lib/logger"
 
 interface DeployCommandOptions {
   name?: string,
@@ -19,25 +20,29 @@ interface DeployCommandOptions {
  * @param options 
  */
 export const run = (options: DeployCommandOptions) => {
-  const {
-    name: configName
-  } = parseBlsConfig()
+  try {
+    const {
+      name: configName
+    } = parseBlsConfig()
 
-  const {
-    debug = true,
-    name = configName || basename(resolve(process.cwd())),
-    path = process.cwd(),
-    rebuild = true,
-    yes = false
-  } = options
+    const {
+      debug = true,
+      name = configName || basename(resolve(process.cwd())),
+      path = process.cwd(),
+      rebuild = true,
+      yes = false
+    } = options
 
-  runPublish({
-    debug,
-    name,
-    path,
-    publishCallback: (data: any) => deployFunction(data, options),
-    rebuild,
-  })
+    runPublish({
+      debug,
+      name,
+      path,
+      publishCallback: (data: any) => deployFunction(data, options),
+      rebuild,
+    })
+  } catch (error: any) {
+    logger.error('Failed to deploy function.', error.message)
+  }
 }
 
 /**
@@ -74,13 +79,11 @@ const deployFunction = async (data: any, options: DeployCommandOptions) => {
       const { confirm } = await promptFnDeploy({ name: matchingFunction.functionName })
 
       if (!confirm) {
-        console.log(Chalk.red('Aborting deployment.'))
-        return
+        throw new Error("Canceled by user, aborting deployment.")
       }
     }
-  } catch (error) {
-    console.log(Chalk.red('Failed to retrive user functions'))
-    console.error(error)
+  } catch (error: any) {
+    logger.error('Failed to retrive deployed functions.', error.message)
     return
   }
 
@@ -93,8 +96,8 @@ const deployFunction = async (data: any, options: DeployCommandOptions) => {
 
     const { data } = await consoleClient.post(`/api/modules/${fnAction}`, fnBody)
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id
-  } catch (error) {
-    console.log('Failed to update function metadata')
+  } catch (error: any) {
+    logger.error('Failed to update function metadata.', error.message)
     return
   }
 
@@ -118,8 +121,8 @@ const deployFunction = async (data: any, options: DeployCommandOptions) => {
         )
       )
     }
-  } catch (error) {
-    console.log('Failed to publish function')
+  } catch (error: any) {
+    logger.error('Failed to deploy function.', error.message)
     return
   }
 

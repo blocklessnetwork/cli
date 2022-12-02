@@ -73,7 +73,11 @@ export const parseBlsConfig = (filePath = './', fileName = 'bls.toml'): IBlsConf
  * @returns 
  */
 export const saveBlsConfig = (json: JsonMap, filePath = './', fileName = 'bls.toml') => {
-    return saveTomlConfig(json, filePath, fileName)
+    try {
+        saveTomlConfig(json, filePath, fileName)
+    } catch (error: any) {
+        throw new Error(`Unable to save bls.toml, ${error.message}.`)
+    }
 }
 
 /**
@@ -84,8 +88,12 @@ export const saveBlsConfig = (json: JsonMap, filePath = './', fileName = 'bls.to
  * @returns 
  */
 export const parseTomlConfig = (filePath: string, fileName: string): JsonMap => {
-    const configPath = filePath + '/' + fileName
-    return parse(fs.readFileSync(configPath, 'utf-8')) as JsonMap
+    try {
+        const configPath = filePath + '/' + fileName
+        return parse(fs.readFileSync(configPath, 'utf-8')) as JsonMap
+    } catch (error: any) {
+        throw new Error('Project or bls.toml not detected, run `bls init` to create a project.')
+    }
 }
 
 /**
