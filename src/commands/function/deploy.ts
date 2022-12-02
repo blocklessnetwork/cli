@@ -79,7 +79,7 @@ const deployFunction = async (data: any, options: DeployCommandOptions) => {
       const { confirm } = await promptFnDeploy({ name: matchingFunction.functionName })
 
       if (!confirm) {
-        throw new Error("Canceled by user, aborting deployment.")
+        throw new Error("Cancelled by user, aborting deployment.")
       }
     }
   } catch (error: any) {
