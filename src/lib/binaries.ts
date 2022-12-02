@@ -12,7 +12,7 @@ import fs from "fs"
 const RUNTIME_BUILD_VERSION = "v0.0.6"
 const NETWORKING_BUILD_VERSION = "v0.0.1"
 
-const download = function (url: any, dest: any): Promise<any> {
+export const download = function (url: any, dest: any): Promise<any> {
   return new Promise((resolve, reject) => {
     var file = fs.createWriteStream(dest)
     https
