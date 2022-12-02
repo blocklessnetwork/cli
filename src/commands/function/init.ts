@@ -10,6 +10,7 @@ import promptFnInit from '../../prompts/function/init'
 import { downloadRepository } from '../../lib/git'
 import { JsonMap } from './interfaces'
 import { getCargoInstallationStatus, handleCargoInstallation } from '../../lib/cargo'
+import { logger } from '../../lib/logger'
 
 /**
  * Execute the `init` command line operation
@@ -73,8 +74,8 @@ export const run = async (options: any) => {
     // Clone Repository
     try {
       await downloadRepository({ repoUrl: template, destination: installationPath })
-    } catch (error) {
-      console.log('Failed to clone starter template.')
+    } catch (error: any) {
+      logger.error('Failed to clone starter template.', error.message)
       return
     }
 
@@ -86,8 +87,8 @@ export const run = async (options: any) => {
         version: parseNpmConfigVersion(version),
         isPrivate
       }), installationPath)
-    } catch (error) {
-      console.log('Failed to create project level configuration.')
+    } catch (error: any) {
+      logger.error('Failed to create project level configuration.', error.message)
       return
     }
 
@@ -106,12 +107,12 @@ export const run = async (options: any) => {
             if (cargoConfig.package) (cargoConfig.package as JsonMap).name = sanitizedName
             saveTomlConfig(cargoConfig, installationPath, 'Cargo.toml')
             execSync(`cd ${installationPath}; cargo update`, { stdio: 'ignore' })
-          } catch (error) {
-            console.log(`${Chalk.red('Error:')} failed to configure Rust function`)
+          } catch (error: any) {
+            logger.error('Failed to configure Rust function.', error.message)
           }
       }
-    } catch (error) {
-      console.log('Failed to finalize function setup, please try again.')
+    } catch (error: any) {
+      logger.error('Failed to finalize function setup, please try again.', error.message)
       return
     }
 
@@ -120,8 +121,8 @@ export const run = async (options: any) => {
     console.log("")
     console.log(`Change into the directory ${installationPath} to get started`)
 
-  } catch (error) {
-    console.log(Chalk.red(`Failed to initialize function, please try again.`))
+  } catch (error: any) {
+    logger.error('Failed to initialize function, please try again.', error.message)
     return
   }
 

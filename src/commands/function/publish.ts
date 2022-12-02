@@ -7,6 +7,7 @@ import { run as runBuild } from "./build";
 import { resolve } from "path";
 import { getWASMRepoServer } from "../../lib/urls";
 import { parseBlsConfig } from "../../lib/blsConfig"
+import { logger } from "../../lib/logger"
 
 export const publishFunction = async (
   manifest: any,
@@ -29,18 +30,21 @@ export const publishFunction = async (
       },
     })
     .then((res) => {
+      console.log(Chalk.green('Publish successful!'))
+      console.log('')
+      
       if (cb) {
         cb(res.data);
       }
     })
     .catch((error) => {
-      console.log(`${Chalk.red('Error:')} failed to publish function ${archiveName}`);
+      logger.error('Failed to publish function.', error.message)
     });
 };
 
 const logResult = (data: any) => {
   const { cid } = data;
-  console.log(`function successfully published with id ${cid}`);
+  console.log(`Function successfully published with id ${cid}`);
 };
 export const run = (options: any) => {
   const {
