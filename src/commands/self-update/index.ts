@@ -1,6 +1,8 @@
 import fs from "fs"
 import { execSync } from "child_process"
 import { TMP_DIR } from "../../store/constants"
+import { download } from "../../lib/binaries"
+import { logger } from "../../lib/logger"
 
 interface SelfUpdateCommandOptions {
   version: string
@@ -50,20 +52,29 @@ const parseVersion = (version: string) => {
  * Install
  * 
  */
-const runSelfUpdate = (version: string) => {
-  // Define tmp directory
-  const tmpDir = TMP_DIR
+const runSelfUpdate = async (version: string) => {
+  try {
+    // Define tmp directory
+    const tmpDir = TMP_DIR
 
-  // Create tmp directory if not exists
-  if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
+    // Create tmp directory if not exists
+    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
 
-  // Copy over download script
-  fs.copyFileSync('./download.sh', `${tmpDir}/download.sh`)
-  fs.chmodSync(`${tmpDir}/download.sh`, '755')
+    // Download installer script
+    await download(
+      `https://raw.githubusercontent.com/BlocklessNetwork/cli/main/download.sh`,
+      `${tmpDir}/download.sh`
+    )
 
-  // Execute download script
-  execSync(`sudo ./download.sh ${version}`, { cwd: tmpDir, stdio: 'inherit' })
+    // Copy over download script
+    fs.chmodSync(`${tmpDir}/download.sh`, '755')
 
-  // Cleanup tmpDir
-  fs.rmSync(tmpDir, { recursive: true, force: true })
+    // Execute download script
+    execSync(`sudo ./download.sh ${version}`, { cwd: tmpDir, stdio: 'inherit' })
+
+    // Cleanup tmpDir
+    fs.rmSync(tmpDir, { recursive: true, force: true })
+  } catch (error: any) {
+    logger.error('Failed to sefl-update Blockless CLI, please try updating the CLI manually.', error.message)
+  }
 }
