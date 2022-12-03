@@ -5,6 +5,8 @@ import { run as runBuild } from "./build"
 import { run as runInvoke } from "./invoke"
 import { run as runDeploy } from "./deploy"
 import { run as runUpdate } from "./update"
+import { run as runStop } from "./stop"
+import { run as runDelete } from "./delete"
 
 export function functionCli(yargs: Argv) {
   yargs
@@ -47,6 +49,38 @@ export function functionCli(yargs: Argv) {
     },
     (argv) => {
       runInit(argv)
+    }
+  )
+
+  yargs.command(
+    'stop [target]',
+    'Undeploys a function from the network',
+    (yargs) => {
+      return yargs
+        .positional('target', {
+          description: 'The name of the function to stop (Defaults to the working directory)',
+          type: 'string',
+          default: undefined
+        })
+    },
+    (argv) => {
+      runStop(argv as any)
+    }
+  )
+
+  yargs.command(
+    'delete [target]',
+    'Undeploys and deletes a function from the network',
+    (yargs) => {
+      return yargs
+        .positional('target', {
+          description: 'The name of the function to delete (Defaults to the working directory)',
+          type: 'string',
+          default: undefined
+        })
+    },
+    (argv) => {
+      runDelete(argv as any)
     }
   )
 
