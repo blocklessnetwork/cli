@@ -1,4 +1,4 @@
-import Table from "cli-table3"
+import Chalk from "chalk"
 import { consoleClient } from "../../lib/http"
 import { logger } from "../../lib/logger"
 
@@ -6,26 +6,23 @@ export const run = async () => {
   try {
     const { data } = await consoleClient.post(`/api/modules/mine`, {})
 
-    const maxWidth = Math.min(process.stdout.columns, 120) || 120
-    const tableOptions = {
-      head: ["Name", "CID", "Status"],
-      wordWrap: true,
-      wrapOnWordBoundary: false
-    } as Table.TableConstructorOptions
+    logger.log('List of Functions:')
+    logger.log('-----------------------------------')
 
-    if (maxWidth && maxWidth >= 40) {
-      const colNameWidth = Math.floor(maxWidth * 0.24)
-      const colStatusWidth = Math.floor(maxWidth * 0.24)
-      const colCIDWidth = Math.floor(maxWidth * 0.44)
-      tableOptions.colWidths = [colNameWidth, colCIDWidth, colStatusWidth]
+    if (data && data.length > 0) {
+      data.forEach && data.forEach((f: any) => {
+        logger.log('')
+        logger.log(`${Chalk.blue('Name:')}   ${f.functionName}`)
+        logger.log(`${Chalk.blue('CID:')}    ${f.functionId}`)
+        logger.log(`${Chalk.blue('Status:')} ${f.status === 'stopped' ? Chalk.red(f.status) : f.status === 'deployed' ? Chalk.green(f.status) : f.status}`)
+      })
+
+      logger.log('')
+      logger.log(`Total Functions: ${data.length}`)
+    } else {
+      logger.log('')
+      logger.log('You have no functions.')
     }
-
-    const table = new Table(tableOptions)
-    data && data.forEach && data.forEach((f: any) => {
-      table.push([f.functionName, f.functionId, f.status])
-    })
-
-    logger.log(table.toString())
   } catch (error: any) {
     logger.error('Failed to retrieve function list.', error.message)
     return
