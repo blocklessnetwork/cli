@@ -1,6 +1,7 @@
 import fs from "fs"
+import path from "path"
+import os from 'os'
 import { execSync } from "child_process"
-import { TMP_DIR } from "../../store/constants"
 import { download } from "../../lib/binaries"
 import { logger } from "../../lib/logger"
 
@@ -53,21 +54,19 @@ const parseVersion = (version: string) => {
  * 
  */
 const runSelfUpdate = async (version: string) => {
+  // Define tmp directory
+  // Create tmp directory using node tmp dir creation with preix
+  const tmpDir = fs.mkdtempSync(path.resolve(os.tmpdir(), 'bls-'))
+  
   try {
-    // Define tmp directory
-    const tmpDir = TMP_DIR
-
-    // Create tmp directory if not exists
-    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
-
     // Download installer script
     await download(
       `https://raw.githubusercontent.com/BlocklessNetwork/cli/main/download.sh`,
-      `${tmpDir}/download.sh`
+      path.resolve(tmpDir, 'download.sh')
     )
 
     // Copy over download script
-    fs.chmodSync(`${tmpDir}/download.sh`, '755')
+    fs.chmodSync(path.resolve(tmpDir, 'download.sh'), '755')
 
     // Execute download script
     execSync(`sudo ./download.sh ${version}`, { cwd: tmpDir, stdio: 'inherit' })
@@ -75,6 +74,7 @@ const runSelfUpdate = async (version: string) => {
     // Cleanup tmpDir
     fs.rmSync(tmpDir, { recursive: true, force: true })
   } catch (error: any) {
+    fs.rmSync(tmpDir, { recursive: true, force: true })
     logger.error('Failed to sefl-update Blockless CLI, please try updating the CLI manually.', error.message)
   }
 }
