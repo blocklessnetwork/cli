@@ -1,7 +1,7 @@
 # Blockless CLI
 The Blockless CLI is a command line tool that makes it easy to interact with the Blockless Network and build and manage your applications. With the Blockless CLI, you can connect to the network via your on-chain identity, construct a local worker environment with one click, and build, test, deploy, and monitor your projects in real time.
 
-# Installation
+## Installation
 With `curl`:
 
 ```sh
