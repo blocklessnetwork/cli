@@ -64,7 +64,9 @@ Below is a list of commonly used commands:
 - `bls function`: Build, test, and manage your projects and functions.
   
 
-## Other Available Glboal Flags
+## Glboal flags
+Other than the `-h` or `--help` global flags, there are two more flags that you can use globally.
+
 ### `--yes` flag
 You can use `-y` or `--yes` flag to set all options to the default value:
 
@@ -79,7 +81,7 @@ You can use `-v` or `--version` flag to check the version information for the CL
 bls -v
 ```
 
-## Blockless CLI Reference
+## Blockless CLI reference
 
 For detailed reference, please visit the [Blockless CLI Reference](https://blockless.network/docs/cli-reference)
 
