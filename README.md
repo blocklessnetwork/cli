@@ -30,6 +30,12 @@ To see a list of available subcommands, run the `bls` command with the `--help` 
 bls --help
 ```
 
+Additionaly, to find help for a specific subcommand, simply attach the `--help` or `-h` flag at the end:
+
+```sh
+bls function -h
+```
+
 ## Commonly Used Commands
 
 The BLS CLI provides a range of commands for interacting with the Blockless network. Some of the most commonly used commands are:
