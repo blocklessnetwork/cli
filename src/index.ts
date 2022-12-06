@@ -10,6 +10,7 @@ import { run as runSelfUpdate } from './commands/self-update'
 
 import { openInBrowser } from './lib/browser'
 import { getConsoleServer } from './lib/urls'
+import { logger } from './lib/logger'
 
 /**
  * Yargs options included in every wrangler command.
@@ -23,6 +24,14 @@ export interface CommonYargsOptions {
 function createCLI(argv: string[]) {
   const cli: Yargs.Argv<any> = yargs(argv)
     .strict()
+    .showHelpOnFail(false)
+    .fail((msg, error) => {
+      if (!error || error.name === "YError") {
+        error = new Error(msg)
+      }
+
+      throw error
+    })
     .scriptName('bls')
     .version(false)
     .usage('bls [command] [subcommand]')
@@ -45,7 +54,7 @@ function createCLI(argv: string[]) {
     command: ["*"],
     handler: async (args) => {
       setImmediate(() =>
-        cli.parse([...args._.map((a) => `${a}`), "--help"])
+        cli.parse([...args._.map((a) => `${a}`), "--help"], parseCliResponse)
       )
     },
   }
@@ -137,19 +146,33 @@ function createCLI(argv: string[]) {
  */
 export async function main(argv: string[], options: any) {
   const blsCli = createCLI(argv)
-
-  // console.log(`blockless cli ${options.version}`)
-  // console.log('')
+  blsCli.version(options.version)
+  blsCli.epilogue(`Blockless CLI v${options.version}`)
 
   if (argv.length > 0) {
     try {
-      blsCli.version(options.version)
-      blsCli.epilogue(`Blockless CLI v${options.version}`)
-      await blsCli.parse()
+      blsCli.parse(argv, parseCliResponse)
     } catch (error: any) {
-      console.info(`${error.message}\n ${await blsCli.getHelp()}`)
+      logger.error(error.message)
     }
   } else {
-    console.log(await blsCli.getHelp())
+    blsCli.parse('--help', parseCliResponse)
+  }
+}
+
+/**
+ * Helper function to parse yargs CLI output
+ * 
+ */
+const parseCliResponse = (err: Error, argv: any, output: string) => {
+  if (output) {
+    let formattedOutput = output
+    formattedOutput = formattedOutput.replace(/\[boolean\]/g, '')
+    
+    if (!!argv.help && !!argv._ && argv._.length > 0) {
+      formattedOutput = formattedOutput.replace(/\s\sbls\s\w+\s/g, '  ')
+    }
+
+    logger.log(formattedOutput)
   }
 }
