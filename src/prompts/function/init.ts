@@ -37,7 +37,13 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     message: `What would you like to name your function?`,
                     initial: randomName()
                 }
-            ]
+            ],
+            {
+                onCancel: () => {
+                    console.log("Cancelled by user, exiting...")
+                    process.exit(1)
+                }
+            }
         ) : { name: options.name }
         
         const matchedFramework = !!options.framework && Object.values(EBlsFramework).includes(options.framework as EBlsFramework)
