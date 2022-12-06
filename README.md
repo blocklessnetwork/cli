@@ -43,7 +43,7 @@ The BLS CLI provides a range of commands for interacting with the Blockless netw
 - `bls login`: Authenticates and logs in to the Blockless network using your wallet keypair.
 - `bls whoami`: Shows information about your current identity on the Blockless network, including your public key.
 - `bls components`: Manages your local environment components, including the local worker agent and orchestrator agent.
-- `bls function`: Build, test, and manages your projects and functions.
+- `bls function`: Build, test, and manage your projects and functions.
 
 For a complete list of available commands and their usage, you can run the `bls -h` command or visit the [Blockless CLI reference](https://blockless.network/docs/cli) for detailed documentation.
 
