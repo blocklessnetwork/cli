@@ -83,7 +83,7 @@ bls -v
 
 ## Blockless CLI reference
 
-For detailed reference, please visit the [Blockless CLI Reference](https://blockless.network/docs/cli-reference)
+For detailed reference, please visit the [Blockless CLI Reference](https://blockless.network/docs/cli-reference).
 
 ## Contributing
 
