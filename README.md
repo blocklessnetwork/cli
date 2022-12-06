@@ -26,12 +26,16 @@ sudo sh -c "wget https://raw.githubusercontent.com/BlocklessNetwork/cli/main/dow
 
 ## Usage
 
-Installing the Blockless CLI provides access to the `bls` command.
+To use the BLS CLI, open a terminal and run the `bls` command followed by the subcommand you want to use. For example, to connect to the Blockless network, you can run the `login` subcommand:
 
-```sh-session
-bls [command]
-# Run `--help` for detailed information about CLI commands
-bls [command] help
+```sh
+bls login
+```
+
+To see a list of available subcommands, run the `bls` command with the `--help` or `-h` flag:
+
+```sh
+bls --help
 ```
 
 ## Commonly Used Commands
