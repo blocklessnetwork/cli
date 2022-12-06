@@ -1,15 +1,7 @@
 # Blockless CLI
-The Blockless CLI helps you build, test, and manage your deployments and projects right from the terminal.
-
-**With the Blockless CLI, you can:**
-
-- Build and deploy your functions to the Blockless network
-- Test locally with a fully emulated production environment
-- Create, list, or delete functions
-- Manage wallet and permissions
+The BLS CLI is a powerful tool for interacting with the Blockless network directly from the command line. With it, you can easily connect to the network, manage your identities, and build, test, and manage your deployments and projects.
 
 ## Installation
-
 Blockless CLI is available for macOS, Windows, and Linux. Windows with arm64 architecture will be supported shortly. Installation can be done via bash for all supported platforms.
 
 Supported Platforms
@@ -54,7 +46,7 @@ The Stripe CLI supports a broad range of commands. Below is some of the most use
 
 ## Documentation
 
-For a full reference, see the [Blockless CLI reference](https://docs.blockless.network/docs/cli)
+For a full reference, see the [Blockless CLI reference](https://blockless.network/docs/cli)
 
 ## Contributing
 
