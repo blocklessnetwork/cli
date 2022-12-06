@@ -2,27 +2,19 @@
 The BLS CLI is a powerful tool for interacting with the Blockless network directly from the command line. With it, you can easily connect to the network, manage your identities, and build, test, and manage your deployments and projects.
 
 ## Installation
-Blockless CLI is available for macOS, Windows, and Linux. Windows with arm64 architecture will be supported shortly. Installation can be done via bash for all supported platforms.
+With `curl`:
 
-Supported Platforms
-
-| OS      | arm64 | x64 |
-| ------- | ----- | --- |
-| Windows |       | x   |
-| Linux   | x     | x   |
-| MacOS   | x     | x   |
-
-Using **curl**:
-
-```bash
+```sh
 sudo sh -c "curl https://raw.githubusercontent.com/BlocklessNetwork/cli/main/download.sh | bash"
 ```
 
-Using **wget**:
+Or with `wget`:
 
-```bash
+```sh
 sudo sh -c "wget https://raw.githubusercontent.com/BlocklessNetwork/cli/main/download.sh -v -O download.sh; chmod +x download.sh; ./download.sh; rm -rf download.sh"
 ```
+
+Windows with arm64 architecture will be supported shortly.
 
 ## Usage
 
