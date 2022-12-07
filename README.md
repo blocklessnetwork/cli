@@ -65,7 +65,7 @@ Below is a list of commonly used commands:
   
 
 ## Glboal flags
-Other than the `-h` or `--help` global flags, there are two more flags that you can use globally.
+Other than the help (`-h` or `--help`) global flag, there are two more flags that you can use globally.
 
 ### `--yes` flag
 You can use `-y` or `--yes` flag to set all options to the default value:
