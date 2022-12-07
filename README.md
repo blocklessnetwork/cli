@@ -1,5 +1,7 @@
 # Blockless CLI
-The Blockless CLI is a command line tool that makes it easy to interact with the Blockless Network and build and manage your applications. With the Blockless CLI, you can connect to the network via your on-chain identity, construct a local worker environment with one click, and build, test, deploy, and monitor your projects in real time.
+The Blockless CLI is a command line tool that makes it easy to interact with the Blockless Network and build and manage your applications. 
+
+With the Blockless CLI, you can connect to the network via your on-chain identity, construct a local worker environment with one click, and build, test, deploy, and monitor your projects in real time.
 
 ## Installation
 With `curl`:
@@ -56,10 +58,10 @@ The Blockless CLI provides a range of commands for managing your account, local 
 
 Below is a list of commonly used commands:
 
-- `bls help`: Displays information and usage instructions for the BLS CLI and its available subcommands.
-- `bls console`: Opens the BLS console, a web-based interface for managing your deployments and projects on the Blockless network.
-- `bls login`: Authenticates and logs in to the Blockless network using your wallet keypair.
-- `bls whoami`: Shows information about your current identity on the Blockless network, including your public key.
+- `bls help`: Displays information and usage instructions for the Blockless CLI and its available subcommands.
+- `bls console`: Opens the Blockless console, a web-based interface for managing your deployments and projects on the Blockless Network.
+- `bls login`: Authenticates and logs in to the Blockless Network using your wallet keypair.
+- `bls whoami`: Shows information about your current identity on the Blockless Network, including your public key.
 - `bls components`: Manages your local environment components, including the local worker agent and orchestrator agent.
 - `bls function`: Build, test, and manage your projects and functions.
   
@@ -68,14 +70,14 @@ Below is a list of commonly used commands:
 Other than the help (`-h` or `--help`) global flag, there are two more flags that you can use globally.
 
 ### `--yes` flag
-You can use `-y` or `--yes` flag to set all options to the default value:
+You can use `-y` or `--yes` flag to set all options to the default value. For example:
 
 ```sh
 bls function deploy -y
 ```
 
 ### `--version` flag
-You can use `-v` or `--version` flag to check the version information for the CLI:
+`-v` or `--version` flag can be used to verify the current version of the Blockless CLI:
 
 ```sh
 bls -v
