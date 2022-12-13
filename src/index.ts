@@ -71,7 +71,7 @@ function createCLI(argv: string[]) {
         .group(['auth-token'], 'Options:')
     },
     (argv) => {
-      runLogin(argv.options)
+      runLogin(argv)
     }
   )
 
