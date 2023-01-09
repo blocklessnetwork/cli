@@ -169,7 +169,7 @@ const parseCliResponse = (err: Error, argv: any, output: string) => {
     let formattedOutput = output
     formattedOutput = formattedOutput.replace(/\[boolean\]/g, '')
     
-    if (!!argv.help && !!argv._ && argv._.length > 0) {
+    if (!!argv.help && !!argv._ && argv._.length > 0 && !output.startsWith('bls [command] [subcommand]')) {
       formattedOutput = formattedOutput.replace(/\s\sbls\s\w+\s/g, '  ')
     }
 
