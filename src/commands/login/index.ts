@@ -107,7 +107,7 @@ const start = async () => {
           : consoleServer
 
       reply.redirect(
-        `${webServer}/login?returnUrl=http://0.0.0.0:${port}/token&clientId=${clientId}`
+        `${webServer}/login?redirect=http://0.0.0.0:${port}/token&clientId=${clientId}`
       );
     });
 

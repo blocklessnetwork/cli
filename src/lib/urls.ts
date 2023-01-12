@@ -3,7 +3,7 @@ export const getConsoleServer = (
   port?: number
 ) => {
   const devMode = process.env.NODE_ENV === "development";
-  const host = devMode ? "http://0.0.0.0" : "https://console.bls.dev";
+  const host = devMode ? "http://0.0.0.0" : "https://dashboard.blockless.network";
   return `${host}:${port ? port : devMode ? 3005 : 443}`;
 };
 
