@@ -11,6 +11,7 @@ import { run as runSelfUpdate } from './commands/self-update'
 import { openInBrowser } from './lib/browser'
 import { getConsoleServer } from './lib/urls'
 import { logger } from './lib/logger'
+// import { sitesCli } from './commands/sites'
 
 /**
  * Yargs options included in every wrangler command.
@@ -109,10 +110,16 @@ function createCLI(argv: string[]) {
   )
 
   cli.command(
-    'function',
+    ['function', 'functions'],
     'Manages your functions',
     (yargs) => functionCli(yargs.command(subCommands))
   )
+
+  // cli.command(
+  //   'sites',
+  //   'Manages your sites',
+  //   (yargs) => sitesCli(yargs.command(subCommands))
+  // )
 
   cli.command(
     'self-update',

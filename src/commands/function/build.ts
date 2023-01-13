@@ -26,7 +26,7 @@ export const run = (options: {
 
   try {
     // Fetch BLS config
-    const { name, deployment, build, build_release } = parseBlsConfig()
+    const { name, content_type, deployment, build, build_release } = parseBlsConfig()
 
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
@@ -45,9 +45,9 @@ export const run = (options: {
 
     // Generate a default WASM manifest
     const wasmManifest = createWasmManifest(
-      buildDir,
       wasmName,
-      wasmArchive
+      wasmArchive,
+      content_type
     )
 
     // Create a WASM archive

@@ -8,6 +8,9 @@ import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { run as runInstall } from "../offchain/install"
 import prompRuntimeConfirm from "../../prompts/runtime/confirm"
+import Fastify from "fastify"
+import { openInBrowser } from "../../lib/browser"
+import { getPortPromise } from "portfinder";
 
 export const run = async (options: any) => {
   const {
@@ -15,7 +18,8 @@ export const run = async (options: any) => {
     path = process.cwd(),
     debug = true,
     rebuild = true,
-    stdin = []
+    stdin = [],
+    serve = false
   } = options
 
   const runtimePath = `${systemPath}runtime/blockless-cli`
@@ -87,11 +91,57 @@ export const run = async (options: any) => {
       }
     }
 
-    // pass in stdin to the runtime
-    execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
-      cwd: path,
-      stdio: "inherit",
-    })
+    if (serve) {
+      const fastify = Fastify({
+        logger: false,
+        maxParamLength: 10000
+      })
+
+      fastify.get("*", async (request, reply) => {
+        const result = execSync(`echo "${request.url.trim()}" | ${envString} ${runtimePath} ${manifestPath}`, {
+          cwd: path
+        }).toString()
+
+        if (!manifest.contentType || manifest.contentType === 'json' && result) {
+          try {
+            const resultJson = JSON.parse(result)
+
+            reply
+              .header("Content-Type", "application/json")
+              .send(resultJson)
+          } catch (error) { }
+        } else if (manifest.contentType === "html" && result) {
+          const body = result
+
+          if (body.startsWith("data:")) {
+            const data = body.split(",")[1]
+            const contentType = body.split(",")[0].split(":")[1].split(";")[0]
+            const base64data = Buffer.from(data, "base64")
+            reply.type(contentType).send(base64data)
+          } else {
+            reply
+              .header("Content-Type", "text/html")
+              .send(body)
+          }
+        } else {
+          reply.send(result)
+        }
+      })
+
+      const port = await getPortPromise({ port: 3000, stopPort: 4000 })
+
+      fastify.listen({ port }).then(async () => {
+        console.log(`Serving http://127.0.0.1:${port} ...`)
+        openInBrowser(`http://127.0.0.1:${port}`)
+      })
+    } else {
+      // pass in stdin to the runtime
+      const result = execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
+        cwd: path
+      }).toString()
+
+      console.log(result)
+    }
   } catch (error: any) {
     logger.error('Failed to invoke function.', error.message)
   }
