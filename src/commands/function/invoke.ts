@@ -98,7 +98,7 @@ export const run = async (options: any) => {
       })
 
       fastify.get("*", async (request, reply) => {
-        const result = execSync(`echo "${request.url.trim()}" | ${envString} ${runtimePath} ${manifestPath}`, {
+        const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
           cwd: path
         }).toString()
 
