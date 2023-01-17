@@ -1,10 +1,32 @@
 import type { Argv } from "yargs"
+import { run as runInit } from "./init"
 import { run as runBuild } from "./build"
 import { run as runPreview } from "./preview"
 
 export function sitesCli(yargs: Argv) {
   yargs
     .usage('bls sites [subcommand]')
+
+  yargs.command(
+    'init [name]',
+    'Initializes a blockless site project with a given name and template',
+    (yargs) => {
+      return yargs
+        .positional('name', {
+          description: 'Set the name of the local function project',
+          type: 'string',
+          default: undefined
+        })
+        .option('name', {
+          alias: 'n',
+          description: 'The target name for the blockless function'
+        })
+        .group(['name'], 'Options:')
+    },
+    (argv) => {
+      runInit(argv)
+    }
+  )
 
   yargs.command(
     'build [path]',
@@ -41,8 +63,7 @@ export function sitesCli(yargs: Argv) {
         })
     },
     (argv) => {
-      console.log('preview', argv)
-      // runPreview()
+      runPreview(argv)
     }
   )
 }

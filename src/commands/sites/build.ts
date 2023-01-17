@@ -1,9 +1,11 @@
 import Chalk from 'chalk'
+import fs from 'fs'
 import { resolve } from "path"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
-
-import { packFiles } from "../../lib/packer"
+import { createWasmArchive, createWasmManifest } from '../function/shared'
+import { generateChecksum } from '../../lib/crypto'
+import { buildSiteWasm } from './shared'
 
 /**
  * Execute the `build` command line operation
@@ -29,12 +31,38 @@ export const run = async (options: {
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
     const buildDir = resolve(path, buildConfig.dir || '.bls')
-    const publicDir = resolve(path, buildConfig.public_dir || 'out')
+    const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
+    const wasmName = buildConfig.entry || `${name}.wasm`
+    const wasmArchive = `${buildName}.tar.gz`
 
-    // Pack public directory
-    packFiles(publicDir, `${buildDir}/sources.ts`)
+    // Rebuild function if requested
+    if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
+      buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
+    } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
+      return
+    }
 
-    // Show success message
+    const wasmManifest = createWasmManifest(
+      wasmName,
+      wasmArchive,
+      content_type
+    )
+
+    // Create a WASM archive
+    const archive = createWasmArchive(buildDir, wasmArchive, wasmName)
+    const checksum = generateChecksum(archive)
+
+    // Include WASM checksum and entrypoint
+    wasmManifest.runtime.checksum = checksum
+    wasmManifest.methods?.push({
+      name: wasmName.split(".")[0],
+      entry: wasmName,
+      result_type: "string",
+    })
+
+    // Store manifest
+    fs.writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
+
     console.log(`${Chalk.green('Build successful!')}`)
     console.log('')
   } catch (error: any) {
@@ -42,3 +70,14 @@ export const run = async (options: {
     return
   }
 }
+
+const dynamicImport = async (path: string) => {
+  console.log('dynamic import')
+
+  try {
+    const module = await import(path)
+    return module.default
+  } catch (err) {
+    return console.error(err)
+  }
+};

@@ -25,7 +25,24 @@ export const generateBaseConfig = ({
         }
     } as JsonMap
 
-    if (framework === 'assemblyscript') {
+    if (framework === 'site') {
+        defaultConfig.type = 'site'
+        defaultConfig.content_type = 'html'
+        
+        defaultConfig.build = {
+            dir: '.bls',
+            public_dir: 'out',
+            entry: `${name}_debug.wasm`,
+            command: 'npm run build && npm run export'
+        }
+
+        defaultConfig.build_release = {
+            dir: '.bls',
+            public_dir: 'out',
+            entry: `${name}.wasm`,
+            command: 'npm run build && npm run export'
+        }
+    } else if (framework === 'assemblyscript') {
         defaultConfig.build = {
             dir: 'build',
             entry: `${name}_debug.wasm`,
