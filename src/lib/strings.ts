@@ -20,3 +20,15 @@ export const slugify = (...args: (string | number)[]): string => {
         .replace(/_/g, '-')
         .replace(/\s+/g, '-') // separator
 }
+
+
+export const normalizeFunctionName = (name: string) => {
+  let formattedName = name
+  
+  if (formattedName) {
+    formattedName = formattedName.trim()
+    formattedName = formattedName.replace(/_/g, '-')
+  }
+
+  return formattedName
+}
