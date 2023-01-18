@@ -1,11 +1,11 @@
-import fs from "fs"
 import Chalk from 'chalk'
+import fs from 'fs'
 import { resolve } from "path"
-import { writeFileSync } from "fs"
-import { buildWasm, createWasmArchive, createWasmManifest } from "./shared"
 import { parseBlsConfig } from "../../lib/blsConfig"
-import { generateChecksum } from "../../lib/crypto"
 import { logger } from "../../lib/logger"
+import { createWasmArchive, createWasmManifest } from '../function/shared'
+import { generateChecksum } from '../../lib/crypto'
+import { buildSiteWasm } from './shared'
 
 /**
  * Execute the `build` command line operation
@@ -13,15 +13,15 @@ import { logger } from "../../lib/logger"
  * @param options 
  * @returns void
  */
-export const run = (options: {
+export const run = async (options: {
   path: string
-  debug: boolean
   rebuild: boolean
+  debug: boolean
 }) => {
   const {
     debug = true,
-    path = process.cwd(),
-    rebuild = true
+    rebuild = true,
+    path = process.cwd()
   } = options
 
   try {
@@ -30,20 +30,18 @@ export const run = (options: {
 
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
-    const deployConfig = deployment
+    const buildDir = resolve(path, buildConfig.dir || '.bls')
     const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
-    const buildDir = resolve(path, buildConfig.dir || 'build')
     const wasmName = buildConfig.entry || `${name}.wasm`
     const wasmArchive = `${buildName}.tar.gz`
 
-    // Rebuild function if requested or 
+    // Rebuild function if requested
     if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
-      buildWasm(wasmName, buildDir, path, buildConfig, debug)
+      buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
     } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
       return
     }
 
-    // Generate a default WASM manifest
     const wasmManifest = createWasmManifest(
       wasmName,
       wasmArchive,
@@ -62,18 +60,24 @@ export const run = (options: {
       result_type: "string",
     })
 
-    if (deployConfig) {
-      wasmManifest.permissions = deployConfig.permissions || []
-    }
-
     // Store manifest
-    writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
+    fs.writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
 
-    // Show success message
     console.log(`${Chalk.green('Build successful!')}`)
     console.log('')
   } catch (error: any) {
-    logger.error('Failed to build function.', error.message)
+    logger.error('Failed to build site.', error.message)
     return
   }
 }
+
+const dynamicImport = async (path: string) => {
+  console.log('dynamic import')
+
+  try {
+    const module = await import(path)
+    return module.default
+  } catch (err) {
+    return console.error(err)
+  }
+};

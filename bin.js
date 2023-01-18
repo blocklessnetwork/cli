@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const compareVersions = require("compare-versions")
 const MIN_NODE_VERSION = '14.17.6'
 

@@ -21,6 +21,7 @@ export interface IBlsFunctionConfig {
 export interface IBlsConfig extends JsonMap {
   name: string
   version: string
+  content_type: 'text' | 'html' | 'json'
 
   deployment: IBlsDeployConfig
   build: IBlsBuildConfig
@@ -30,6 +31,7 @@ export interface IBlsConfig extends JsonMap {
 export interface IBlsBuildConfig extends JsonMap {
   command: string
   dir: string
+  public_dir: string
   entry: string
 }
 

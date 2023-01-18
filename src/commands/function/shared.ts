@@ -81,16 +81,16 @@ export const buildWasm = (
 /**
  * Create WASM manifest
  * 
- * @param buildDir 
+ * @param contentType 
  * @param entry 
  * @param url 
  * @param manifestOverride 
  * @returns 
  */
 export const createWasmManifest = (
-  buildDir: string,
   entry: string,
   url: string,
+  contentType: 'text' | 'html' | 'json' | undefined,
   manifestOverride = {}
 ): IManifest => {
   const name = entry.split(".")[0]
@@ -106,7 +106,7 @@ export const createWasmManifest = (
       checksum: "",
       url,
     },
-    contentType: "json",
+    contentType: contentType || 'text',
     methods: [],
     permissions: [],
     ...manifestOverride

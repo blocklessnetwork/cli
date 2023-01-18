@@ -2,7 +2,6 @@ import fs from "fs"
 import Chalk from "chalk"
 import { store } from "../../store"
 import { execSync } from "child_process"
-import { run as runBuild } from "./build"
 import { resolve } from "path"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
@@ -17,9 +16,7 @@ export const run = async (options: any) => {
     systemPath = `${store.system.homedir}/.bls/`,
     path = process.cwd(),
     debug = true,
-    rebuild = true,
-    stdin = [],
-    serve = false
+    rebuild = false,
   } = options
 
   const runtimePath = `${systemPath}runtime/blockless-cli`
@@ -47,9 +44,6 @@ export const run = async (options: any) => {
     // Fetch BLS config
     const { build, build_release } = parseBlsConfig()
 
-    // Execute the build command
-    runBuild({ path, debug, rebuild })
-
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
     const buildDir = resolve(path, buildConfig.dir || 'build')
@@ -64,7 +58,6 @@ export const run = async (options: any) => {
     // prepare environment variables
     // pass environment variables to bls runtime
     let envString = ''
-    let stdinString = ''
 
     if (!!options.env) {
       let envVars = [] as string[]
@@ -84,69 +77,55 @@ export const run = async (options: any) => {
       if (envVars.length > 0) {
         envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
       }
-
-      // Include stdin commands
-      if (stdin.length > 0) {
-        stdinString = stdin.join(' ')
-      }
     }
 
-    if (serve) {
-      const fastify = Fastify({
-        logger: false,
-        maxParamLength: 10000
-      })
+    const fastify = Fastify({
+      logger: false,
+      maxParamLength: 10000
+    })
 
-      await fastify.register(import('@fastify/rate-limit'), {
-        max: 100,
-        timeWindow: '1 minute'
-      })
+    await fastify.register(import('@fastify/rate-limit'), {
+      max: 100,
+      timeWindow: '1 minute'
+    })
 
-      fastify.get("*", async (request, reply) => {
-        const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
-          cwd: path
-        }).toString()
-
-        if (!manifest.contentType || manifest.contentType === 'json' && result) {
-          try {
-            const resultJson = JSON.parse(result)
-
-            reply
-              .header("Content-Type", "application/json")
-              .send(resultJson)
-          } catch (error) { }
-        } else if (manifest.contentType === "html" && result) {
-          const body = result
-
-          if (body.startsWith("data:")) {
-            const data = body.split(",")[1]
-            const contentType = body.split(",")[0].split(":")[1].split(";")[0]
-            const base64data = Buffer.from(data, "base64")
-            reply.type(contentType).send(base64data)
-          } else {
-            reply
-              .header("Content-Type", "text/html")
-              .send(body)
-          }
-        } else {
-          reply.send(result)
-        }
-      })
-
-      const port = await getPortPromise({ port: 3000, stopPort: 4000 })
-
-      fastify.listen({ port }).then(async () => {
-        console.log(`Serving http://127.0.0.1:${port} ...`)
-        openInBrowser(`http://127.0.0.1:${port}`)
-      })
-    } else {
-      // pass in stdin to the runtime
-      const result = execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
+    fastify.get("*", async (request, reply) => {
+      const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path
       }).toString()
 
-      console.log(result)
-    }
+      if (!manifest.contentType || manifest.contentType === 'json' && result) {
+        try {
+          const resultJson = JSON.parse(result)
+
+          reply
+            .header("Content-Type", "application/json")
+            .send(resultJson)
+        } catch (error) { }
+      } else if (manifest.contentType === "html" && result) {
+        const body = result
+
+        if (body.startsWith("data:")) {
+          const data = body.split(",")[1]
+          const contentType = body.split(",")[0].split(":")[1].split(";")[0]
+          const base64data = Buffer.from(data, "base64")
+          reply.type(contentType).send(base64data)
+        } else {
+          reply
+            .header("Content-Type", "text/html")
+            .send(body)
+        }
+      } else {
+        reply.send(result)
+      }
+    })
+
+    const port = await getPortPromise({ port: 3000, stopPort: 4000 })
+
+    fastify.listen({ port }).then(async () => {
+      console.log(`Serving http://127.0.0.1:${port} ...`)
+      openInBrowser(`http://127.0.0.1:${port}`)
+    })
   } catch (error: any) {
     logger.error('Failed to invoke function.', error.message)
   }

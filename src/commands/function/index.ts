@@ -98,7 +98,7 @@ export function functionCli(yargs: Argv) {
           alias: 'd',
           description: 'Add a debug flag to the function build',
           type: 'boolean',
-          default: true
+          default: false
         })
         .group(['debug'], 'Options:')
     },
@@ -182,10 +182,15 @@ export function functionCli(yargs: Argv) {
           alias: 'd',
           description: 'Add a debug flag to the function build',
           type: 'boolean',
-          default: true
+          default: false
         })
         .option('rebuild', {
           description: 'Rebuild the funciton',
+          type: 'boolean',
+          default: false
+        })
+        .option('serve', {
+          description: 'Server the invoke result through a web server',
           type: 'boolean',
           default: false
         })

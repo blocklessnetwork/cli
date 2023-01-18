@@ -11,6 +11,7 @@ import { run as runSelfUpdate } from './commands/self-update'
 import { openInBrowser } from './lib/browser'
 import { getConsoleServer } from './lib/urls'
 import { logger } from './lib/logger'
+import { sitesCli } from './commands/sites'
 
 /**
  * Yargs options included in every wrangler command.
@@ -45,6 +46,10 @@ function createCLI(argv: string[]) {
       alias: "y",
       describe: "Assume yes to all prompts",
       type: "boolean"
+    })
+    .option("experimental", {
+      describe: 'Enables experimental commands',
+      type: 'boolean'
     })
 
   cli.group(["yes", "help", "version"], "Flags:")
@@ -109,9 +114,15 @@ function createCLI(argv: string[]) {
   )
 
   cli.command(
-    'function',
+    ['function', 'functions'],
     'Manages your functions',
     (yargs) => functionCli(yargs.command(subCommands))
+  )
+
+  cli.command(
+    'sites',
+    'Manages your sites (Experimental Feature)',
+    (yargs) => sitesCli(yargs.command(subCommands))
   )
 
   cli.command(
