@@ -6,6 +6,7 @@ import { run as runPreview } from "./preview"
 export function sitesCli(yargs: Argv) {
   yargs
     .usage('bls sites [subcommand]')
+    .demandOption('experimental')
 
   yargs.command(
     'init [name]',

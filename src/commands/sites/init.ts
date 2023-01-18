@@ -32,9 +32,11 @@ export const run = async (options: any) => {
     // Load up site name and details
     const packageJsonPath = !!name ? resolve(path, name, 'package.json') : resolve(path, 'package.json')
     const packageJsonExists = fs.existsSync(packageJsonPath)
-    const packageJson = require(packageJsonPath)
 
-    const prompts = await promptSitesInit({ name: (packageJson.name || options.name), siteExists: packageJsonExists })
+    const prompts = await promptSitesInit({
+      name: (packageJsonExists ? require(packageJsonPath).name : options.name),
+      siteExists: packageJsonExists
+    })
     if (!prompts) return
 
     const { name: siteName, template } = prompts
