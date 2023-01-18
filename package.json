@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@cosmjs/launchpad": "^0.27.1",
+    "@fastify/rate-limit": "^7.6.0",
     "@iarna/toml": "^2.2.5",
     "@types/node": "^18.0.3",
     "axios": "^0.27.2",

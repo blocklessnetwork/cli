@@ -84,6 +84,11 @@ export const run = async (options: any) => {
       maxParamLength: 10000
     })
 
+    await fastify.register(import('@fastify/rate-limit'), {
+      max: 100,
+      timeWindow: '1 minute'
+    })
+
     fastify.get("*", async (request, reply) => {
       const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path
