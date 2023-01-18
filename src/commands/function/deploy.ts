@@ -5,6 +5,7 @@ import { consoleClient } from "../../lib/http"
 import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
+import { normalizeFunctionName } from "../../lib/strings"
 
 interface DeployCommandOptions {
   name?: string,
@@ -68,7 +69,9 @@ const deployFunction = async (data: any, options: DeployCommandOptions) => {
 
     // Sort all matching functions by name and select the last matching function
     // TODO: Ensure all functions have unique names under a user's scope
-    const matchingFunctions = data.filter((f: any) => f.functionName === functionName)
+    const matchingFunctions = data.filter((f: any) => 
+      normalizeFunctionName(f.functionName) === normalizeFunctionName(functionName))
+      
     if (matchingFunctions && matchingFunctions.length > 0) {
       matchingFunction = matchingFunctions[matchingFunctions.length - 1]
       internalFunctionId = matchingFunction._id
