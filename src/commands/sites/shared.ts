@@ -127,7 +127,7 @@ const generateCompileDirectory = (source: string): { dir: string, file: string }
   },
   "dependencies": {
     "@assemblyscript/wasi-shim": "^0.1.0",
-    "@blockless/sdk": "https://github.com/blocklessnetwork/sdk-assemblyscript#54ac31d4053a1eec0b3c020dbb21a0b458b96ca5",
+    "@blockless/sdk": "https://github.com/blocklessnetwork/sdk-assemblyscript#b8b9539cb0983b12a754c0301e719cf8abe39bda",
     "as-wasi": "^0.5.1"
   },
   "devDependencies": {
