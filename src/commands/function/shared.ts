@@ -3,6 +3,7 @@ import { execSync } from "child_process"
 import { existsSync, readFileSync } from "fs"
 import { resolve } from 'path'
 import { IBlsBuildConfig, IManifest } from "./interfaces"
+import { store } from '../../store'
 
 export const getBuildDir = (path: string) => `${path}/build`
 
@@ -101,6 +102,7 @@ export const createWasmManifest = (
     hooks: [],
     description: "",
     fs_root_path: "./",
+    drivers_root_path: `${store.system.homedir}/.bls/extensions`,
     entry,
     runtime: {
       checksum: "",
