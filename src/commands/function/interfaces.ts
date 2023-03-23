@@ -52,6 +52,7 @@ export interface IManifest {
   name: string;
   description: string;
   fs_root_path: string;
+  runtime_logger: string;
   drivers_root_path: string;
   limited_fuel?: number;
   limited_memory?: number;
