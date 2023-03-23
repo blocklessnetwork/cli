@@ -102,6 +102,7 @@ export const createWasmManifest = (
     hooks: [],
     description: "",
     fs_root_path: "./",
+    runtime_logger: 'runtime.log',
     drivers_root_path: `${store.system.homedir}/.bls/extensions`,
     entry,
     runtime: {
