@@ -84,11 +84,11 @@ export const run = async (options: any) => {
       if (envVars.length > 0) {
         envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
       }
-
-      // Include stdin commands
-      if (stdin.length > 0) {
-        stdinString = stdin.join(' ')
-      }
+    }
+    
+    // Include stdin commands
+    if (stdin.length > 0) {
+      stdinString = stdin.join(' ')
     }
 
     if (serve) {
