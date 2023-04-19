@@ -141,6 +141,7 @@ export const run = async (options: any) => {
       })
     } else {
       // pass in stdin to the runtime
+      stdinString = stdinString.replace(/"/g, '\\"')
       const result = execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path
       }).toString()
