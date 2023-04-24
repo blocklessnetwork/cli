@@ -38,7 +38,7 @@ export const run = (options: DeployCommandOptions) => {
       debug,
       name,
       path,
-      publishCallback: (data: any) => deployFunction(data, options),
+      publishCallback: (data: any) => deployFunction(name, data, options),
       rebuild,
     })
   } catch (error: any) {
@@ -58,8 +58,8 @@ export const run = (options: DeployCommandOptions) => {
  * @param data 
  * @returns 
  */
-const deployFunction = async (data: any, options: DeployCommandOptions) => {
-  const { cid: functionId, name: functionName } = data
+const deployFunction = async (functionName: string, functionData: any, options: DeployCommandOptions) => {
+  const { cid: functionId } = functionData
   let matchingFunction = null
   let internalFunctionId = null
 
