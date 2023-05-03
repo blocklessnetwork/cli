@@ -149,13 +149,10 @@ jobs:
         with:
           path: bls-macos-arm64-blockless-cli.tar.gz
           retention-days: 1
-  update_latest:
+  delete_latest:   
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: .
       - name: Delete the "latest" Release
         uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
@@ -163,6 +160,13 @@ jobs:
           delete_release: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  update_latest:
+    needs: delete_latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: .
       - name: Publish the Release
         uses: softprops/action-gh-release@v1
         with:
