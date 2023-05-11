@@ -5,7 +5,7 @@ import { consoleClient } from "../../lib/http"
 import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
-import { normalizeFunctionName } from "../../lib/strings"
+import { normalizeFunctionName, slugify } from "../../lib/strings"
 
 interface DeployCommandOptions {
   name?: string,
@@ -38,7 +38,7 @@ export const run = (options: DeployCommandOptions) => {
       debug,
       name,
       path,
-      publishCallback: (data: any) => deployFunction(name, data, options),
+      publishCallback: (data: any) => deployFunction(slugify(name), data, options),
       rebuild,
     })
   } catch (error: any) {

@@ -8,6 +8,7 @@ import { resolve } from "path";
 import { getWASMRepoServer } from "../../lib/urls";
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
+import { slugify } from "../../lib/strings"
 
 export const publishFunction = async (
   manifest: any,
@@ -57,9 +58,9 @@ export const run = (options: any) => {
   // Fetch BLS config
   const { name, build, build_release } = parseBlsConfig()
   const buildConfig = !debug ? build_release : build
-  const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
+  const buildName = buildConfig.entry ? slugify(buildConfig.entry.replace('.wasm', '')) : slugify(name)
   const buildDir = resolve(path, buildConfig.dir || 'build')
-  const wasmArchive = `${buildName}.tar.gz`
+  const wasmArchive = `${slugify(buildName)}.tar.gz`
 
   // Run the build command
   runBuild({ debug, path, rebuild });
