@@ -16,7 +16,7 @@ export const slugify = (...args: (string | number)[]): string => {
         .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
         .toLowerCase()
         .trim()
-        .replace(/[^a-z0-9 _-]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
+        .replace(/[^a-z0-9 _.-]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
         .replace(/_/g, '-')
         .replace(/\s+/g, '-') // separator
 }
@@ -28,6 +28,7 @@ export const normalizeFunctionName = (name: string) => {
   if (formattedName) {
     formattedName = formattedName.trim()
     formattedName = formattedName.replace(/_/g, '-')
+    formattedName = formattedName.replace(/ /g, '-')
   }
 
   return formattedName

@@ -6,6 +6,7 @@ import { buildWasm, createWasmArchive, createWasmManifest } from "./shared"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { generateChecksum } from "../../lib/crypto"
 import { logger } from "../../lib/logger"
+import { slugify } from "../../lib/strings"
 
 /**
  * Execute the `build` command line operation
@@ -31,9 +32,9 @@ export const run = (options: {
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
     const deployConfig = deployment
-    const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
+    const buildName = buildConfig.entry ? slugify(buildConfig.entry.replace('.wasm', '')) : slugify(name)
     const buildDir = resolve(path, buildConfig.dir || 'build')
-    const wasmName = buildConfig.entry || `${name}.wasm`
+    const wasmName = slugify(buildConfig.entry) || `${slugify(name)}.wasm`
     const wasmArchive = `${buildName}.tar.gz`
 
     // Rebuild function if requested or 
