@@ -4,13 +4,14 @@ import { logger } from "../../lib/logger"
 
 export const run = async () => {
   try {
-    const { data } = await consoleClient.post(`/api/modules/mine`, {})
+    const { data } = await consoleClient.get(`/api/modules/mine`, {})
+    const functions = data.docs ? data.docs : []
 
     logger.log('List of Functions:')
     logger.log('-----------------------------------')
 
-    if (data && data.length > 0) {
-      data.forEach && data.forEach((f: any) => {
+    if (functions && functions.length > 0) {
+      functions.forEach && functions.forEach((f: any) => {
         logger.log('')
         logger.log(`${Chalk.blue('Name:')}   ${f.functionName}`)
         logger.log(`${Chalk.blue('CID:')}    ${f.functionId}`)
@@ -18,7 +19,7 @@ export const run = async () => {
       })
 
       logger.log('')
-      logger.log(`Total Functions: ${data.length}`)
+      logger.log(`Total Functions: ${functions.length}`)
     } else {
       logger.log('')
       logger.log('You have no functions.')
