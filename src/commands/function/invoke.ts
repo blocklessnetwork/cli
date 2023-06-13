@@ -63,29 +63,8 @@ export const run = async (options: any) => {
 
     // prepare environment variables
     // pass environment variables to bls runtime
-    let envString = ''
     let stdinString = ''
 
-    if (!!options.env) {
-      let envVars = [] as string[]
-      let envVarsKeys = [] as string[]
-
-      // Validate environment variables
-      const vars = typeof options.env === 'string' ? [options.env] : options.env
-      vars.map((v: string) => {
-        const split = v.split('=')
-        if (split.length !== 2) return
-
-        envVars.push(v)
-        envVarsKeys.push(split[0])
-      })
-
-      // Include environment string if there are variables
-      if (envVars.length > 0) {
-        envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
-      }
-    }
-    
     // Include stdin commands
     if (stdin.length > 0) {
       stdinString = stdin.join(' ')
@@ -102,8 +81,58 @@ export const run = async (options: any) => {
         timeWindow: '1 minute'
       })
 
-      fastify.get("*", async (request, reply) => {
-        const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
+      fastify.all("*", async (request, reply) => {
+        let qs = ''
+        let headerString = ''
+        let requestPath = decodeURIComponent(request.url.trim())
+
+        if (requestPath.includes('?')) {
+          qs = requestPath.split('?')[1]
+          requestPath = requestPath.split('?')[0]
+        }
+
+        if (request.headers) {
+          headerString = Object.entries(request.headers)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&')
+        }
+
+        let envString = ''
+        let envVars = [] as string[]
+        let envVarsKeys = [] as string[]
+    
+        if (!!options.env) {
+          // Validate environment variables
+          const vars = typeof options.env === 'string' ? [options.env] : options.env
+          vars.map((v: string) => {
+            const split = v.split('=')
+            if (split.length !== 2) return
+    
+            envVars.push(v)
+            envVarsKeys.push(split[0])
+          })
+        }    
+
+        envVars.push(`BLS_REQUEST_PATH="${requestPath}"`)
+        envVars.push(`BLS_REQUEST_QUERY="${qs}"`)
+        envVars.push(`BLS_REQUEST_METHOD="${request.method}"`)
+        envVars.push(`BLS_REQUEST_HEADERS="${headerString}"`)
+        envVarsKeys.push('BLS_REQUEST_PATH')
+        envVarsKeys.push('BLS_REQUEST_QUERY')
+        envVarsKeys.push('BLS_REQUEST_METHOD')
+        envVarsKeys.push('BLS_REQUEST_HEADERS')
+        
+        if (request.body) {
+          envVars.push(`BLS_REQUEST_BODY="${JSON.stringify(request.body)}"`)
+          envVarsKeys.push('BLS_REQUEST_BODY')
+        }
+
+        // Include environment string if there are variables
+        if (envVars.length > 0) {
+          envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
+        }
+        
+        const result = execSync(`echo "${path}" | ${envString} ${runtimePath} ${manifestPath}`, {
           cwd: path
         }).toString()
 
@@ -142,6 +171,28 @@ export const run = async (options: any) => {
     } else {
       // pass in stdin to the runtime
       stdinString = stdinString.replace(/"/g, '\\"')
+
+      let envString = ''
+      let envVars = [] as string[]
+      let envVarsKeys = [] as string[]
+  
+      if (!!options.env) {
+        // Validate environment variables
+        const vars = typeof options.env === 'string' ? [options.env] : options.env
+        vars.map((v: string) => {
+          const split = v.split('=')
+          if (split.length !== 2) return
+  
+          envVars.push(v)
+          envVarsKeys.push(split[0])
+        })
+      }  
+
+      // Include environment string if there are variables
+      if (envVars.length > 0) {
+        envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
+      }
+
       const result = execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path
       }).toString()
