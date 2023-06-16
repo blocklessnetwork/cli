@@ -4,7 +4,7 @@ import { logger } from "../../lib/logger"
 
 export const run = async () => {
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine`, {})
+    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
     const functions = data.docs ? data.docs : []
 
     logger.log('List of Functions:')

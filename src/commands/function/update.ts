@@ -64,7 +64,7 @@ const updateFunction = async (data: any) => {
 
   // Find all matching functions, warn users if they are updating a function that is not deployed
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine`, {})
+    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
