@@ -70,14 +70,3 @@ export const run = async (options: {
     return
   }
 }
-
-const dynamicImport = async (path: string) => {
-  console.log('dynamic import')
-
-  try {
-    const module = await import(path)
-    return module.default
-  } catch (err) {
-    return console.error(err)
-  }
-};
