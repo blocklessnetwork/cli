@@ -1,12 +1,24 @@
 import type { Argv } from "yargs"
 import { run as runInit } from "./init"
+import { run as runList } from "./list"
 import { run as runBuild } from "./build"
 import { run as runPreview } from "./preview"
+import { run as runDelete } from "./delete"
+import { run as runDeploy } from "./deploy"
 
 export function sitesCli(yargs: Argv) {
   yargs
     .usage('bls sites [subcommand]')
     .demandOption('experimental')
+
+  yargs.command(
+    'list',
+    'Lists your deployed blockless sites',
+    () => { },
+    () => {
+      runList()
+    }
+  )
 
   yargs.command(
     'init [name]',
@@ -26,6 +38,22 @@ export function sitesCli(yargs: Argv) {
     },
     (argv) => {
       runInit(argv)
+    }
+  )
+
+  yargs.command(
+    'delete [target]',
+    'Undeploys and deletes a site from the network',
+    (yargs) => {
+      return yargs
+        .positional('target', {
+          description: 'The name of the site to delete (Defaults to the working directory)',
+          type: 'string',
+          default: undefined
+        })
+    },
+    (argv) => {
+      runDelete(argv as any)
     }
   )
 
@@ -65,6 +93,22 @@ export function sitesCli(yargs: Argv) {
     },
     (argv) => {
       runPreview(argv)
+    }
+  )
+
+  yargs.command(
+    'deploy [path]',
+    'Deploys a static site on Blockless',
+    (yargs) => {
+      return yargs
+        .positional('path', {
+          description: 'Set the path to the static site project',
+          type: 'string',
+          default: undefined
+        })
+    },
+    (argv) => {
+      runDeploy(argv as any)
     }
   )
 }
