@@ -1,11 +1,10 @@
+import Chalk from "chalk"
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
-import { getConsoleServer } from "../../lib/urls";
-import { openInBrowser } from '../../lib/browser';
+import { openInBrowser } from "../../lib/browser";
+import { getGatewayUrl } from "../../lib/urls"
 
 const portastic = require("portastic");
-
-const consoleServer = getConsoleServer();
 const clientId = "7ddcb826-e84a-4102-b95b-d9b8d3a57176";
 
 const fastify = Fastify({
@@ -25,7 +24,7 @@ fastify.get("/token/:userId", async (request: any, reply: any) => {
     console.log("Error when attempting to login");
     return;
   }
-  console.log(`User returned from ${consoleServer} authenticated`);
+
   reply.redirect("/complete");
 });
 
@@ -87,33 +86,31 @@ fastify.get("/complete", async (request: any, reply: any) => {
     </body>
   </html>`;
   reply.header("Content-Type", "text/html").send(html);
-  setTimeout(() => process.exit(0), 2000);
+
+  console.log('')
+  console.log(Chalk.green('Authentication Completed!'));
+  console.log('You have successfully authenticated with the server.')
+  console.log('')
+  fastify.close()
 });
 
 // run the server
-const start = async () => {
+const start = async (url: string) => {
   try {
     const ports = await portastic.find({ min: 8000, max: 8999 });
-    const port = ports[Math.floor(Math.random() * ports.length)];
+    const serverPort = ports[Math.floor(Math.random() * ports.length)];
 
-    // request a jwt from the console ui
     fastify.get("/", async (request, reply) => {
-      console.log(`Sending user to ${consoleServer} to authenticate`);
-
-      // the web dev server will be under port 3000, and api under port 3005
-      const webServer =
-        process.env.NODE_ENV === "development"
-          ? getConsoleServer(3000)
-          : consoleServer
-
       reply.redirect(
-        `${webServer}/login?redirect=http://0.0.0.0:${port}/token&clientId=${clientId}`
+        `${url}/login?redirect=http://0.0.0.0:${serverPort}/token&clientId=${clientId}`
       );
     });
 
-    fastify.listen({ port }).then(async () => {
-      console.log(`Open Browser at http://0.0.0.0:${port} to complete login`)
-      openInBrowser(`http://0.0.0.0:${port}`)
+    fastify.listen({ port: serverPort }).then(async () => {
+      console.log(
+        `Open Browser at http://0.0.0.0:${serverPort} to complete login`
+      );
+      openInBrowser(`http://0.0.0.0:${serverPort}`);
     });
   } catch (err) {
     fastify.log.error(err);
@@ -123,11 +120,18 @@ const start = async () => {
 
 // run the command when cli is called
 export function run(options?: any) {
+  if (options?.authUrl) {
+    getDb().set("config.authUrl", options?.authUrl.replace(/^https?:\/\//, '')).write();
+  }
+  if (options?.authPort) {
+    getDb().set("config.authPort", parseInt(options?.authPort)).write();
+  }
+
   if (options?.authToken) {
-    // todo verify token is actually good before setting it
     const token = options?.authToken;
     getDb().set("config.token", token).write();
   } else {
-    start();
+    const gatewayUrl = getGatewayUrl()
+    start(gatewayUrl);
   }
 }

@@ -4,40 +4,45 @@ import { store } from "./index";
 import { existsSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
 
+let db: any = null
+
 export const getDb = () => {
-  const lowdb = require("lowdb")
-  const FileSync = require("lowdb/adapters/FileSync")
-  const lowdbEncryption = require("lowdb-encryption")
-
-  const cliConfigFileName = "bls.cli.config.json"
-  const cliConfigFilePath = `${store.system.homedir}${store.system.appPath}`
-  const cliConfigFile = `${cliConfigFilePath}/${cliConfigFileName}`
-
-  if (!existsSync(cliConfigFile)) {
-    if (!existsSync(cliConfigFilePath)) {
-      execSync(`mkdir -p ${cliConfigFilePath}`)
+  if (!db) {
+    const lowdb = require("lowdb")
+    const FileSync = require("lowdb/adapters/FileSync")
+    const lowdbEncryption = require("lowdb-encryption")
+  
+    const cliConfigFileName = "bls.cli.config.json"
+    const cliConfigFilePath = `${store.system.homedir}${store.system.appPath}`
+    const cliConfigFile = `${cliConfigFilePath}/${cliConfigFileName}`
+  
+    if (!existsSync(cliConfigFile)) {
+      if (!existsSync(cliConfigFilePath)) {
+        execSync(`mkdir -p ${cliConfigFilePath}`)
+      }
+      writeFileSync(cliConfigFile, JSON.stringify({}))
     }
-    writeFileSync(cliConfigFile, JSON.stringify({}))
+  
+    const defaultValue = {
+      config: {
+        token: "",
+      },
+    }
+  
+    const adapter = new FileSync(
+      `${store.system.homedir}${store.system.appPath}/bls.cli.config.json`,
+      {
+        defaultValue,
+        ...lowdbEncryption({
+          secret: "s3cr3t",
+          iterations: 100_000,
+        }),
+      }
+    )
+  
+    db = lowdb(adapter);
   }
 
-  const defaultValue = {
-    config: {
-      token: "",
-    },
-  }
-
-  const adapter = new FileSync(
-    `${store.system.homedir}${store.system.appPath}/bls.cli.config.json`,
-    {
-      defaultValue,
-      ...lowdbEncryption({
-        secret: "s3cr3t",
-        iterations: 100_000,
-      }),
-    }
-  )
-
-  const db = lowdb(adapter);
   return db.read()
 };
 
@@ -49,3 +54,11 @@ export const getToken = () => {
   
   return token;
 };
+
+export const getAuthUrl = (): { url: string, port: number } => {
+  const db = getDb();
+  const config = db.get("config").value();
+  const { authUrl, authPort } = config
+
+  return { url: authUrl, port: authPort }
+}
