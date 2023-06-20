@@ -1,12 +1,8 @@
 import axios from "axios"
-import Chalk from 'chalk'
 import { getToken } from "../store/db"
-import { getConsoleServer } from "./urls"
-
-const consoleServer = getConsoleServer()
+import { getGatewayUrl } from "./urls"
 
 export const consoleClient = axios.create({
-    baseURL: consoleServer,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -18,6 +14,9 @@ export const consoleClient = axios.create({
  */
 consoleClient.interceptors.request.use(async (config) => {
     const token = getToken()
+    const gatewayUrl = getGatewayUrl()
+
+    config.baseURL = gatewayUrl
 
     if (token) {
         config.headers = {

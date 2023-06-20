@@ -9,7 +9,7 @@ import { run as runLogin } from './commands/login'
 import { run as runSelfUpdate } from './commands/self-update'
 
 import { openInBrowser } from './lib/browser'
-import { getConsoleServer } from './lib/urls'
+import { getGatewayUrl } from './lib/urls'
 import { logger } from './lib/logger'
 import { sitesCli } from './commands/sites'
 
@@ -69,11 +69,21 @@ function createCLI(argv: string[]) {
     'Logs into your blockless account',
     (yargs) => {
       return yargs
+        .option('auth-url', {
+          alias: 'u',
+          description: 'Include an authentication host with your login command',
+          default: 'dashboard.blockless.network'
+        })
+        .option('auth-port', {
+          alias: 'p',
+          description: 'Include an authentication port with your login command',
+          default: 443
+        })
         .option('auth-token', {
           alias: 't',
           description: 'Include an authentication token with your login command',
         })
-        .group(['auth-token'], 'Options:')
+        .group(['auth-url', 'auth-port', 'auth-token'], 'Options:')
     },
     (argv) => {
       runLogin(argv)
@@ -103,7 +113,7 @@ function createCLI(argv: string[]) {
     'Opens the Console in the browser',
     () => { },
     async () => {
-      await openInBrowser(getConsoleServer())
+      await openInBrowser(getGatewayUrl())
     }
   )
 
