@@ -4,25 +4,25 @@ import { consoleClient } from "../../lib/http"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
 
-interface StopCommandOptions {
+interface DeleteCommandOptions {
   target: string
 }
 
 /**
- * Entry function for bls function deploy
+ * Entry function for bls site delete
  * 
  * @param options 
  */
-export const run = async (options: StopCommandOptions) => {
+export const run = async (options: DeleteCommandOptions) => {
   try {
     if (options.target) {
-      await stopFunction({ name: options.target })
+      await deleteSite({ name: options.target })
     } else {
       const { name: configName } = parseBlsConfig()
-      await stopFunction({ name: configName })
+      await deleteSite({ name: configName })
     }
   } catch (error: any) {
-    logger.error('Failed to delete function.', error.message)
+    logger.error('Failed to delete site.', error.message)
   }
 }
 
@@ -31,7 +31,7 @@ export const run = async (options: StopCommandOptions) => {
  * @param data 
  * @returns 
  */
-const stopFunction = async (data: any) => {
+const deleteSite = async (data: any) => {
   const { name: functionName } = data
 
   let matchingFunction = null
@@ -39,10 +39,10 @@ const stopFunction = async (data: any) => {
 
   // Find all matching functions, warn users if they are updating a function that is not deployed
   try {
-    console.log(Chalk.yellow(`Stopping ${functionName} ...`))
+    console.log(Chalk.yellow(`Deleting ${functionName} ...`))
     console.log('')
 
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await consoleClient.get(`/api/sites?limit=999`, {})
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
@@ -57,33 +57,29 @@ const stopFunction = async (data: any) => {
 
     // If a function does not exist, request the user to deploy that function first
     if (!matchingFunction) {
-      throw new Error('Function not found.')
+      throw new Error('Site not found.')
     }
   } catch (error: any) {
-    logger.error('Failed to retrive deployed functions.', error.message)
+    logger.error('Failed to retrive deployed sites.', error.message)
     return
   }
 
-  // Stop the function
+  // Delete the site
   try {
-    if (!internalFunctionId || !matchingFunction) 
-      throw new Error('Unable to retrive function ID.')
+    if (!internalFunctionId || !matchingFunction)
+      throw new Error('Unable to retrive site ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/update`, {
-      _id: internalFunctionId,
-      name: matchingFunction.functionName,
-      status: 'stopped'
-    })
+    const { data } = await consoleClient.delete(`/api/sites/${internalFunctionId}`)
 
-    if (!data.success) throw new Error("")
+    if (!data) throw new Error("")
 
     console.log(
       Chalk.green(
-        `Successfully stopped function ${functionName}!`
+        `Successfully deleted site ${functionName}!`
       )
     )
   } catch (error: any) {
-    logger.error('Failed to stop function.', error.message)
+    logger.error('Failed to delete site.', error.message)
     return
   }
 }

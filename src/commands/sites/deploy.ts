@@ -8,10 +8,8 @@ import { logger } from "../../lib/logger"
 import { normalizeFunctionName, slugify } from "../../lib/strings"
 
 interface DeployCommandOptions {
-  name?: string,
+  name?: string
   path?: string
-  rebuild?: boolean
-  debug?: boolean
   yes?: boolean
 }
 
@@ -27,32 +25,29 @@ export const run = (options: DeployCommandOptions) => {
     } = parseBlsConfig()
 
     const {
-      debug = true,
       name = configName || basename(resolve(process.cwd())),
-      path = process.cwd(),
-      rebuild = true,
-      yes = false
+      path = process.cwd()
     } = options
 
     runPublish({
-      debug,
+      debug: false,
       name,
       path,
       publishCallback: (data: any) => deployFunction(slugify(name), data, options),
-      rebuild,
+      rebuild: true,
     })
   } catch (error: any) {
-    logger.error('Failed to deploy function.', error.message)
+    logger.error('Failed to deploy site.', error.message)
   }
 }
 
 /**
- * Helper to deploy a bls function via CLI
+ * Helper to deploy a bls site via CLI
  * 
- * 1. Publish package and retrive ipfs function id
- * 2. Get list of user functions
- * 3. Decide whether to update or create a new function (based on function name), bail if deploying same data
- * 4. Call new or update API with function config parameters
+ * 1. Publish package and retrive ipfs site id
+ * 2. Get list of user sites
+ * 3. Decide whether to update or create a new site (based on site name), bail if deploying same data
+ * 4. Call new or update API with site config parameters
  * 5. Run deploy
  * 
  * @param data 
@@ -65,7 +60,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
 
   // Find all matching functions, warn users if they are overwriting a deployed function
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await consoleClient.get(`/api/sites?limit=999`, {})
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
@@ -87,33 +82,36 @@ const deployFunction = async (functionName: string, functionData: any, options: 
       }
     }
   } catch (error: any) {
-    logger.error('Failed to retrive deployed functions.', error.message)
+    logger.error('Failed to retrive deployed sites.', error.message)
     return
   }
 
-  // Create or Update a user function
+  // Create or update site
   try {
-    const fnAction = !internalFunctionId ? `new` : `update`
-    const fnBody = !internalFunctionId ?
-      { functionId, name: functionName } :
-      { _id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
+    let response
 
-    const { data } = await consoleClient.post(`/api/modules/${fnAction}`, fnBody)
-    if (!internalFunctionId && data && data._id) internalFunctionId = data._id
+    if (!internalFunctionId) {
+      response = await consoleClient.post(`/api/sites`, { functionId, functionName })
+    } else {
+      response = await consoleClient.patch(
+        `/api/sites/${internalFunctionId}`,
+        { functionId, functionName, status: 'deploying' }
+      )
+    }
+
+    if (!internalFunctionId && response.data && response.data._id) internalFunctionId = response.data._id
   } catch (error: any) {
-    logger.error('Failed to update function metadata.', error.message)
+    logger.error('Failed to update site metadata.', error.message)
     return
   }
 
-  // Deploy Function
+  // Deploy Site
   try {
-    if (!internalFunctionId) throw new Error('Unable to retrive function ID')
+    if (!internalFunctionId) throw new Error('Unable to retrive site ID')
     console.log(Chalk.yellow(`Deploying ${functionName} ...`))
 
-    const { data } = await consoleClient.post(`/api/modules/deploy`, {
-      userFunctionid: internalFunctionId,
-      functionId: functionId,
-      functionName: functionName.replace(/\s+/g, "-"),
+    const { data } = await consoleClient.put(`/api/sites/${internalFunctionId}/deploy`, {
+      functionId: functionId
     })
 
     if (!!data.err) {
@@ -126,7 +124,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
       )
     }
   } catch (error: any) {
-    logger.error('Failed to deploy function.', error.message)
+    logger.error('Failed to deploy site.', error.message)
     return
   }
 

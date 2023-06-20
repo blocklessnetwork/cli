@@ -42,7 +42,7 @@ const deleteFunction = async (data: any) => {
     console.log(Chalk.yellow(`Deleting ${functionName} ...`))
     console.log('')
 
-    const { data } = await consoleClient.get(`/api/modules/mine`, {})
+    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function

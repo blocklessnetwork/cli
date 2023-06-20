@@ -4,14 +4,14 @@ import { logger } from "../../lib/logger"
 
 export const run = async () => {
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
-    const functions = data.docs ? data.docs : []
+    const { data } = await consoleClient.get(`/api/sites?limit=999`, {})
+    const sites = data.docs ? data.docs : []
 
-    logger.log('List of Functions:')
+    logger.log('List of Sites:')
     logger.log('-----------------------------------')
 
-    if (functions && functions.length > 0) {
-      functions.forEach && functions.forEach((f: any) => {
+    if (sites && sites.length > 0) {
+      sites.forEach && sites.forEach((f: any) => {
         logger.log('')
         logger.log(`${Chalk.blue('Name:')}   ${f.functionName}`)
         logger.log(`${Chalk.blue('CID:')}    ${f.functionId}`)
@@ -19,13 +19,13 @@ export const run = async () => {
       })
 
       logger.log('')
-      logger.log(`Total Functions: ${functions.length}`)
+      logger.log(`Total Sites: ${sites.length}`)
     } else {
       logger.log('')
-      logger.log('You have no functions.')
+      logger.log('You have no sites.')
     }
   } catch (error: any) {
-    logger.error('Failed to retrieve function list.', error.message)
+    logger.error('Failed to retrieve site list.', error.message)
     return
   }
 }
