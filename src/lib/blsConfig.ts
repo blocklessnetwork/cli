@@ -20,8 +20,7 @@ export const generateBaseConfig = ({
         version,
 
         deployment: {
-            permission: isPrivate ? 'private' : 'public',
-            nodes: 4
+            nodes: 1
         }
     } as JsonMap
 

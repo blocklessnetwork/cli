@@ -3,10 +3,11 @@ import { resolve } from 'path'
 import Chalk from "chalk"
 import { logger } from "../../lib/logger"
 import { getNpmConfigInitVersion, getNpmInstallationStatus, handleNpmInstallation, parseNpmConfigVersion } from '../../lib/npm'
-import { downloadRepository } from '../../lib/git'
 import { slugify } from '../../lib/strings'
 import promptSitesInit from '../../prompts/sites/init'
 import { generateBaseConfig, saveBlsConfig } from '../../lib/blsConfig'
+import { generateFramework } from './fameworks'
+import { JsonMap } from '@iarna/toml'
 
 export const run = async (options: any) => {
   let {
@@ -30,20 +31,17 @@ export const run = async (options: any) => {
     }
 
     // Load up site name and details
-    const packageJsonPath = !!name ? resolve(path, name, 'package.json') : resolve(path, 'package.json')
-    const packageJsonExists = fs.existsSync(packageJsonPath)
-
     const prompts = await promptSitesInit({
-      name: (packageJsonExists ? require(packageJsonPath).name : options.name),
-      siteExists: packageJsonExists
+      name: options.name,
+      siteExists: false
     })
     if (!prompts) return
 
-    const { name: siteName, template } = prompts
+    const { name: siteName, framework } = prompts
     if (!!siteName) name = siteName
 
     const sanitizedName = slugify(name)
-    const installationPath = packageJsonExists ? resolve(process.cwd(), path) : resolve(process.cwd(), path, sanitizedName)
+    const installationPath = resolve(process.cwd(), path, sanitizedName)
     const configPath = resolve(installationPath, 'bls.toml')
     const version = getNpmConfigInitVersion()
 
@@ -63,26 +61,29 @@ export const run = async (options: any) => {
 
     console.log(`${Chalk.yellow("Initalizing:")} new site in ${Chalk.blue(installationPath)}`)
 
-    // Clone Repository
-    if (template) {
-      try {
-        await downloadRepository({ repoUrl: template, destination: installationPath })
-      } catch (error: any) {
-        logger.error('Failed to clone starter template.', error.message)
-        return
-      }
-    }
-
     try {
-      // Create bls.toml configuration file
-      saveBlsConfig(generateBaseConfig({
+      const config = await generateFramework({
+        id: framework,
+        name: sanitizedName,
+        path,
+        installationPath
+      })
+
+      const baseConfig = generateBaseConfig({
         framework: 'site',
         name: sanitizedName,
         version: parseNpmConfigVersion(version),
         isPrivate
-      }), installationPath)
+      });
+
+      (baseConfig.build as JsonMap).command = config.build;
+      (baseConfig.build as JsonMap).public_dir = config.publicDir;
+      (baseConfig.build_release as JsonMap).command = config.build;
+      (baseConfig.build_release as JsonMap).public_dir = config.publicDir;
+
+      saveBlsConfig(baseConfig, installationPath)
     } catch (error: any) {
-      logger.error('Failed to create project level configuration.', error.message)
+      logger.error('Failed to initalize framework.', error.message)
       return
     }
 

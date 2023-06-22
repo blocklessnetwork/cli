@@ -5,6 +5,7 @@ import { execSync } from "child_process"
 import { resolve } from "path"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
+import { run as runBuild } from "./build"
 import { run as runInstall } from "../offchain/install"
 import prompRuntimeConfirm from "../../prompts/runtime/confirm"
 import Fastify from "fastify"
@@ -43,6 +44,9 @@ export const run = async (options: any) => {
   try {
     // Fetch BLS config
     const { build, build_release } = parseBlsConfig()
+
+    // Execute the build command
+    runBuild({ path, debug, rebuild })
 
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build

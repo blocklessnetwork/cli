@@ -1,6 +1,7 @@
 import fs from "fs"
 import prompts from "prompts"
 import { randomName } from "../../lib/randomName"
+import { listFrameworks } from "../../commands/sites/fameworks"
 
 interface PromptDeployOptions {
     name: string,
@@ -9,13 +10,10 @@ interface PromptDeployOptions {
 
 interface PromptDeployOutput {
     name: string
-    template: string
+    framework: string
 }
 
-const templates = [
-  { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-site-hello-world' },
-  { title: 'Next.js', value: 'https://github.com/blocklessnetwork/template-site-nextjs' }
-]
+const frameworks = listFrameworks().map(f => ({ title: f.name, value: f.id }))
 
 const promptSitesInit = async (options: PromptDeployOptions): Promise<PromptDeployOutput | null> => {
     try {
@@ -40,9 +38,9 @@ const promptSitesInit = async (options: PromptDeployOptions): Promise<PromptDepl
             [
                 {
                     type: 'select',
-                    name: 'template',
-                    message: 'Pick a starter template',
-                    choices: templates,
+                    name: 'framework',
+                    message: 'Pick a framework',
+                    choices: frameworks,
                     initial: 0
                 }
             ],
@@ -52,7 +50,7 @@ const promptSitesInit = async (options: PromptDeployOptions): Promise<PromptDepl
                     process.exit(1)
                 }
             }
-        ) : { template: null }
+        ) : { framework: null }
 
         return {
             ...nameResponse,
