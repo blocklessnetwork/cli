@@ -21,7 +21,7 @@ export const createWasmArchive = (
   wasmName: string
 ) => {
   console.log(`${Chalk.yellow(`Creating Archive:`)} ${wasmArchive} in ${path}`)
-  execSync(`cd ${path} && tar zcf ./${wasmArchive} -C ${path} ${wasmName}`, {
+  execSync(`cd ${path} && tar zcf ./${wasmArchive} -C ${path} *.wasm`, {
     cwd: path,
     stdio: "ignore",
   })

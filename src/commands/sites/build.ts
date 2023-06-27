@@ -37,24 +37,37 @@ export const run = async (options: {
     const wasmName = buildConfig.entry || `${name}.wasm`
     const wasmArchive = `${buildName}.tar.gz`
 
-    // Rebuild function if requested
-    if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
-      buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
-    } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
+    // Bail if file is present and rebuild is not requested
+    if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
       return
     }
 
     // Generate a default WASM manifest
     const wasmManifest = createWasmManifest(wasmName, content_type)
 
+    // Build site WASM
+    const { entry, routes } = await buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
+
     // Create a WASM archive
     createWasmArchive(buildDir, wasmArchive, wasmName)
 
-    wasmManifest.modules?.push({
-      file: wasmName,
-      name: wasmName.split(".")[0],
-      type: 'entry',
-      md5: generateMd5Checksum(fs.readFileSync(`${buildDir}/${wasmName}`))
+    if (entry) {
+      wasmManifest.modules?.push({
+        file: wasmName,
+        name: wasmName.split(".")[0],
+        type: 'entry',
+        md5: generateMd5Checksum(fs.readFileSync(`${buildDir}/${wasmName}`))
+      })
+    }
+
+    routes.map(r => {
+      const wasmName = r.path.replace('.ts', '.wasm')
+      wasmManifest.modules?.push({
+        file: wasmName,
+        name: r.name,
+        type: 'module',
+        md5: generateMd5Checksum(fs.readFileSync(`${buildDir}/${wasmName}`))
+      })
     })
 
     if (deployConfig) {
