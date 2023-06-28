@@ -67,13 +67,6 @@ export function sitesCli(yargs: Argv) {
           type: 'string',
           default: undefined
         })
-        .option('debug', {
-          alias: 'd',
-          description: 'Add a debug flag to the function build',
-          type: 'boolean',
-          default: false
-        })
-        .group(['debug'], 'Options:')
     },
     (argv) => {
       runBuild(argv as any)
@@ -90,6 +83,12 @@ export function sitesCli(yargs: Argv) {
           type: 'string',
           default: undefined
         })
+        .option('rebuild', {
+          description: 'Rebuild the funciton',
+          type: 'boolean',
+          default: true
+        })
+        .group(['rebuild'], 'Options:')
     },
     (argv) => {
       runPreview(argv)

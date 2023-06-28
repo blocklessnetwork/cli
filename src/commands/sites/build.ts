@@ -30,15 +30,14 @@ export const run = async (options: {
 
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
+    const deployConfig = deployment
     const buildDir = resolve(path, buildConfig.dir || '.bls')
     const buildName = buildConfig.entry ? buildConfig.entry.replace('.wasm', '') : name
     const wasmName = buildConfig.entry || `${name}.wasm`
     const wasmArchive = `${buildName}.tar.gz`
 
-    // Rebuild function if requested
-    if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
-      buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
-    } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
+    // Bail if file is present and rebuild is not requested
+    if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
       return
     }
 
@@ -47,6 +46,9 @@ export const run = async (options: {
       wasmArchive,
       content_type
     )
+
+    // Build site WASM
+    await buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
 
     // Create a WASM archive
     const archive = createWasmArchive(buildDir, wasmArchive, wasmName)
@@ -59,6 +61,10 @@ export const run = async (options: {
       entry: wasmName,
       result_type: "string",
     })
+
+    if (deployConfig) {
+      wasmManifest.permissions = deployConfig.permissions || []
+    }
 
     // Store manifest
     fs.writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
