@@ -191,17 +191,19 @@ const generateCompileDirectory = (source: string): { dir: string, file: string }
     // Match assets and serve data
     if (assets.has(url)) {
       // Parse content type and format
-      const content = assets.get(url) || '404 not found'
+      const content = assets.get(url)
 
       if (content.startsWith('data:')) {
         const matchString = content.replace('data:', '')
         const matchTypeSplit = matchString.split(';')
         
         contentType = matchTypeSplit[0]
-        response = matchTypeSplit[1]
       }
 
-      response = assets.get(url) || '404 not found'
+      response = assets.get(url)
+      status = 200
+    } else if (assets.has('/404.html')) {
+      response = assets.get('/404.html')
     }
 
     return new http.Response(response)
