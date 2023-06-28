@@ -172,17 +172,26 @@ const generateCompileDirectory = (source: string): { dir: string, file: string }
     let status: u32 = 404
     let contentType: string = 'text/html'
 
-    if (req.url === '/' && assets.has('/index.html')) {
-      req.url = '/index.html'
+    let url = req.url
+    let urlWithoutSlash = url.endsWith('/') ? url.slice(0, -1) : url
+
+    // Serve the index file for the homepage
+    if (url === '/' && assets.has('/index.html')) {
+      url = '/index.html'
     }
 
-    if (!assets.has(req.url) && assets.has(req.url + '.html')) {
-      req.url = req.url + '.html'
+    // Serve nested index.html for any folder route
+    // Serve matching html for a non html route 
+    if (!assets.has(urlWithoutSlash) && assets.has(urlWithoutSlash + '/index.html')) {
+      url = urlWithoutSlash + '/index.html'
+    } else if (!assets.has(urlWithoutSlash) && assets.has(urlWithoutSlash + '.html')) {
+      url = urlWithoutSlash + '.html'
     }
     
-    if (assets.has(req.url)) {
+    // Match assets and serve data
+    if (assets.has(url)) {
       // Parse content type and format
-      const content = assets.get(req.url) || '404 not found'
+      const content = assets.get(url) || '404 not found'
 
       if (content.startsWith('data:')) {
         const matchString = content.replace('data:', '')
@@ -192,7 +201,7 @@ const generateCompileDirectory = (source: string): { dir: string, file: string }
         response = matchTypeSplit[1]
       }
 
-      response = assets.get(req.url) || '404 not found'
+      response = assets.get(url) || '404 not found'
     }
 
     return new http.Response(response)
