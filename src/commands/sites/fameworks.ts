@@ -17,6 +17,16 @@ interface IFramework {
 
 const frameworks: IFramework[] = [
   {
+    id: 'vite',
+    name: 'Blank (Vite)',
+    command: (pm, name) => `${pm} create-vite ${name} --template vanilla`,
+    postCommand: null,
+    config: {
+      build: 'npm run build',
+      publicDir: 'dist'
+    }
+  },
+  {
     id: 'react',
     name: 'React',
     command: (pm, name) => `${pm} create-react-app ${name}`,
