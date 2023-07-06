@@ -119,11 +119,16 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     if (!!data.err) {
       console.log(Chalk.red(`Deployment unsuccessful, ${data.message}`))
     } else {
-      console.log(
-        Chalk.green(
-          `Successfully deployed ${functionName} with id ${functionId}`
-        )
-      )
+      console.log(Chalk.green(`Deployment successful!`));
+
+      const domain =
+        !!data.domainMappings &&
+        data.domainMappings.length > 0 &&
+        data.domainMappings[0].domain;
+
+      console.log(`${Chalk.blue("Name:")}   ${data.functionName}`)
+      if (domain) console.log(`${Chalk.blue("URL:")}    https://${domain}`)
+      console.log(`${Chalk.blue("CID:")}    ${data.functionId}`)
     }
   } catch (error: any) {
     logger.error('Failed to deploy function.', error.message)
