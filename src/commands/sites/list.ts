@@ -12,10 +12,20 @@ export const run = async () => {
 
     if (sites && sites.length > 0) {
       sites.forEach && sites.forEach((f: any) => {
+        const domain = 
+          !!f.domainMappings && 
+          f.domainMappings.length > 0 && 
+          f.domainMappings[0].domain
+
         logger.log('')
-        logger.log(`${Chalk.blue('Name:')}   ${f.functionName}`)
-        logger.log(`${Chalk.blue('CID:')}    ${f.functionId}`)
-        logger.log(`${Chalk.blue('Status:')} ${f.status === 'stopped' ? Chalk.red(f.status) : f.status === 'deployed' ? Chalk.green(f.status) : f.status}`)
+        logger.log(`${Chalk.blue('Name:')}    ${f.functionName}`)
+        
+        if (domain) {
+          logger.log(`${Chalk.blue('URL:')}     https://${domain}`)
+        }
+        
+        logger.log(`${Chalk.blue('CID:')}     ${f.functionId}`)
+        logger.log(`${Chalk.blue('Status:')}  ${f.status === 'stopped' ? Chalk.red(f.status) : f.status === 'deployed' ? Chalk.green(f.status) : f.status}`)
       })
 
       logger.log('')
