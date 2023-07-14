@@ -92,6 +92,7 @@ fastify.get("/complete", async (request: any, reply: any) => {
   console.log('You have successfully authenticated with the server.')
   console.log('')
   fastify.close()
+  process.exit(1)
 });
 
 // run the server
