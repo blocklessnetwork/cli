@@ -2,6 +2,7 @@ import Chalk from "chalk"
 import { run as runPublish } from "./publish"
 import { basename, resolve } from "path"
 import { consoleClient } from "../../lib/http"
+import { gatewayRequest } from "../../lib/gateway"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
@@ -64,7 +65,7 @@ const updateFunction = async (data: any) => {
 
   // Find all matching functions, warn users if they are updating a function that is not deployed
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await gatewayRequest("[GET] /functions")
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
