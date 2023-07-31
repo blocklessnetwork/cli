@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { getToken } from "../store/db";
+import { getDb, getToken } from "../store/db";
 import { getGatewayUrl } from "./urls";
 
 export const gatewayClient = axios.create({
@@ -200,7 +200,8 @@ export function gatewayRequest<T extends GatewayEndpointType>(
   api: T,
   data?: GatewayEndpoints[T]["params"]
 ) {
-  const map = gatewayAPIMapping[api]["v0"];
+  const gatewayVersion = getDb().get("config.apiVersion").value()
+  const map = gatewayAPIMapping[api][gatewayVersion === 1 ? "v1" : 'v0'];
   const url = data
     ? Object.entries(data as { [key: string]: any }).reduce(
         (str, [key, value]) =>
@@ -214,8 +215,6 @@ export function gatewayRequest<T extends GatewayEndpointType>(
     url,
     data: !!map.dataParser ? map.dataParser(data) : data,
   };
-
-  console.log("rquest", request);
 
   return gatewayClient.request(request);
 }

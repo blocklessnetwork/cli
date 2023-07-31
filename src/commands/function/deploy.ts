@@ -95,7 +95,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
   try {
     const fnAction = !internalFunctionId ? `[POST] /functions` : `[PATCH] /functions/{id}`
     const fnBody = !internalFunctionId ?
-      { functionId, name: functionName } :
+      { functionId, functionName } :
       { id: internalFunctionId, functionId, functionName, status: 'deploying' }
 
     const { data } = await gatewayRequest(`${fnAction}`, fnBody)

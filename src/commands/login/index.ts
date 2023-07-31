@@ -2,7 +2,8 @@ import Chalk from "chalk"
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
 import { openInBrowser } from "../../lib/browser";
-import { getGatewayUrl } from "../../lib/urls"
+import { getGatewayUrl, validateGatewayVersion } from "../../lib/urls"
+import axios from "axios"
 
 const portastic = require("portastic");
 const clientId = "7ddcb826-e84a-4102-b95b-d9b8d3a57176";
@@ -119,19 +120,23 @@ const start = async (url: string) => {
 };
 
 // run the command when cli is called
-export function run(options?: any) {
+export async function run(options?: any) {
   if (options?.authUrl) {
     getDb().set("config.authUrl", options?.authUrl.replace(/^https?:\/\//, '')).write();
   }
+
   if (options?.authPort) {
     getDb().set("config.authPort", parseInt(options?.authPort)).write();
   }
+
+  const gatewayUrl = getGatewayUrl()
+  const gatewayVersion = await validateGatewayVersion(gatewayUrl)
+  getDb().set("config.apiVersion", gatewayVersion).write()
 
   if (options?.authToken) {
     const token = options?.authToken;
     getDb().set("config.token", token).write();
   } else {
-    const gatewayUrl = getGatewayUrl()
     start(gatewayUrl);
   }
 }

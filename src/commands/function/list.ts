@@ -5,7 +5,6 @@ import { gatewayRequest } from "../../lib/gateway";
 export const run = async () => {
   try {
     const { data } = await gatewayRequest("[GET] /functions");
-
     const functions = data.docs ? data.docs : [];
 
     logger.log("List of Functions:");
