@@ -1,10 +1,10 @@
 import Chalk from "chalk"
-import { consoleClient } from "../../lib/http"
 import { logger } from "../../lib/logger"
+import { gatewayRequest } from "../../lib/gateway"
 
 export const run = async () => {
   try {
-    const { data } = await consoleClient.get(`/api/sites?limit=999`, {})
+    const { data } = await gatewayRequest("[GET] /sites");
     const sites = data.docs ? data.docs : []
 
     logger.log('List of Sites:')

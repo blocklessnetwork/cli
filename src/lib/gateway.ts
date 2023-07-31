@@ -60,9 +60,19 @@ export type GatewayEndpoints = {
   "[GET] /functions/{id}": { params: { id: string } };
   "[DELETE] /functions/{id}": { params: { id: string } };
   "[PATCH] /functions/{id}": {
-    params: { id: string; name?: string; functionId?: string; status?: string };
+    params: { id: string; functionName?: string, functionId?: string; status?: string };
   };
   "[PUT] /functions/{id}/deploy": {
+    params: { id: string; functionId?: string; functionName?: string };
+  };
+  "[GET] /sites": { params: {} };
+  "[POST] /sites": { params: { functionId?: string, functionName?: string } };
+  "[GET] /sites/{id}": { params: { id: string } };
+  "[DELETE] /sites/{id}": { params: { id: string } };
+  "[PATCH] /sites/{id}": {
+    params: { id: string; functionName?: string; functionId?: string; status?: string };
+  };
+  "[PUT] /sites/{id}/deploy": {
     params: { id: string; functionId?: string; functionName?: string };
   };
 };
@@ -92,11 +102,12 @@ export const gatewayAPIMapping: {
     v0: {
       request: {
         method: "POST",
-        url: "/api/modules/new"
+        url: "/api/modules/new",
       },
-      dataParser: (
-        data: GatewayEndpoints["[POST] /functions"]["params"]
-      ) => ({ name: data.functionName, ...data }),
+      dataParser: (data: GatewayEndpoints["[POST] /functions"]["params"]) => ({
+        name: data.functionName,
+        ...data,
+      }),
     },
     v1: { request: { method: "POST", url: "/api/v1/functions" } },
   },
@@ -124,7 +135,7 @@ export const gatewayAPIMapping: {
       request: { method: "POST", url: "/api/modules/update" },
       dataParser: (
         data: GatewayEndpoints["[PATCH] /functions/{id}"]["params"]
-      ) => ({ _id: data.id, ...data }),
+      ) => ({ _id: data.id, name: data.functionName, ...data }),
     },
     v1: { request: { method: "PATCH", url: "/api/v1/functions/{id}" } },
   },
@@ -134,6 +145,52 @@ export const gatewayAPIMapping: {
       dataParser: (
         data: GatewayEndpoints["[PUT] /functions/{id}/deploy"]["params"]
       ) => ({ userFunctionid: data.id, ...data }),
+    },
+    v1: { request: { method: "PUT", url: "/api/v1/functions/{id}/deploy" } },
+  },
+  "[GET] /sites": {
+    v0: {
+      request: {
+        method: "GET",
+        url: "/api/sites",
+        params: { limit: 999 },
+      },
+    },
+    v1: { request: { method: "GET", url: "/api/v1/sites" } },
+  },
+  "[POST] /sites": {
+    v0: {
+      request: {
+        method: "POST",
+        url: "/api/sites",
+      },
+    },
+    v1: { request: { method: "POST", url: "/api/v1/sites" } },
+  },
+  "[GET] /sites/{id}": {
+    v0: {
+      request: {
+        method: "GET",
+        url: "/api/sites/{id}",
+      },
+    },
+    v1: { request: { method: "GET", url: "/api/v1/sites/{id}" } },
+  },
+  "[DELETE] /sites/{id}": {
+    v0: {
+      request: { method: "DELETE", url: "/api/sites/{id}" },
+    },
+    v1: { request: { method: "DELETE", url: "/api/v1/sites/{id}/delete" } },
+  },
+  "[PATCH] /sites/{id}": {
+    v0: {
+      request: { method: "PATCH", url: "/api/sites/{id}" },
+    },
+    v1: { request: { method: "PATCH", url: "/api/v1/sites/{id}" } },
+  },
+  "[PUT] /sites/{id}/deploy": {
+    v0: {
+      request: { method: "PUT", url: "/api/sites/{id}/deploy" }
     },
     v1: { request: { method: "PUT", url: "/api/v1/functions/{id}/deploy" } },
   },

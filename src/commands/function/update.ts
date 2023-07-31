@@ -1,7 +1,6 @@
 import Chalk from "chalk"
 import { run as runPublish } from "./publish"
 import { basename, resolve } from "path"
-import { consoleClient } from "../../lib/http"
 import { gatewayRequest } from "../../lib/gateway"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
@@ -94,7 +93,8 @@ const updateFunction = async (data: any) => {
     const { data } = await gatewayRequest('[PATCH] /functions/{id}', {
       id: internalFunctionId,
       functionId,
-      name: functionName, status: 'deploying'
+      functionName,
+      status: 'deploying'
     })
 
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id

@@ -1,7 +1,6 @@
 import Chalk from "chalk"
 import { run as runPublish } from "./publish"
 import { basename, resolve } from "path"
-import { consoleClient } from "../../lib/http"
 import { gatewayRequest } from "../../lib/gateway"
 import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
@@ -97,7 +96,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     const fnAction = !internalFunctionId ? `[POST] /functions` : `[PATCH] /functions/{id}`
     const fnBody = !internalFunctionId ?
       { functionId, name: functionName } :
-      { id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
+      { id: internalFunctionId, functionId, functionName, status: 'deploying' }
 
     const { data } = await gatewayRequest(`${fnAction}`, fnBody)
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id

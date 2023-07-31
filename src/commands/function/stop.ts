@@ -1,6 +1,5 @@
 import Chalk from "chalk"
 import { parseBlsConfig } from "../../lib/blsConfig"
-import { consoleClient } from "../../lib/http"
 import { gatewayRequest } from "../../lib/gateway"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
@@ -72,7 +71,7 @@ const stopFunction = async (data: any) => {
 
     const { data } = await gatewayRequest('[PATCH] /functions/{id}', {
       id: internalFunctionId,
-      name: matchingFunction.functionName,
+      functionName: matchingFunction.functionName,
       status: 'stopped'
     })
     

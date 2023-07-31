@@ -1,6 +1,5 @@
 import Chalk from "chalk"
 import { parseBlsConfig } from "../../lib/blsConfig"
-import { consoleClient } from "../../lib/http"
 import { gatewayRequest } from "../../lib/gateway"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
