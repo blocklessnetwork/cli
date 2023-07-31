@@ -56,8 +56,15 @@ gatewayClient.interceptors.response.use(
 
 export type GatewayEndpoints = {
   "[GET] /functions": { params: {} };
+  "[POST] /functions": { params: { functionId?: string, functionName?: string } };
   "[GET] /functions/{id}": { params: { id: string } };
   "[DELETE] /functions/{id}": { params: { id: string } };
+  "[PATCH] /functions/{id}": {
+    params: { id: string; name?: string; functionId?: string; status?: string };
+  };
+  "[PUT] /functions/{id}/deploy": {
+    params: { id: string; functionId?: string; functionName?: string };
+  };
 };
 
 export type GatewayEndpointType = keyof GatewayEndpoints;
@@ -81,6 +88,18 @@ export const gatewayAPIMapping: {
     },
     v1: { request: { method: "GET", url: "/api/v1/functions" } },
   },
+  "[POST] /functions": {
+    v0: {
+      request: {
+        method: "POST",
+        url: "/api/modules/new"
+      },
+      dataParser: (
+        data: GatewayEndpoints["[POST] /functions"]["params"]
+      ) => ({ name: data.functionName, ...data }),
+    },
+    v1: { request: { method: "POST", url: "/api/v1/functions" } },
+  },
   "[GET] /functions/{id}": {
     v0: {
       request: {
@@ -100,13 +119,31 @@ export const gatewayAPIMapping: {
     },
     v1: { request: { method: "DELETE", url: "/api/v1/functions/{id}/delete" } },
   },
+  "[PATCH] /functions/{id}": {
+    v0: {
+      request: { method: "POST", url: "/api/modules/update" },
+      dataParser: (
+        data: GatewayEndpoints["[PATCH] /functions/{id}"]["params"]
+      ) => ({ _id: data.id, ...data }),
+    },
+    v1: { request: { method: "PATCH", url: "/api/v1/functions/{id}" } },
+  },
+  "[PUT] /functions/{id}/deploy": {
+    v0: {
+      request: { method: "POST", url: "/api/modules/deploy" },
+      dataParser: (
+        data: GatewayEndpoints["[PUT] /functions/{id}/deploy"]["params"]
+      ) => ({ userFunctionid: data.id, ...data }),
+    },
+    v1: { request: { method: "PUT", url: "/api/v1/functions/{id}/deploy" } },
+  },
 };
 
 export function gatewayRequest<T extends GatewayEndpointType>(
   api: T,
   data?: GatewayEndpoints[T]["params"]
 ) {
-  const map = gatewayAPIMapping[api]["v1"];
+  const map = gatewayAPIMapping[api]["v0"];
   const url = data
     ? Object.entries(data as { [key: string]: any }).reduce(
         (str, [key, value]) =>
@@ -120,6 +157,8 @@ export function gatewayRequest<T extends GatewayEndpointType>(
     url,
     data: !!map.dataParser ? map.dataParser(data) : data,
   };
+
+  console.log("rquest", request);
 
   return gatewayClient.request(request);
 }

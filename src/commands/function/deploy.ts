@@ -94,12 +94,12 @@ const deployFunction = async (functionName: string, functionData: any, options: 
 
   // Create or Update a user function
   try {
-    const fnAction = !internalFunctionId ? `new` : `update`
+    const fnAction = !internalFunctionId ? `[POST] /functions` : `[PATCH] /functions/{id}`
     const fnBody = !internalFunctionId ?
       { functionId, name: functionName } :
-      { _id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
+      { id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
 
-    const { data } = await consoleClient.post(`/api/modules/${fnAction}`, fnBody)
+    const { data } = await gatewayRequest(`${fnAction}`, fnBody)
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id
   } catch (error: any) {
     logger.error('Failed to update function metadata.', error.message)
@@ -111,8 +111,8 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     if (!internalFunctionId) throw new Error('Unable to retrive function ID')
     console.log(Chalk.yellow(`Deploying ${functionName} ...`))
 
-    const { data } = await consoleClient.post(`/api/modules/deploy`, {
-      userFunctionid: internalFunctionId,
+    const { data } = await gatewayRequest(`[PUT] /functions/{id}/deploy`, {
+      id: internalFunctionId,
       functionId: functionId,
       functionName: functionName.replace(/\s+/g, "-"),
     })

@@ -70,13 +70,13 @@ const stopFunction = async (data: any) => {
     if (!internalFunctionId || !matchingFunction) 
       throw new Error('Unable to retrive function ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/update`, {
-      _id: internalFunctionId,
+    const { data } = await gatewayRequest('[PATCH] /functions/{id}', {
+      id: internalFunctionId,
       name: matchingFunction.functionName,
       status: 'stopped'
     })
-
-    if (!data.success) throw new Error("")
+    
+    if (!data) throw new Error("")
 
     console.log(
       Chalk.green(

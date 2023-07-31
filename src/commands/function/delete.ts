@@ -70,8 +70,8 @@ const deleteFunction = async (data: any) => {
     if (!internalFunctionId || !matchingFunction)
       throw new Error('Unable to retrive function ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/delete`, {
-      _id: internalFunctionId
+    const { data } = await gatewayRequest('[DELETE] /functions/{id}', {
+      id: internalFunctionId
     })
 
     if (!data.success) throw new Error("")

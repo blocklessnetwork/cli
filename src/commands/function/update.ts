@@ -91,8 +91,8 @@ const updateFunction = async (data: any) => {
   try {
     if (!internalFunctionId) throw new Error('Unable to retrive function ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/update`, {
-      _id: internalFunctionId,
+    const { data } = await gatewayRequest('[PATCH] /functions/{id}', {
+      id: internalFunctionId,
       functionId,
       name: functionName, status: 'deploying'
     })
@@ -109,8 +109,8 @@ const updateFunction = async (data: any) => {
     
     console.log(Chalk.yellow(`Deploying ${functionName} ...`))
 
-    const { data } = await consoleClient.post(`/api/modules/deploy`, {
-      userFunctionid: internalFunctionId,
+    const { data } = await gatewayRequest(`[PUT] /functions/{id}/deploy`, {
+      id: internalFunctionId,
       functionId: functionId,
       functionName: functionName.replace(/\s+/g, "-"),
     })
