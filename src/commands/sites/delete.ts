@@ -69,7 +69,7 @@ const deleteSite = async (data: any) => {
     if (!internalFunctionId || !matchingFunction)
       throw new Error('Unable to retrive site ID.')
 
-    const { data } = await gatewayRequest('[DELETE] /functions/{id}', {
+    const { data } = await gatewayRequest('[DELETE] /sites/{id}', {
       id: internalFunctionId
     })
 

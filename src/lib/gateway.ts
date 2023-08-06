@@ -128,7 +128,7 @@ export const gatewayAPIMapping: {
         data: GatewayEndpoints["[DELETE] /functions/{id}"]["params"]
       ) => ({ _id: data.id }),
     },
-    v1: { request: { method: "DELETE", url: "/api/v1/functions/{id}/delete" } },
+    v1: { request: { method: "DELETE", url: "/api/v1/functions/{id}" } },
   },
   "[PATCH] /functions/{id}": {
     v0: {
@@ -180,7 +180,7 @@ export const gatewayAPIMapping: {
     v0: {
       request: { method: "DELETE", url: "/api/sites/{id}" },
     },
-    v1: { request: { method: "DELETE", url: "/api/v1/sites/{id}/delete" } },
+    v1: { request: { method: "DELETE", url: "/api/v1/sites/{id}" } },
   },
   "[PATCH] /sites/{id}": {
     v0: {
@@ -192,7 +192,7 @@ export const gatewayAPIMapping: {
     v0: {
       request: { method: "PUT", url: "/api/sites/{id}/deploy" }
     },
-    v1: { request: { method: "PUT", url: "/api/v1/functions/{id}/deploy" } },
+    v1: { request: { method: "PUT", url: "/api/v1/sites/{id}/deploy" } },
   },
 };
 

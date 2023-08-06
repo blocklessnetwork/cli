@@ -64,7 +64,7 @@ const deleteFunction = async (data: any) => {
     return
   }
 
-  // delete the function
+  // Delete the function
   try {
     if (!internalFunctionId || !matchingFunction)
       throw new Error('Unable to retrive function ID.')
@@ -73,7 +73,7 @@ const deleteFunction = async (data: any) => {
       id: internalFunctionId
     })
 
-    if (!data.success) throw new Error("")
+    if (!data) throw new Error("")
 
     console.log(
       Chalk.green(
