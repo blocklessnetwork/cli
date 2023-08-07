@@ -6,6 +6,7 @@ import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName, slugify } from "../../lib/strings"
+import { getGatewayDeploymentUrl } from "../../lib/urls"
 
 interface DeployCommandOptions {
   name?: string
@@ -120,10 +121,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     } else {
       console.log(Chalk.green(`Deployment successful!`));
 
-      const domain =
-        !!data.domainMappings &&
-        data.domainMappings.length > 0 &&
-        data.domainMappings[0].domain;
+      const domain = getGatewayDeploymentUrl(data.subdomain, data.domainMappings)
 
       console.log(`${Chalk.blue("Name:")}   ${data.functionName}`)
       if (domain) console.log(`${Chalk.blue("URL:")}    https://${domain}`)

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAuthUrl } from "../store/db";
+import { getAuthUrl, getDb } from "../store/db";
 
 // Console API Server
 export const getConsoleServer = (port?: number) => {
@@ -19,6 +19,31 @@ export const getGatewayUrl = (): string => {
       ? `${protocol}://${authUrl.url}`
       : `${protocol}://${authUrl.url}:${authUrl.port}`
     : getConsoleServer();
+};
+
+export const getGatewayDeploymentUrl = (
+  subdomain: string | null,
+  domainMappings: { domain: string }[]
+): string | null => {
+  let domain = null;
+
+  const gatewayVersion = getDb().get("config.apiVersion").value();
+
+  if (gatewayVersion === 1) {
+    const gatewayUrl = getAuthUrl();
+
+    if (domainMappings.length > 0) {
+      domain = domainMappings[0].domain;
+    } else {
+      domain = `${subdomain}.${gatewayUrl.url}`;
+    }
+  } else {
+    if (domainMappings.length > 0) {
+      domain = domainMappings[0].domain;
+    }
+  }
+
+  return domain;
 };
 
 export async function validateGatewayVersion(gatewayUrl: string) {

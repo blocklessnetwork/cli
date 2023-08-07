@@ -1,6 +1,7 @@
 import Chalk from "chalk";
 import { logger } from "../../lib/logger";
 import { gatewayRequest } from "../../lib/gateway";
+import { getGatewayDeploymentUrl } from "../../lib/urls"
 
 export const run = async () => {
   try {
@@ -13,10 +14,7 @@ export const run = async () => {
     if (functions && functions.length > 0) {
       functions.forEach &&
         functions.forEach((f: any) => {
-          const domain =
-            !!f.domainMappings &&
-            f.domainMappings.length > 0 &&
-            f.domainMappings[0].domain;
+          const domain = getGatewayDeploymentUrl(f.subdomain, f.domainMappings)
 
           logger.log("");
           logger.log(`${Chalk.blue("Name:")}    ${f.functionName}`);
