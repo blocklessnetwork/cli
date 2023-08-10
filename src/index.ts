@@ -47,10 +47,6 @@ function createCLI(argv: string[]) {
       describe: "Assume yes to all prompts",
       type: "boolean"
     })
-    .option("experimental", {
-      describe: 'Enables experimental commands',
-      type: 'boolean'
-    })
 
   cli.group(["yes", "help", "version"], "Flags:")
   cli.help().alias("h", "help")
@@ -131,7 +127,7 @@ function createCLI(argv: string[]) {
 
   cli.command(
     'sites',
-    'Manages your sites (Experimental Feature)',
+    'Manages your sites',
     (yargs) => sitesCli(yargs.command(subCommands))
   )
 

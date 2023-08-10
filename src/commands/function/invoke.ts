@@ -137,7 +137,8 @@ export const run = async (options: any) => {
         }
         
         const result = execSync(`echo "${path}" | ${envString} ${runtimePath} ${manifestPath}`, {
-          cwd: path
+          cwd: path,
+          maxBuffer: (10000 * 1024)
         }).toString()
 
         if (!manifest.contentType || manifest.contentType === 'json' && result) {
@@ -198,7 +199,8 @@ export const run = async (options: any) => {
       }
 
       const result = execSync(`echo "${stdinString}" | ${envString} ${runtimePath} ${manifestPath}`, {
-        cwd: path
+        cwd: path,
+        maxBuffer: (10000 * 1024)
       }).toString()
 
       console.log(result)
