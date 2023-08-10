@@ -10,7 +10,6 @@ export const getDb = () => {
   if (!db) {
     const lowdb = require("lowdb")
     const FileSync = require("lowdb/adapters/FileSync")
-    const lowdbEncryption = require("lowdb-encryption")
   
     const cliConfigFileName = "bls.cli.config.json"
     const cliConfigFilePath = `${store.system.homedir}${store.system.appPath}`
@@ -31,13 +30,7 @@ export const getDb = () => {
   
     const adapter = new FileSync(
       `${store.system.homedir}${store.system.appPath}/bls.cli.config.json`,
-      {
-        defaultValue,
-        ...lowdbEncryption({
-          secret: "s3cr3t",
-          iterations: 100_000,
-        }),
-      }
+      { defaultValue }
     )
   
     db = lowdb(adapter);
@@ -58,7 +51,8 @@ export const getToken = () => {
 export const getAuthUrl = (): { url: string, port: number } => {
   const db = getDb();
   const config = db.get("config").value();
-  const { authUrl, authPort } = config
+  if (!config) return { url: 'dashboard.blockless.network', port: 443 }
 
+  const { authUrl, authPort } = config
   return { url: authUrl, port: authPort }
 }
