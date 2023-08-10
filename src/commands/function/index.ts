@@ -7,6 +7,7 @@ import { run as runDeploy } from "./deploy"
 import { run as runUpdate } from "./update"
 import { run as runStop } from "./stop"
 import { run as runDelete } from "./delete"
+import { functionEnvCli } from "./env"
 
 export function functionCli(yargs: Argv) {
   yargs
@@ -161,6 +162,12 @@ export function functionCli(yargs: Argv) {
     (argv) => {
       runUpdate(argv)
     }
+  )
+  
+  yargs.command(
+    'env',
+    'Manages your functions environment variables',
+    (yargs) => functionEnvCli(yargs)
   )
 
   yargs.command(
