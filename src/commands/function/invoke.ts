@@ -22,7 +22,7 @@ export const run = async (options: any) => {
     serve = false
   } = options
 
-  const runtimePath = `${systemPath}runtime/blockless-cli`
+  const runtimePath = `${systemPath}runtime/bls-runtime`
 
   // Validate Runtime Path
   try {

@@ -51,7 +51,6 @@ export interface IWasmModule {
 export interface IManifest {
   id: string;
   version: number
-  veriosn: number
   name: string;
   description: string;
   fs_root_path: string;

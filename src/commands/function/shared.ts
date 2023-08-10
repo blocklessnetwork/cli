@@ -98,7 +98,6 @@ export const createWasmManifest = (
   const manifest: IManifest = {
     id: "",
     version: 1,
-    veriosn: 1,
     name,
     hooks: [],
     description: "",
