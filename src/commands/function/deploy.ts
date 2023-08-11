@@ -1,11 +1,12 @@
 import Chalk from "chalk"
 import { run as runPublish } from "./publish"
 import { basename, resolve } from "path"
-import { consoleClient } from "../../lib/http"
+import { gatewayRequest } from "../../lib/gateway"
 import promptFnDeploy from "../../prompts/function/deploy"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName, slugify } from "../../lib/strings"
+import { getGatewayDeploymentUrl } from "../../lib/urls"
 
 interface DeployCommandOptions {
   name?: string,
@@ -65,7 +66,7 @@ const deployFunction = async (functionName: string, functionData: any, options: 
 
   // Find all matching functions, warn users if they are overwriting a deployed function
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await gatewayRequest("[GET] /functions")
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
@@ -93,12 +94,12 @@ const deployFunction = async (functionName: string, functionData: any, options: 
 
   // Create or Update a user function
   try {
-    const fnAction = !internalFunctionId ? `new` : `update`
+    const fnAction = !internalFunctionId ? `[POST] /functions` : `[PATCH] /functions/{id}`
     const fnBody = !internalFunctionId ?
-      { functionId, name: functionName } :
-      { _id: internalFunctionId, functionId, name: functionName, status: 'deploying' }
+      { functionId, functionName } :
+      { id: internalFunctionId, functionId, functionName, status: 'deploying' }
 
-    const { data } = await consoleClient.post(`/api/modules/${fnAction}`, fnBody)
+    const { data } = await gatewayRequest(`${fnAction}`, fnBody)
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id
   } catch (error: any) {
     logger.error('Failed to update function metadata.', error.message)
@@ -110,8 +111,8 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     if (!internalFunctionId) throw new Error('Unable to retrive function ID')
     console.log(Chalk.yellow(`Deploying ${functionName} ...`))
 
-    const { data } = await consoleClient.post(`/api/modules/deploy`, {
-      userFunctionid: internalFunctionId,
+    const { data } = await gatewayRequest(`[PUT] /functions/{id}/deploy`, {
+      id: internalFunctionId,
       functionId: functionId,
       functionName: functionName.replace(/\s+/g, "-"),
     })
@@ -119,11 +120,13 @@ const deployFunction = async (functionName: string, functionData: any, options: 
     if (!!data.err) {
       console.log(Chalk.red(`Deployment unsuccessful, ${data.message}`))
     } else {
-      console.log(
-        Chalk.green(
-          `Successfully deployed ${functionName} with id ${functionId}`
-        )
-      )
+      console.log(Chalk.green(`Deployment successful!`));
+
+      const domain = getGatewayDeploymentUrl(data.subdomain, data.domainMappings)
+
+      console.log(`${Chalk.blue("Name:")}   ${data.functionName}`)
+      if (domain) console.log(`${Chalk.blue("URL:")}    https://${domain}`)
+      console.log(`${Chalk.blue("CID:")}    ${data.functionId}`)
     }
   } catch (error: any) {
     logger.error('Failed to deploy function.', error.message)

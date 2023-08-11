@@ -1,10 +1,13 @@
 import Chalk from "chalk"
 import Table from "cli-table3"
 import { parseJwt } from "../../lib/crypto"
-import { getToken } from "../../store/db"
+import { getDb, getToken } from "../../store/db"
+import { getGatewayUrl } from "../../lib/urls"
 
 export const listWallet = () => {
   const token = getToken()
+  const gatewayUrl = getGatewayUrl()
+  const gatewayVersion = getDb().get("config.apiVersion").value()
 
   let publicAddress
   let walletType
@@ -19,16 +22,22 @@ export const listWallet = () => {
     } catch {}
   }
 
+  console.log('')
+
   if (!!publicAddress && !!walletType && expiredTime > Date.now()) {
-    console.log(`You are connected with a JWT token to the Blockless console!`)
+    console.log(`You are connected with a JWT token to a Blockless Gateway!`)
 
     var table = new Table({
-      head: ["Wallet", "Address"],
       wordWrap: true,
       wrapOnWordBoundary: false
     })
     
-    table.push([walletType, publicAddress])
+    table.push(
+      [Chalk.magenta("Status"), Chalk.green("Connected")],
+      [Chalk.magenta("Address"), publicAddress],
+      [Chalk.magenta("Gateway"), gatewayUrl],
+      [Chalk.magenta("Version"), (!gatewayVersion || gatewayVersion === 0) ? `v0.1 (Legacy)` : `v${gatewayVersion}`]
+    );
     console.log(table.toString())
   } else {
     console.log(

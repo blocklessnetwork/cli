@@ -1,6 +1,6 @@
 import Chalk from "chalk"
 import { parseBlsConfig } from "../../lib/blsConfig"
-import { consoleClient } from "../../lib/http"
+import { gatewayRequest } from "../../lib/gateway"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
 
@@ -42,7 +42,7 @@ const deleteFunction = async (data: any) => {
     console.log(Chalk.yellow(`Deleting ${functionName} ...`))
     console.log('')
 
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await gatewayRequest("[GET] /functions")
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
@@ -64,16 +64,16 @@ const deleteFunction = async (data: any) => {
     return
   }
 
-  // delete the function
+  // Delete the function
   try {
     if (!internalFunctionId || !matchingFunction)
       throw new Error('Unable to retrive function ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/delete`, {
-      _id: internalFunctionId
+    const { data } = await gatewayRequest('[DELETE] /functions/{id}', {
+      id: internalFunctionId
     })
 
-    if (!data.success) throw new Error("")
+    if (!data) throw new Error("")
 
     console.log(
       Chalk.green(

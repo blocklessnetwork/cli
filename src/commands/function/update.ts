@@ -1,7 +1,7 @@
 import Chalk from "chalk"
 import { run as runPublish } from "./publish"
 import { basename, resolve } from "path"
-import { consoleClient } from "../../lib/http"
+import { gatewayRequest } from "../../lib/gateway"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { normalizeFunctionName } from "../../lib/strings"
@@ -64,7 +64,7 @@ const updateFunction = async (data: any) => {
 
   // Find all matching functions, warn users if they are updating a function that is not deployed
   try {
-    const { data } = await consoleClient.get(`/api/modules/mine?limit=999`, {})
+    const { data } = await gatewayRequest("[GET] /functions")
     const functions = data.docs ? data.docs : []
 
     // Sort all matching functions by name and select the last matching function
@@ -90,10 +90,11 @@ const updateFunction = async (data: any) => {
   try {
     if (!internalFunctionId) throw new Error('Unable to retrive function ID.')
 
-    const { data } = await consoleClient.post(`/api/modules/update`, {
-      _id: internalFunctionId,
+    const { data } = await gatewayRequest('[PATCH] /functions/{id}', {
+      id: internalFunctionId,
       functionId,
-      name: functionName, status: 'deploying'
+      functionName,
+      status: 'deploying'
     })
 
     if (!internalFunctionId && data && data._id) internalFunctionId = data._id
@@ -108,8 +109,8 @@ const updateFunction = async (data: any) => {
     
     console.log(Chalk.yellow(`Deploying ${functionName} ...`))
 
-    const { data } = await consoleClient.post(`/api/modules/deploy`, {
-      userFunctionid: internalFunctionId,
+    const { data } = await gatewayRequest(`[PUT] /functions/{id}/deploy`, {
+      id: internalFunctionId,
       functionId: functionId,
       functionName: functionName.replace(/\s+/g, "-"),
     })

@@ -9,7 +9,6 @@ import { run as runDeploy } from "./deploy"
 export function sitesCli(yargs: Argv) {
   yargs
     .usage('bls sites [subcommand]')
-    .demandOption('experimental')
 
   yargs.command(
     'list',

@@ -145,7 +145,8 @@ export const run = async (options: any) => {
       }
       
       const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
-        cwd: path
+        cwd: path,
+        maxBuffer: (10000 * 1024)
       }).toString()
 
       if (!manifest.contentType || manifest.contentType === 'json' && result) {

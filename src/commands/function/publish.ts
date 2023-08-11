@@ -2,10 +2,10 @@ import { readFileSync } from "fs";
 import Chalk from "chalk";
 import FormData from "form-data";
 import axios from "axios";
-import { getToken } from "../../store/db";
+import { getDb, getToken } from "../../store/db";
 import { run as runBuild } from "./build";
 import { resolve } from "path";
-import { getWASMRepoServer } from "../../lib/urls";
+import { getGatewayUrl, getWASMRepoServer } from "../../lib/urls";
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { slugify } from "../../lib/strings"
@@ -16,31 +16,37 @@ export const publishFunction = async (
   archiveName: string,
   cb?: Function
 ) => {
-  const server = getWASMRepoServer();
-  const token = getToken();
   const formData = new FormData();
 
   formData.append("manifest", manifest, "manifest.json");
   formData.append("wasi_archive", archive, archiveName);
+  
+  try {
+    const gatewayUrl = getGatewayUrl();
+    const wasmRepoUrl = getWASMRepoServer();
+    const token = getToken();
+    const gatewayVersion = getDb().get("config.apiVersion").value();
+    const url =
+      gatewayVersion === 1
+        ? `${gatewayUrl}/api/v1/registry`
+        : `${wasmRepoUrl}/api/submit`;
 
-  axios
-    .post(`${server}/api/submit`, formData, {
+    const res = await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
-    })
-    .then((res) => {
-      console.log(Chalk.green('Publish successful!'))
-      console.log('')
-      
-      if (cb) {
-        cb(res.data);
-      }
-    })
-    .catch((error) => {
-      logger.error('Failed to publish function.', error.message)
     });
+
+    console.log(Chalk.green("Publish successful!"));
+    console.log("");
+
+    if (cb) {
+      cb(res.data);
+    }
+  } catch (error: any) {
+    logger.error("Failed to publish function.", error.message);
+  }
 };
 
 const logResult = (data: any) => {
