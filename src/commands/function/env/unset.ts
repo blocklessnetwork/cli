@@ -13,6 +13,7 @@ interface EnvUnsetCommandOptions {
 }
 
 /**
+ * Entry function for bls function env unset
  *
  * @param options
  * @returns

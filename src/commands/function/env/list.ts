@@ -15,6 +15,7 @@ interface EnvSetCommandOptions {
 }
 
 /**
+ * Entry function for bls function env list
  *
  * @param options
  * @returns
