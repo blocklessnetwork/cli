@@ -4,7 +4,7 @@ import fs, { existsSync } from "fs"
 import path, { resolve } from "path"
 import { execSync } from "child_process"
 import { IBlsBuildConfig } from "../function/interfaces"
-import { getDirectoryContents } from '../../lib/dir'
+import { copyFileSync, getDirectoryContents } from '../../lib/dir'
 import { slugify } from '../../lib/strings'
 import { getTsExportedFunctions } from '../../lib/sourceFile'
 
@@ -182,7 +182,7 @@ const packRoutes = (source: string, dest: string) => {
 
         // Move route to the build folder
         console.log(`${Chalk.yellow(`Compiling route:`)} ${relativePath} ...`)
-        fs.cpSync(filePath, path.resolve(dest, relativePath))
+        copyFileSync(filePath, path.resolve(dest, relativePath))
       }
     })
   }
@@ -251,7 +251,7 @@ const generateCompileDirectory = (source: string, dest: string): { dir: string, 
   },
   "dependencies": {
     "@assemblyscript/wasi-shim": "^0.1.0",
-    "@blockless/sdk": "https://github.com/blocklessnetwork/sdk-assemblyscript/#33818777aa7d226339a699af95288e64981a0d5c",
+    "@blockless/sdk": "^1.1.2",
     "as-wasi": "^0.6.0"
   },
   "devDependencies": {
@@ -323,9 +323,9 @@ http.HttpComponent.serve((req: http.Request) => {
   }
   
   // Match assets and serve data
-  ${routesContent}if (assets.has(req.url)) {
+  ${routesContent}if (assets.has(url)) {
     // Parse content type and format
-    const content = assets.get(req.url)
+    const content = assets.get(url)
 
     if (content.startsWith('data:')) {
       const matchString = content.replace('data:', '')
@@ -334,7 +334,7 @@ http.HttpComponent.serve((req: http.Request) => {
       contentType = matchTypeSplit[0]
     }
 
-    response = assets.get(req.url)
+    response = assets.get(url)
     status = 200
   } else if (assets.has('/404.html')) {
     response = assets.get('/404.html')
