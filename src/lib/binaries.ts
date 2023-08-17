@@ -9,7 +9,7 @@ import { store } from "../store"
 import { https } from "follow-redirects"
 import fs from "fs"
 
-const RUNTIME_BUILD_VERSION = "v0.2.2"
+const RUNTIME_BUILD_VERSION = "v0.3.1"
 const NETWORKING_BUILD_VERSION = "v0.0.1"
 
 export const download = function (url: any, dest: any): Promise<any> {
