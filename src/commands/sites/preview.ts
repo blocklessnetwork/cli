@@ -46,7 +46,7 @@ export const run = async (options: any) => {
     const { build, build_release } = parseBlsConfig()
 
     // Execute the build command
-    runBuild({ path, debug, rebuild })
+    await runBuild({ path, debug, rebuild })
 
     // check for and store unmodified wasm file name to change later
     const buildConfig = !debug ? build_release : build
@@ -94,6 +94,56 @@ export const run = async (options: any) => {
     })
 
     fastify.get("*", async (request, reply) => {
+      let qs = ''
+      let headerString = ''
+      let requestPath = decodeURIComponent(request.url.trim())
+
+      if (requestPath.includes('?')) {
+        qs = requestPath.split('?')[1]
+        requestPath = requestPath.split('?')[0]
+      }
+
+      if (request.headers) {
+        headerString = Object.entries(request.headers)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')
+      }
+
+      let envString = ''
+      let envVars = [] as string[]
+      let envVarsKeys = [] as string[]
+  
+      if (!!options.env) {
+        // Validate environment variables
+        const vars = typeof options.env === 'string' ? [options.env] : options.env
+        vars.map((v: string) => {
+          const split = v.split('=')
+          if (split.length !== 2) return
+  
+          envVars.push(v)
+          envVarsKeys.push(split[0])
+        })
+      }    
+
+      envVars.push(`BLS_REQUEST_PATH="${requestPath}"`)
+      envVars.push(`BLS_REQUEST_QUERY="${qs}"`)
+      envVars.push(`BLS_REQUEST_METHOD="${request.method}"`)
+      envVars.push(`BLS_REQUEST_HEADERS="${headerString}"`)
+      envVarsKeys.push('BLS_REQUEST_PATH')
+      envVarsKeys.push('BLS_REQUEST_QUERY')
+      envVarsKeys.push('BLS_REQUEST_METHOD')
+      envVarsKeys.push('BLS_REQUEST_HEADERS')
+      
+      if (request.body) {
+        envVars.push(`BLS_REQUEST_BODY="${JSON.stringify(request.body)}"`)
+        envVarsKeys.push('BLS_REQUEST_BODY')
+      }
+
+      // Include environment string if there are variables
+      if (envVars.length > 0) {
+        envString = `env ${envVars.join(' ')} BLS_LIST_VARS=\"${envVarsKeys.join(';')}\"`
+      }
+      
       const result = execSync(`echo "${decodeURIComponent(request.url.trim())}" | ${envString} ${runtimePath} ${manifestPath}`, {
         cwd: path,
         maxBuffer: (10000 * 1024)
