@@ -21,7 +21,12 @@ function install {
 	GH="https://github.com"
 	#bash check
 	[ ! "$BASH_VERSION" ] && fail "Please use bash instead"
-	[ ! -d $OUT_DIR ] && fail "output directory missing: $OUT_DIR"
+	
+	# Check if $OUT_DIR exists, if not create it
+	if [ ! -d $OUT_DIR ]; then
+		mkdir -p $OUT_DIR || fail "Failed to create directory: $OUT_DIR"
+	fi
+	
 	#dependency check, assume we are a standard POISX machine
 	which find > /dev/null || fail "find not installed"
 	which xargs > /dev/null || fail "xargs not installed"
