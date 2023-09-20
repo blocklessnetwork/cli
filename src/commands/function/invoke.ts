@@ -123,7 +123,7 @@ export const run = async (options: any) => {
         envVarsKeys.push('BLS_REQUEST_HEADERS')
         
         if (request.body) {
-          envVars.push(`BLS_REQUEST_BODY="${JSON.stringify(request.body)}"`)
+          envVars.push(`BLS_REQUEST_BODY="${encodeURIComponent(JSON.stringify(request.body))}"`)
           envVarsKeys.push('BLS_REQUEST_BODY')
         }
 
