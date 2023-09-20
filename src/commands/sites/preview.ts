@@ -93,6 +93,8 @@ export const run = async (options: any) => {
       timeWindow: '1 minute'
     })
 
+    await fastify.register(import('@fastify/cors'))
+
     fastify.get("*", async (request, reply) => {
       let qs = ''
       let headerString = ''
