@@ -46,7 +46,7 @@ export function functionEnvCli(yargs: Argv) {
 				(f: string | number) =>
 					typeof f === 'string' &&
 					['function', 'functions', 'env', 'set'].indexOf(f) === -1 &&
-					/^[A-Za-z]{2,}=.+$/.test(f)
+					/^[A-Za-z0-9_]{2,}=[A-Za-z0-9_\-.\/:?=]+$/.test(f)
 			) as string[]
 
 			if (vars.length > 0) {
