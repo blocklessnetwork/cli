@@ -9,7 +9,6 @@ import { logger } from "../../lib/logger"
 import { run as runInstall } from "../offchain/install"
 import prompRuntimeConfirm from "../../prompts/runtime/confirm"
 import Fastify from "fastify"
-import { openInBrowser } from "../../lib/browser"
 import { getPortPromise } from "portfinder";
 
 export const run = async (options: any) => {
@@ -167,7 +166,6 @@ export const run = async (options: any) => {
 
       fastify.listen({ port }).then(async () => {
         console.log(`Serving http://127.0.0.1:${port} ...`)
-        openInBrowser(`http://127.0.0.1:${port}`)
       })
     } else {
       // pass in stdin to the runtime
