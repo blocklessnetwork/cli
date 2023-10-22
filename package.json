@@ -3,6 +3,7 @@
   "version": "0.0.0-development",
   "description": "blockless cli client, manage, interact with and deploy blockless applications.",
   "main": "src/index.ts",
+  "private": false,
   "bin": {
     "bls": "dev-bin.js"
   },
