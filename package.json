@@ -1,11 +1,11 @@
 {
 	"name": "@blockless/cli",
-	"version": "0.0.3-development",
+	"version": "0.0.4-development",
 	"description": "blockless cli client, manage, interact with and deploy blockless applications.",
-	"main": "src/index.ts",
+	"main": "dist/src/index.js",
 	"private": false,
 	"bin": {
-		"bls": "dev-bin.js"
+		"bls": "bin.js"
 	},
 	"scripts": {
 		"build:module": "tsc",
