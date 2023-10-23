@@ -15,6 +15,7 @@
     "format:fix": "prettier --write ."
   },
   "files": [
+    "dev-bin.js",
     "bin.js",
     "dist/**/*.js",
     "dist/*.json",
