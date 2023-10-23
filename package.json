@@ -17,7 +17,8 @@
   "files": [
     "bin.js",
     "dist/**/*.js",
-    "dist/*.json"
+    "dist/*.json",
+    "src/*",
   ],
   "author": "",
   "license": "ISC",
