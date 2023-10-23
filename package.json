@@ -1,6 +1,6 @@
 {
   "name": "@blockless/cli",
-  "version": "0.0.1-development",
+  "version": "0.0.2-development",
   "description": "blockless cli client, manage, interact with and deploy blockless applications.",
   "main": "src/index.ts",
   "private": false,
@@ -14,13 +14,6 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write ."
   },
-  "files": [
-    "dev-bin.js",
-    "bin.js",
-    "dist/**/*.js",
-    "dist/*.json",
-    "src/*"
-  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
