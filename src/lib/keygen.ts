@@ -1,22 +1,24 @@
-import { execSync } from "child_process";
-import Chalk from "chalk";
-import { store } from "../store";
+import { execSync } from 'child_process'
+import Chalk from 'chalk'
+import { store } from '../store'
 
-export const generateKey = () => {
-  const os =
-    store.system.platform === "win32" ? "windows" : store.system.platform;
+export const generateKey = (identity: string) => {
+	const os = store.system.platform === 'win32' ? 'windows' : store.system.platform
 
-  const arch = store.system.arch === "arm64" ? "arm64" : "amd64";
+	const arch = store.system.arch === 'arm64' ? 'arm64' : 'amd64'
 
-  console.log(
-    `${Chalk.yellow("Generating")} ... identity key in ${
-      store.system.homedir
-    }/.bls/network/keys`
-  );
-  execSync(
-    `mkdir -p ${store.system.homedir}/.bls/network/keys; cd ${store.system.homedir}/.bls/network/keys; ${store.system.homedir}/.bls/network/b7s keygen`,
-    {
-      stdio: "ignore",
-    }
-  );
-};
+	if (!identity) {
+		console.error(Chalk.red('You must provide an identity string.'))
+		return
+	}
+
+	const keysDirectory = `${store.system.homedir}/.bls/network/keys/${identity}`
+
+	console.log(`${Chalk.yellow('Generating')} ... identity key in ${keysDirectory}`)
+	execSync(
+		`mkdir -p ${keysDirectory}; cd ${keysDirectory}; ${store.system.homedir}/.bls/network/b7s-keyforge`,
+		{
+			stdio: 'ignore'
+		}
+	)
+}
