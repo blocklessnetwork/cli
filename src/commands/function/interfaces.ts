@@ -41,31 +41,27 @@ export interface IBlsDeployConfig extends JsonMap {
 }
 
 // WASM interrfaces
-export interface IWasmMethod {
-  name: string;
-  entry: string;
-  result_type: string;
+export interface IWasmModule {
+  file: string
+  name: string
+  type: string
+  md5: string
 }
 
 export interface IManifest {
   id: string;
+  version: number
   name: string;
   description: string;
   fs_root_path: string;
+  drivers_root_path?: string;
   runtime_logger: string;
-  drivers_root_path: string;
   limited_fuel?: number;
   limited_memory?: number;
   entry: string;
-  resouces?: [];
   hooks?: [];
-  runtime: {
-    checksum: string;
-    url: string;
-  };
+  modules?: IWasmModule[]
   contentType?: "json" | "html" | "text";
-  resources?: string[];
-  methods?: IWasmMethod[];
   permissions?: string[];
 }
 

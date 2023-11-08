@@ -19,7 +19,7 @@ export const run = async (options: any) => {
     rebuild = false,
   } = options
 
-  const runtimePath = `${systemPath}runtime/blockless-cli`
+  const runtimePath = `${systemPath}runtime/bls-runtime`
 
   // Validate Runtime Path
   try {
@@ -55,7 +55,11 @@ export const run = async (options: any) => {
     // the runtime requires absolute paths
     let manifestData = fs.readFileSync(manifestPath, "utf8")
     let manifest = JSON.parse(manifestData)
-    manifest.entry = resolve(buildDir, manifest.entry)
+    manifest.drivers_root_path = `${systemPath}/extensions`
+    manifest.modules = manifest.modules.map((m: any) => {
+      m.file = resolve(buildDir, m.file)
+      return m
+    })
     fs.writeFileSync(manifestPath, JSON.stringify(manifest))
 
     // prepare environment variables

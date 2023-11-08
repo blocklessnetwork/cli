@@ -8,6 +8,10 @@ export const generateChecksum = (archive: Buffer): string => {
   return crypto.createHash("sha256").update(archive).digest("hex");
 };
 
+export const generateMd5Checksum = (buf: Buffer) => {
+  return crypto.createHash('md5').update(buf).digest("hex")
+}
+
 
 /**
  * A simple function to parse JWT from a given token 

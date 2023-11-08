@@ -90,7 +90,6 @@ export const buildWasm = (
  */
 export const createWasmManifest = (
   entry: string,
-  url: string,
   contentType: 'text' | 'html' | 'json' | undefined,
   manifestOverride = {}
 ): IManifest => {
@@ -98,19 +97,16 @@ export const createWasmManifest = (
 
   const manifest: IManifest = {
     id: "",
+    version: 1,
     name,
     hooks: [],
     description: "",
     fs_root_path: "./",
+    drivers_root_path: `./`,
     runtime_logger: 'runtime.log',
-    drivers_root_path: `${store.system.homedir}/.bls/extensions`,
-    entry,
-    runtime: {
-      checksum: "",
-      url,
-    },
+    entry: '_start',
     contentType: contentType || 'text',
-    methods: [],
+    modules: [],
     permissions: [],
     ...manifestOverride
   }

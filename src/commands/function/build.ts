@@ -1,10 +1,9 @@
 import fs from "fs"
 import Chalk from 'chalk'
 import { resolve } from "path"
-import { writeFileSync } from "fs"
 import { buildWasm, createWasmArchive, createWasmManifest } from "./shared"
 import { parseBlsConfig } from "../../lib/blsConfig"
-import { generateChecksum } from "../../lib/crypto"
+import { generateMd5Checksum } from "../../lib/crypto"
 import { logger } from "../../lib/logger"
 import { slugify } from "../../lib/strings"
 
@@ -45,22 +44,16 @@ export const run = (options: {
     }
 
     // Generate a default WASM manifest
-    const wasmManifest = createWasmManifest(
-      wasmName,
-      wasmArchive,
-      content_type
-    )
+    const wasmManifest = createWasmManifest(wasmName, content_type)
 
     // Create a WASM archive
-    const archive = createWasmArchive(buildDir, wasmArchive, wasmName)
-    const checksum = generateChecksum(archive)
+    createWasmArchive(buildDir, wasmArchive, wasmName)
 
-    // Include WASM checksum and entrypoint
-    wasmManifest.runtime.checksum = checksum
-    wasmManifest.methods?.push({
+    wasmManifest.modules?.push({
+      file: wasmName,
       name: wasmName.split(".")[0],
-      entry: wasmName,
-      result_type: "string",
+      type: 'entry',
+      md5: generateMd5Checksum(fs.readFileSync(`${buildDir}/${wasmName}`))
     })
 
     if (deployConfig) {
@@ -68,7 +61,7 @@ export const run = (options: {
     }
 
     // Store manifest
-    writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
+    fs.writeFileSync(`${buildDir}/manifest.json`, JSON.stringify(wasmManifest))
 
     // Show success message
     console.log(`${Chalk.green('Build successful!')}`)
