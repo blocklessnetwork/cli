@@ -9,7 +9,6 @@ import { logger } from "../../lib/logger"
 import { run as runInstall } from "../offchain/install"
 import prompRuntimeConfirm from "../../prompts/runtime/confirm"
 import Fastify from "fastify"
-import { openInBrowser } from "../../lib/browser"
 import { getPortPromise } from "portfinder";
 
 export const run = async (options: any) => {
@@ -85,6 +84,8 @@ export const run = async (options: any) => {
         timeWindow: '1 minute'
       })
 
+      await fastify.register(import('@fastify/cors'))
+
       fastify.all("*", async (request, reply) => {
         let qs = ''
         let headerString = ''
@@ -127,7 +128,7 @@ export const run = async (options: any) => {
         envVarsKeys.push('BLS_REQUEST_HEADERS')
         
         if (request.body) {
-          envVars.push(`BLS_REQUEST_BODY="${JSON.stringify(request.body)}"`)
+          envVars.push(`BLS_REQUEST_BODY="${encodeURIComponent(JSON.stringify(request.body))}"`)
           envVarsKeys.push('BLS_REQUEST_BODY')
         }
 
@@ -171,7 +172,6 @@ export const run = async (options: any) => {
 
       fastify.listen({ port }).then(async () => {
         console.log(`Serving http://127.0.0.1:${port} ...`)
-        openInBrowser(`http://127.0.0.1:${port}`)
       })
     } else {
       // pass in stdin to the runtime

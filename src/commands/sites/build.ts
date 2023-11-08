@@ -37,15 +37,16 @@ export const run = async (options: {
     const wasmName = buildConfig.entry || `${name}.wasm`
     const wasmArchive = `${buildName}.tar.gz`
 
-    // Rebuild function if requested
-    if (!fs.existsSync(resolve(buildDir, wasmName)) || rebuild) {
-      buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
-    } else if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
+    // Bail if file is present and rebuild is not requested
+    if (fs.existsSync(resolve(buildDir, wasmName)) && !rebuild) {
       return
     }
 
     // Generate a default WASM manifest
     const wasmManifest = createWasmManifest(wasmName, content_type)
+
+    // Build site WASM
+    await buildSiteWasm(wasmName, buildDir, path, buildConfig, debug)
 
     // Create a WASM archive
     createWasmArchive(buildDir, wasmArchive, wasmName)
