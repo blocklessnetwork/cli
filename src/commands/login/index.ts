@@ -1,36 +1,36 @@
-import Chalk from "chalk"
+import Chalk from "chalk";
 import Fastify from "fastify";
 import { getDb } from "../../store/db";
 import { openInBrowser } from "../../lib/browser";
-import { getGatewayUrl, validateGatewayVersion } from "../../lib/urls"
-import axios from "axios"
+import { getGatewayUrl, validateGatewayVersion } from "../../lib/urls";
+import axios from "axios";
 
 const portastic = require("portastic");
 const clientId = "7ddcb826-e84a-4102-b95b-d9b8d3a57176";
 
 const fastify = Fastify({
-  // no logging to the console
-  logger: false,
-  //return jwt bigger than default
-  maxParamLength: 10000,
+	// no logging to the console
+	logger: false,
+	//return jwt bigger than default
+	maxParamLength: 10000,
 });
 
 // we have the jwt, store it
 fastify.get("/token/:userId", async (request: any, reply: any) => {
-  const userId = request.params.userId;
-  const error = request.params.error;
-  getDb().set("config.token", userId).write();
+	const userId = request.params.userId;
+	const error = request.params.error;
+	getDb().set("config.token", userId).write();
 
-  if (error) {
-    console.log("Error when attempting to login");
-    return;
-  }
+	if (error) {
+		console.log("Error when attempting to login");
+		return;
+	}
 
-  reply.redirect("/complete");
+	reply.redirect("/complete");
 });
 
 fastify.get("/complete", async (request: any, reply: any) => {
-  const html = `<!DOCTYPE html>
+	const html = `<!DOCTYPE html>
   <html lang="en">
     <head>
       <style>
@@ -86,58 +86,64 @@ fastify.get("/complete", async (request: any, reply: any) => {
       </div>
     </body>
   </html>`;
-  reply.header("Content-Type", "text/html").send(html);
+	reply.header("Content-Type", "text/html").send(html);
 
-  console.log('')
-  console.log(Chalk.green('Authentication Completed!'));
-  console.log('You have successfully authenticated with the server.')
-  console.log('')
-  fastify.close()
-  process.exit(0)
+	console.log("");
+	console.log(Chalk.green("Authentication Completed!"));
+	console.log("You have successfully authenticated with the server.");
+	console.log("");
+	fastify.close();
+	process.exit(0);
 });
 
 // run the server
 const start = async (url: string) => {
-  try {
-    const ports = await portastic.find({ min: 8000, max: 8999 });
-    const serverPort = ports[Math.floor(Math.random() * ports.length)];
+	try {
+		const ports = await portastic.find({ min: 8000, max: 8999 });
+		const serverPort = ports[Math.floor(Math.random() * ports.length)];
 
-    fastify.get("/", async (request, reply) => {
-      reply.redirect(
-        `${url}/login?redirect=http://0.0.0.0:${serverPort}/token&clientId=${clientId}`
-      );
-    });
+		fastify.get("/", async (request, reply) => {
+			const host = request.headers.host;
+			reply.redirect(
+				`${url}/login?redirect=http://${host}/token&clientId=${clientId}`,
+			);
+		});
 
-    fastify.listen({ port: serverPort }).then(async () => {
-      console.log(
-        `Open Browser at http://0.0.0.0:${serverPort} to complete login`
-      );
-      openInBrowser(`http://0.0.0.0:${serverPort}`);
-    });
-  } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
-  }
+		fastify.listen({ port: serverPort }).then(async () => {
+			console.log(
+				`Open Browser at http://0.0.0.0:${serverPort} to complete login`,
+			);
+			console.log(
+				`-OR- Open Browser at http://127.0.0.1:${serverPort} to complete login`,
+			);
+			// openInBrowser(`http://0.0.0.0:${serverPort}`);
+		});
+	} catch (err) {
+		fastify.log.error(err);
+		process.exit(1);
+	}
 };
 
 // run the command when cli is called
 export async function run(options?: any) {
-  if (options?.authUrl) {
-    getDb().set("config.authUrl", options?.authUrl.replace(/^https?:\/\//, '')).write();
-  }
+	if (options?.authUrl) {
+		getDb()
+			.set("config.authUrl", options?.authUrl.replace(/^https?:\/\//, ""))
+			.write();
+	}
 
-  if (options?.authPort) {
-    getDb().set("config.authPort", parseInt(options?.authPort)).write();
-  }
+	if (options?.authPort) {
+		getDb().set("config.authPort", parseInt(options?.authPort)).write();
+	}
 
-  const gatewayUrl = getGatewayUrl()
-  const gatewayVersion = await validateGatewayVersion(gatewayUrl)
-  getDb().set("config.apiVersion", gatewayVersion).write()
+	const gatewayUrl = getGatewayUrl();
+	const gatewayVersion = await validateGatewayVersion(gatewayUrl);
+	getDb().set("config.apiVersion", gatewayVersion).write();
 
-  if (options?.authToken) {
-    const token = options?.authToken;
-    getDb().set("config.token", token).write();
-  } else {
-    start(gatewayUrl);
-  }
+	if (options?.authToken) {
+		const token = options?.authToken;
+		getDb().set("config.token", token).write();
+	} else {
+		start(gatewayUrl);
+	}
 }
