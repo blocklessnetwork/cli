@@ -1,6 +1,6 @@
 {
 	"name": "@blockless/cli",
-	"version": "0.0.4-development",
+	"version": "0.0.5-development",
 	"description": "blockless cli client, manage, interact with and deploy blockless applications.",
 	"main": "dist/src/index.js",
 	"private": false,
