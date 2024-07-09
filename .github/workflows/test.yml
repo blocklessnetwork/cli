@@ -6,7 +6,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, self-hosted]
+        os: [macos-latest, ubuntu-latest]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
