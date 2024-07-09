@@ -18,7 +18,6 @@ jobs:
       - run: yarn build
       - run: cp bls_x64-macos /usr/local/bin/bls
       - run: bls components install -y
-      - run: yarn test
       - run: |
           FILE="/Users/runner/.bls/network/keys/head/identity"
           if test -f $FILE; then
@@ -28,3 +27,4 @@ jobs:
             echo " does not exist."
             exit 1
           fi
+      - run: yarn test
