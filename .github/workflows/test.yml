@@ -1,12 +1,12 @@
 name: Run tests
 
-on: [pull_request]
+on: [pull_request, workflow_dispatch]
 
 jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, self-hosted]
+        os: [macos-latest, ubuntu-latest]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,3 +27,4 @@ jobs:
             echo " does not exist."
             exit 1
           fi
+      - run: yarn test
