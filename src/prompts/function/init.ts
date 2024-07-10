@@ -14,7 +14,8 @@ interface PromptDeployOutput {
 
 enum EBlsFramework {
     RUST = 'rust',
-    ASSEMBLY_SCRIPT = 'assemblyscript'
+    ASSEMBLY_SCRIPT = 'assemblyscript',
+    JAVY_TYPESCRIPT = 'typescript'
 }
 
 const templates = {
@@ -24,7 +25,11 @@ const templates = {
     ],
     [EBlsFramework.RUST]: [
         { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-rust-hello-world' }
+    ],
+    [EBlsFramework.JAVY_TYPESCRIPT]: [
+        { title: 'Hello World', value: 'https://github.com/blocklessnetwork/template-javy-typescript-hello-world' }
     ]
+
 }
 
 const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployOutput | null> => {
@@ -55,7 +60,8 @@ const promptFnInit = async (options: PromptDeployOptions): Promise<PromptDeployO
                     message: 'Pick a framework',
                     choices: [
                         { title: 'Assembly Script', value: EBlsFramework.ASSEMBLY_SCRIPT },
-                        { title: 'Rust', value: EBlsFramework.RUST }
+                        { title: 'Rust', value: EBlsFramework.RUST },
+                        { title: 'Typescript (Javy)', value: EBlsFramework.JAVY_TYPESCRIPT },
                     ],
                     initial: 0
                 }

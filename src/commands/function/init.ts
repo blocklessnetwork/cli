@@ -56,12 +56,19 @@ export const run = async (options: any) => {
           await handleNpmInstallation()
           return
         }
-        
         break;
 
       case 'rust':
         // Check whether Cargo/Rust is installed
         if (!getCargoInstallationStatus()) isValidated = await handleCargoInstallation()
+        break
+
+      case 'typescript':
+        // Check whether NPM is installed
+        if (!getNpmInstallationStatus()) {
+          await handleNpmInstallation()
+          return
+        }
         break
     }
 
@@ -110,6 +117,12 @@ export const run = async (options: any) => {
           } catch (error: any) {
             logger.error('Failed to configure Rust function.', error.message)
           }
+
+          case 'typescript':
+            execSync(`cd ${installationPath}; npm pkg set name=${sanitizedName}`)
+            execSync(`cd ${installationPath}; npm pkg set bls.functionId=${functionId}`)
+            execSync(`cd ${installationPath}; npm install`, { stdio: 'ignore' })
+            break
       }
     } catch (error: any) {
       logger.error('Failed to finalize function setup, please try again.', error.message)
