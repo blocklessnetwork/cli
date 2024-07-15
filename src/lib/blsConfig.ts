@@ -65,6 +65,18 @@ export const generateBaseConfig = ({
             entry: `${name}.wasm`,
             command: 'cargo build --target wasm32-wasi --release'
         }
+    } else if (framework === 'typescript') {
+        defaultConfig.build = {
+            dir: 'build',
+            entry: `${name}_debug.wasm`,
+            command: 'npm run build:debug'
+        }
+
+        defaultConfig.build_release = {
+            dir: 'build',
+            entry: `${name}.wasm`,
+            command: 'npm run build:release'
+        }
     }
 
     return defaultConfig

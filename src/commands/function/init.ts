@@ -92,7 +92,7 @@ export const run = async (options: any) => {
         framework,
         name: sanitizedName,
         version: parseNpmConfigVersion(version),
-        isPrivate
+        isPrivate,
       }), installationPath)
     } catch (error: any) {
       logger.error('Failed to create project level configuration.', error.message)
