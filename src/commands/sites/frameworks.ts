@@ -101,7 +101,7 @@ export async function generateFramework({
   const framework = frameworks.find(f => f.id === id)
   if (!framework) throw new Error("Unable to detect framework.");
   
-  // Run framework genration command
+  // Run framework generation command
   execSync(framework.command('npx', name), { cwd: path, stdio: 'inherit' })
 
   // Run framework configuration command
