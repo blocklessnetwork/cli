@@ -1,5 +1,5 @@
 import Chalk from 'chalk'
-import { getRuntime, getNetworking } from '../../lib/binaries'
+import { getRuntime, getNetworking, getBlsJavy } from '../../lib/binaries'
 import { generateKey } from '../../lib/keygen'
 import { headConfigJSON, saveConfig, workerConfigJSON } from '../../lib/configs'
 import { store, get as storeGet, set as storeSet } from '../../store'
@@ -31,8 +31,12 @@ const install = async function ({ path, inline = false }: { path?: string; inlin
 
 	await getNetworking()
 	console.log(`${Chalk.green('Installing')} ... done`)
-	console.log(`${Chalk.yellow('Installing')} ... downloading keygen identity tool`)
+	console.log(`${Chalk.yellow('Installing')} ... downloading bls-javy tool`)
 
+	await getBlsJavy()
+	console.log(`${Chalk.green('Installing')} ... done`)
+
+	console.log(`${Chalk.yellow('Installing')} ... downloading keygen identity tool`)
 	console.log(`${Chalk.green('Installing')} ... done`)
 	generateKey('head')
 	generateKey('worker1')
