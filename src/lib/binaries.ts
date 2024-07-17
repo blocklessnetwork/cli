@@ -76,3 +76,24 @@ export const getNetworking = () => {
 		resolve(null)
 	})
 }
+
+export const getBlsJavy = () => {
+	return new Promise(async (resolve) => {
+		const os = store.system.platform === 'win32' ? 'windows' : store.system.platform
+		const arch = store.system.arch === 'arm64' ? 'arm64' : 'amd64'
+		const VERSION = 'v1.4.0'
+		const result = await download(
+			`https://github.com/blocklessnetwork/bls-javy/releases/download/${VERSION}/javy-x86_64-macos-${VERSION}.gz`,
+			`/tmp/bls-javy-${os}.${arch}.tar.gz`
+		)
+
+		console.log(`${Chalk.yellow('Installing')} ... unpacking ${result}`)
+		execSync(
+			`mkdir -p ${store.system.homedir}/.bls/network; tar -xvf /tmp/bls-javy-${os}.${arch}.tar.gz -C ${store.system.homedir}/.bls/network`,
+			{ stdio: 'ignore' }
+		)
+		console.log(`${Chalk.green('Installing')} ... installed networking agent: ${os}/${arch}`)
+
+		resolve(null)
+	})
+}
