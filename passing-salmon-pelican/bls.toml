@@ -1,0 +1,19 @@
+name = "passing-salmon-pelican"
+version = "1.0.0"
+type = "site"
+content_type = "html"
+
+[deployment]
+nodes = 1
+
+[build]
+dir = ".bls"
+public_dir = "build"
+entry = "passing-salmon-pelican_debug.wasm"
+command = "npm run build"
+
+[build_release]
+dir = ".bls"
+public_dir = "build"
+entry = "passing-salmon-pelican.wasm"
+command = "npm run build"
