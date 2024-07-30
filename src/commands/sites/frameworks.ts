@@ -37,6 +37,16 @@ const frameworks: IFramework[] = [
     }
   },
   {
+    id: 'react_typescript',
+    name: 'React (Typescript)',
+    command: (pm, name) => `${pm} create-react-app ${name} --template typescript`,
+    postCommand: null,
+    config: {
+      build: 'npm run build',
+      publicDir: 'build'
+    }
+  },
+  {
     id: 'nextjs',
     name: 'Next.js',
     command: (pm, name) => `${pm} create-next-app ${name}`,
