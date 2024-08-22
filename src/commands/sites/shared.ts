@@ -279,7 +279,7 @@ const generateCompileDirectory = (
   },
   "dependencies": {
     "@assemblyscript/wasi-shim": "^0.1.0",
-    "@blockless/sdk": "github:blocklessnetwork/sdk-assemblyscript#parse-json-lists-quickfix",
+    "@blockless/sdk": "github:blocklessnetwork/sdk-assemblyscript",
     "as-wasi": "^0.6.0"
   },
   "devDependencies": {
