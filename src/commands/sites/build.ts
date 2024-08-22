@@ -4,7 +4,7 @@ import { resolve } from "path"
 import { parseBlsConfig } from "../../lib/blsConfig"
 import { logger } from "../../lib/logger"
 import { createWasmArchive, createWasmManifest } from '../function/shared'
-import { generateMd5Checksum } from '../../lib/crypto'
+import { generateMd5Checksum, generateSha256Checksum } from '../../lib/crypto'
 import { buildSiteWasm } from './shared'
 import { slugify } from '../../lib/strings'
 
@@ -50,6 +50,13 @@ export const run = async (options: {
 
     // Create a WASM archive
     createWasmArchive(buildDir, wasmArchive, wasmName)
+
+    wasmManifest.runtime = {
+      url: wasmArchive,
+      checksum: generateSha256Checksum(
+        fs.readFileSync(`${buildDir}/${wasmArchive}`),
+      ),
+    }
 
     wasmManifest.modules?.push({
       file: wasmName,
