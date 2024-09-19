@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --no-warnings
 require("ts-node/register");
 const compareVersions = require("compare-versions");
 const MIN_NODE_VERSION = "14.17.6";
