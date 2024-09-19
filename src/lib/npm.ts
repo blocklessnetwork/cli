@@ -13,6 +13,10 @@ export const getNpmVersion = (): string =>
 export const getNpmConfigInitVersion = (): string =>
   execSync("npm config get init-version").toString("utf-8")
 
+// Node/npm config
+export const getNodeVersion = (): string =>
+	execSync("echo $(node -v)").toString("utf-8").replace('v', '').trim()
+
 /**
  * Check whether NPM is installed
  * 

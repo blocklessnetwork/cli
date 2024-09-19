@@ -12,6 +12,10 @@ import { openInBrowser } from './lib/browser'
 import { getGatewayUrl } from './lib/urls'
 import { logger } from './lib/logger'
 import { sitesCli } from './commands/sites'
+import * as compareVersions from "compare-versions";
+import { getNodeVersion } from './lib/npm'
+const MIN_NODE_VERSION = "18.10";
+
 
 /**
  * Yargs options included in every wrangler command.
@@ -165,6 +169,13 @@ export async function main(argv: string[], options: any) {
   const blsCli = createCLI(argv)
   blsCli.version(options.version)
   blsCli.epilogue(`Blockless CLI v${options.version}`)
+
+  if (compareVersions.compare(getNodeVersion(), MIN_NODE_VERSION, "<")) {
+    console.error(
+      `Bls CLI requires at least node.js v${MIN_NODE_VERSION}.\nYou are using v${process.versions.node}. Please update your version of node.js. Consider using Node.js version manager https://github.com/nvm-sh/nvm.`,
+    );
+    process.exit(1);
+  }
 
   if (argv.length > 0) {
     try {
