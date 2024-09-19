@@ -1,5 +1,8 @@
 {
 	"name": "@blockless/cli",
+	"engines": {
+		"node": ">=18.10.0"
+	},
 	"version": "0.0.5-development",
 	"description": "blockless cli client, manage, interact with and deploy blockless applications.",
 	"main": "dist/src/index.js",
