@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - run: node -v
       - run: npm i -g yarn
       - run: yarn
       - run: yarn build
