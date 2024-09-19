@@ -1,7 +1,7 @@
 #!/usr/bin/env node --no-warnings
 require("ts-node/register");
 const compareVersions = require("compare-versions");
-const MIN_NODE_VERSION = "14.17.6";
+const MIN_NODE_VERSION = "18.10.0";
 
 if (compareVersions.compare(process.versions.node, MIN_NODE_VERSION, "<")) {
 	console.error(
