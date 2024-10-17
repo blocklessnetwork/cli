@@ -66,7 +66,7 @@ Below is a list of commonly used commands:
 - `bls function`: Build, test, and manage your projects and functions.
   
 
-## Glboal flags
+## Global flags
 Other than the help (`-h` or `--help`) global flag, there are two more flags that you can use globally.
 
 ### `--yes` flag
